@@ -1,0 +1,558 @@
+<import name="my-circle" src="../ui/circle/index"></import>
+<import name="my-dialog" src="../ui/dialog/index"></import>
+
+<template>
+  <div class="container">
+    <div class="top_view">
+      <tabs class="tabs" onchange="changeTabactive">
+        <tab-bar class="tab-bar">
+          <text class="tab-text">今日</text>
+          <text class="tab-text">周</text>
+          <text class="tab-text">月</text>
+        </tab-bar>
+      </tabs>
+      <my-circle class="circle" size="350" percent="{{progress}}" stroke-color="#00B2FF" s-angle="150" show-trail="{{false}}" trail-color="#fff">
+        <div class="text-container">
+          <image src="./img/icon_paobu.png" class="icon-image" />
+          <text class="title_stpes">{{segmentsText}}</text>
+          <text class="title_stpes_v">{{steps_view}}</text>
+        </div>
+      </my-circle>
+
+      <div class="details">
+        <div class="detail-item">
+          <div class="detail-value">
+            <text class="detail-value1 larger-text">{{mileage}}</text>
+            <text class="smaller-text">KM</text>
+          </div>
+          <text class="n-text">里程</text>
+        </div>
+        <div class="detail-item">
+          <div class="detail-value">
+            <text class="detail-value2 larger-text">{{calories}}</text>
+            <text class="smaller-text">kcal</text>
+          </div>
+          <text class="n-text">消耗热量</text>
+        </div>
+        <div class="detail-item" @click="openSetStepsDialog">
+          <div class="detail-value">
+            <text id="u" class="detail-value3 larger-text">{{goal_day}}</text>
+            <text class="smaller-text">步></text>
+          </div>
+          <text class="n-text">今日目标</text>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom_view">
+      <div style="width: 100%; justify-content: space-between">
+        <div style="width: 252px; height: 45px; align-items: flex-end">
+          <div style="width: 238px; height: 28px; background: linear-gradient(90deg, #e9fd65, #95ff37 100%); position: absolute; border-radius: 58px"></div>
+          <text style="width: 100%; height: 42px; font-size: 31px; font-weight: bold; position: absolute; color: #000000; margin-left: 3px">BMI/体脂率计算</text>
+        </div>
+        <text style="color: #828282; padding-top: 10px; padding-left: 20px" @click="openBasicInformationDialog">填写计算></text>
+      </div>
+
+      <div style="width: 100%; height: 140px; background-image: url(./img/mingroup2.png); margin-top: 15px; justify-content: space-around">
+        <div style="align-items: center; margin-left: -30px">
+          <image src="./img/icon_bmi.png" style="width: 90px; height: 90px" />
+          <div style="flex-direction: column; justify-content: space-around; margin-left: 16px">
+            <text class="larger3-text">BMI</text>
+            <text class="larger2-text">{{bmi}}</text>
+          </div>
+        </div>
+        <div style="align-items: center">
+          <image src="./img/icon_tzl.png" style="width: 90px; height: 90px" />
+          <div style="flex-direction: column; justify-content: space-around; margin-left: 16px">
+            <text class="larger3-text">体脂率</text>
+            <text class="larger2-text">{{tzl}}%</text>
+          </div>
+        </div>
+      </div>
+
+      <div style="background-image: url(./img/standard.png); width: 100%; height: 368px; margin-top: 14px"></div>
+    </div>
+    <my-dialog visible="{{open1}}" dialog-type="prompt" onaffirm="enterSteps" oncancel="close" onenter="enterSteps" prompt="{{obj}}"></my-dialog>
+    <my-dialog visible="{{open2}}" dialog-type="prompt1" onaffirm="enterDetails" oncancel="close" prompt="{{obj}}"></my-dialog>
+  </div>
+</template>
+
+<style>
+  .container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .top_view {
+    width: 100%;
+    height: 828px;
+    flex-direction: column;
+    align-items: center;
+    background-image: url("./img/group.png"); /* 替换为你的背景图片路径 */
+    background-size: cover; /* 使背景图片覆盖整个容器 */
+    background-position: center; /* 将背景图片居中对齐 */
+  }
+
+  .bottom_view {
+    padding-top: 20px;
+    padding-left: 27px;
+    padding-right: 27px;
+    width: 100%;
+    height: 750px;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -10px;
+    background-color: #ffffff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+  .icon-image {
+    width: 44px; /* 设置图片宽度 */
+    height: 44px; /* 设置图片高度 */
+  }
+
+  .circle {
+    margin-top: 25px;
+  }
+
+  .text-container {
+    flex-direction: column;
+    align-items: center; /* 使文本居中对齐 */
+  }
+
+  .title_stpes {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .title_stpes_v {
+    font-size: 80px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .details {
+    width: 702px;
+    height: 175px;
+    background-color: #00b2ff;
+    bottom: 0; /* 固定在父容器底部 */
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .detail-item {
+    flex-direction: column; /* 使子元素垂直排列 */
+    justify-content: center; /* 子元素在垂直方向均匀分布 */
+    align-items: center; /* 子元素在水平方向居中 */
+  }
+
+  .detail-value {
+    flex: 1; /* 子元素平分宽度 */
+
+    flex-direction: row; /* 使子元素水平排列 */
+    align-items: flex-end; /* 子元素在水平方向居中 */
+  }
+
+  .larger-text {
+    font-size: 48px; /* 设置较大的字体大小 */
+    font-weight: bold;
+
+    color: #fff;
+  }
+
+  .larger2-text {
+    color: #000000;
+    font-size: 48px;
+    font-weight: bold;
+  }
+
+  .larger3-text {
+    color: #4b4b4b;
+    font-size: 26px;
+  }
+  .smaller-text {
+    font-size: 24px; /* 设置较小的字体大小 */
+    margin-bottom: 5px;
+    color: #fff;
+  }
+  .n-text {
+    font-size: 26px; /* 设置较小的字体大小 */
+    color: #fff;
+    margin-top: 5px;
+    font-weight: 400;
+  }
+  .tabs {
+    width: 520px;
+    margin-top: 255px;
+  }
+  .tab-bar {
+    border-color: #bbbbbb;
+    color: #bbbbbb;
+    background-color: #000000;
+    border-radius: 54px;
+  }
+  .tab-text {
+    text-align: center;
+    color: #fff;
+    font-size: 32px;
+    font-weight: bold;
+    width: 150px;
+    height: 65px;
+    border-radius: 74px;
+  }
+  .tab-text:active {
+    color: #000000;
+    background: linear-gradient(270deg, #8fff34 0%, #ebfd66);
+  }
+</style>
+
+<script>
+  import sensor from '@system.sensor';
+  import storage from '@system.storage';
+  import example from '../../Common/helper/apis/example.js';
+  module.exports = {
+
+
+    private: {
+      componentData: {},
+      goalDayKey: "GOAL_DAY",
+      userDetailsKey: "UserDetails",
+
+      stepSys: 0,//设备当前总步数
+      steps_view: 0, // 当前显示的步数
+
+
+      stepsDayApi: 0, // 当天云步数
+      stepsWeekApi: 0, // 当周云步数
+      stepsMoonApi: 0, // 当月云步数
+
+      goal_day: 0,  // 当日目标步数
+
+      progress: 0, // 用于存储步数进度
+
+      currentPage: 0,//当前选的页，默认显示今日
+      segments: [
+        '今日', '周', '月'
+      ],
+      segmentsTexts: [
+        '今日步数', '本周步数', '本月步数'
+      ],
+      segmentsText: "",
+
+
+      body_weight: 75,//体重
+      body_height: 180,//身高
+      sex: 1,//性别  1 男，0 女
+      age: 30,
+      mileage: "0.0",//里程
+      calories: "0.0",//卡路里
+      bmi: "00.0",//BMI
+      tzl: "00.0",//体脂率
+
+
+      open1: false,
+      open2: false,
+      obj: {}
+
+    },
+    //首页初始化流程：
+    // Step1获取用户设置的今日目标步数
+    // Step2从后台获取当前步数  
+    // Step3根据获取到的当前步数，更新今日进度，里程，消耗热量 
+    //
+    onInit() {
+      console.log("onInit()")
+      this.getGoalDaySteps();// Step1
+      this.getUserDetails();
+      this.apigetStpes()// Step2
+      this.subscribeStepCounter();
+
+    },
+
+    onReady() {
+      console.log("onReady()")
+
+      this.updateBMITzl();
+    },
+    onShow() {
+      console.log("onShow()")
+    },
+
+    onHide() {
+      console.log("onHide()")
+    },
+
+    onDestroy() {
+      console.log("onDestroy()")
+    },
+
+
+    subscribeStepCounter() {
+      // 订阅步数计数器
+      sensor.subscribeStepCounter({
+        callback: (ret) => {
+          console.log(`设备步数更新了！------>设备总步数=${ret.steps}`)
+          this.stepSys = ret.steps;
+          //上传步数
+          this.apiuploadStpes(ret.steps);
+
+        },
+        fail: (data, code) => {
+          console.log(`步数计数器订阅失败, code = ${code}`);
+        }
+      });
+    },
+
+    //获取用户设定的今日目标
+    getGoalDaySteps() {
+      var that = this;
+      storage.get({
+        key: this.goalDayKey,
+        default: 10000,
+        success: function (ret) {
+          console.info('storage.get(): ', JSON.stringify(ret))
+          that.goal_day = ret
+        },
+        fail: function (erromsg, errocode) {
+          console.info('get fail --- ' + errocode + ':' + erromsg)
+        }
+      })
+    },
+
+    //保存用户设定的今日目标
+    setGoalDaySteps(data) {
+      storage.set({
+        key: this.goalDayKey,//
+        value: data,
+        success: function (ret) {
+          console.info('storage.set(): ', JSON.stringify(ret))
+        },
+        fail: function (erromsg, errocode) {
+          console.info('set fail --- ' + errocode + ':' + erromsg)
+        }
+      })
+    },
+
+    //获取用户设定的详情
+    getUserDetails() {
+      var that = this;
+      storage.get({
+        key: this.userDetailsKey,
+        success: function (ret) {
+          console.log('用户详情获取成功:', ret);
+          if (ret && ret.trim()) {
+            const userDetails = JSON.parse(ret)
+
+            // 更新各个属性
+            that.body_weight = Number(userDetails.body_weight) || that.body_weight; // 确保转换为数字类型
+            that.body_height = Number(userDetails.body_height) || that.body_height; // 确保转换为数字类型
+            that.sex = userDetails.sex !== undefined ? userDetails.sex : that.sex; // 保持为数字类型
+            that.age = Number(userDetails.age) || that.age; // 确保转换为数字类型
+
+            console.log('更新后的用户详情:', that.body_weight, that.body_height, that.sex, that.age);
+
+            that.updateBMITzl();
+          }
+
+        },
+        fail: function (erromsg, errocode) {
+          console.info('get fail --- ' + errocode + ':' + erromsg)
+        }
+      })
+    },
+
+    //保存用户设定的详情
+    setUserDetails() {
+      const userDetails = {
+        body_weight: this.body_weight,
+        body_height: this.body_height,
+        sex: this.sex,
+        age: this.age
+      };
+      storage.set({
+        key: this.userDetailsKey,
+        value: userDetails,
+        success: function (ret) {
+          console.log('用户详情保存成功:', ret);
+        },
+        fail: function (erromsg, errocode) {
+          console.error('用户详情保存失败:', erromsg, errocode);
+        }
+      })
+    },
+
+
+    //更新步数进度
+    updateProgress() {
+      var that = this;
+      console.log(`更新步数进度！今日云步数=${that.stepsDayApi}`)
+
+
+      // 对应页面的显示步数
+      const service_step = [that.stepsDayApi, that.stepsWeekApi, that.stepsMoonApi];
+      // 当前显示步数
+      const currentsStep = service_step[that.currentPage];
+
+
+
+
+      // 定义不同页面对应的目标步数
+      const goals = [that.goal_day, that.goal_day * 7, that.goal_day * 30];
+      // 对应页面的目标步数
+      const currentGoal = goals[that.currentPage];
+
+
+      // 计算步数比例
+      const stepRatio = currentsStep / currentGoal;
+
+      // 计算进度值并更新
+      this.progress = Math.min(stepRatio * 100, 100) * 0.66;//乘0.66的原因为进度环最大角度为260度，即三分之二圆
+
+
+      this.steps_view = currentsStep;
+      this.segmentsText = that.segmentsTexts[that.currentPage]
+
+      console.log(`目前${that.segmentsText}进度 = ${Math.min(stepRatio * 100, 100).toFixed(1)}%`);
+
+
+      this.updateMileageAndCalories()//更新卡路里，里程
+    },
+
+
+    //更新卡路里，里程
+    updateMileageAndCalories() {
+      var that = this;
+      //更新里程
+      this.mileage = ((that.steps_view * 0.6) / 1000).toFixed(2);
+      // 计算卡路里消耗，并只显示一位小数
+      this.calories = (0.0175 * that.body_weight * that.steps_view).toFixed(1);
+    },
+
+
+    //更新BMI 体脂率
+    updateBMITzl() {
+      const bmi = (this.body_weight / (this.body_height * 0.01) ** 2).toFixed(1);
+      const param1 = (1.2 * bmi);
+      const param2 = this.age * 0.23;
+      const param3 = 5.4 + (10.8 * this.sex);
+
+
+      this.tzl = (param1 + param2 - param3).toFixed(1);
+      this.bmi = bmi;
+
+    },
+
+    //打开基本情况窗口
+    openBasicInformationDialog() {
+      console.log(`打开基本情况窗口`);
+      this.open2 = true
+      this.obj = {
+        title: '填写基本情况',
+        fieldtype: "number",
+        placeholder: "输入整数数字",
+      }
+    },
+
+
+    //打开设定目标步数窗口
+    openSetStepsDialog() {
+      console.log(`打开设定目标步数窗口`);
+
+      this.open1 = true
+      this.obj = {
+        title: '设置每日步数',
+        fieldtype: "number",
+        placeholder: "输入整数数字",
+      }
+    },
+
+    //确定目标步数
+    enterSteps(evt) {
+      this.open1 = false
+      const goal_stpe = evt.detail.event.value
+      console.log(`设定了目标步数：${goal_stpe}`);
+      this.goal_day = goal_stpe;
+      this.setGoalDaySteps(goal_stpe);
+      this.updateProgress();
+
+    },
+
+    //确定基本情况
+    enterDetails(evt) {
+      this.open2 = false
+
+      const kg = evt.detail.event.kg
+      const cm = evt.detail.event.cm
+      const age = evt.detail.event.age
+      const sex = evt.detail.event.sex
+      console.log(`设定了体重：${kg},身高：${cm},年龄：${age},sex:${sex}`);
+
+      this.body_weight = kg;
+      this.body_height = cm;
+      this.age = age;
+      this.sex = sex;
+
+      this.setUserDetails()
+      this.updateBMITzl()
+
+    },
+
+    close() {
+      console.log(`关闭了窗口：`);
+      this.open1 = false
+      this.open2 = false
+    },
+
+    //切换天，周，月页面
+    changeTabactive: function (e) {
+      console.log(e.index)
+      this.currentPage = e.index;
+
+      this.apigetStpes()
+    },
+
+
+
+    //获取云步数
+    apigetStpes() {
+      var that = this;
+      const types = ["TODAY", "WEEK", "MOON"];
+      const apiKeys = ["stepsDayApi", "stepsWeekApi", "stepsMoonApi"];
+      var t = types[that.currentPage];
+      example.getsteps({
+        type: t
+      }).then(response => {
+        console.log(`获取《${t}》云步数成功！ ------>云步数=${response.data}`);
+
+        // 根据当前页面保存步数
+        that[apiKeys[that.currentPage]] = response.data;
+        this.updateProgress();
+      })
+        .catch(error => {
+          console.error(' 获取${t}步数失败:', error);
+        });
+    },
+
+
+    //上传步数
+    apiuploadStpes(c) {
+      var t = Date.now();
+      console.log(`上传步数中---->步数=${c},t = ${t}`);
+
+      example.uploadsteps({
+        count: c,
+        "timestamp": t
+      }).then(response => {
+        console.log(' 上传步数successful:', response);
+        this.stepsDayApi = response.data;
+        this.updateProgress();
+      })
+        .catch(error => {
+          console.error(' 上传步数failed:', error);
+        });
+    },
+  }
+</script>

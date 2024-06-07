@@ -1,0 +1,251 @@
+<template>
+  <div class="container">
+    <div class="topview">
+      <div class="group">
+        <text style="position: absolute; top: 20px; left: 30px; color: #fff">当前余额</text>
+
+        <div style="position: absolute; bottom: 20px; left: 30px; align-items: flex-end">
+          <text style="color: #ffffff; font-size: 80px; font-weight: bold">0.00</text>
+          <text style="color: #ffffff; font-size: 32px; margin-left: 10px; margin-bottom: 12px">元</text>
+        </div>
+        <div style="border-radius: 68px; padding-left: 18px; padding-right: 18px; padding-top: 10px; padding-bottom: 10px; position: absolute; bottom: 30px; right: 30px; background-color: #fff"><text style="color: #e75846; font-size: 20px; font-weight: bold">规则说明</text></div>
+      </div>
+
+      <div style="align-items: center; position: absolute; bottom: 12px; left: 30px">
+        <text style="color: #828282; font-size: 24px">提现方式：</text>
+        <image style="width: 24px; height: 24px" src="./img/icon_pay.png" />
+        <text style="color: #828282; font-size: 24px; margin-left: 5px">支付宝提现</text>
+      </div>
+    </div>
+
+    <div class="midview">
+      <div style="width: 130px; height: 45px; align-items: flex-end; margin-bottom: 15px">
+        <div style="width: 130px; height: 28px; background: linear-gradient(90deg, #e9fd65, #95ff37 100%); position: absolute; border-radius: 58px"></div>
+        <text style="width: 125px; height: 42px; font-size: 31px; font-weight: bold; position: absolute; color: #000000; margin-left: 3px">提现金额</text>
+      </div>
+
+      <div style="background-color: #fff; flex-wrap: wrap; justify-content: space-between">
+        <div class="grid-item">
+          <text class="top-left">每日提现</text>
+          <text class="grid-item-text">
+            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <span style="color: #000; font-size: 45px; font-weight: bold">0.1</span>
+            <span style="color: #000; font-size: 20px">元</span>
+          </text>
+        </div>
+        <div class="grid-item">
+          <text class="top-left">仅一次</text>
+          <text class="grid-item-text">
+            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <span style="color: #000; font-size: 45px; font-weight: bold">1</span>
+            <span style="color: #000; font-size: 20px">元</span>
+          </text>
+        </div>
+        <div class="grid-item">
+          <text class="top-left">每日提现</text>
+          <text class="grid-item-text">
+            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <span style="color: #000; font-size: 45px; font-weight: bold">50</span>
+            <span style="color: #000; font-size: 20px">元</span>
+          </text>
+        </div>
+        <div class="grid-item">
+          <text class="top-left">仅一次</text>
+          <text class="grid-item-text">
+            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <span style="color: #000; font-size: 45px; font-weight: bold">100</span>
+            <span style="color: #000; font-size: 20px">元</span>
+          </text>
+        </div>
+      </div>
+    </div>
+
+    <div class="btmview">
+      <tabs class="tabs" onchange="changeTabactive" >
+        <tab-bar class="tab-bar">
+          <text class="tab-text">收益记录</text>
+          <text class="tab-text">提现记录</text>
+        </tab-bar>
+        <tab-content class="tab-content" scrollable="{{scrollable}}">
+
+          <list class="list">
+            <list-item type="listItem" for="{{listData}}">
+              <div class="list-item">
+                <div style="flex-direction: column">
+                  <text style="margin-bottom: 9px; font-size: 28px; color: #000000; font-weight: bold">收益</text>
+                  <text style="font-size: 24px; color: #828282">2023-03-23 12:00:33</text>
+                </div>
+                <text style="height: 50px; border-radius: 96px; background-color: #eb6352; font-size: 26px; color: #fff; padding-left: 22px; padding-right: 22px; padding-top: 1px; padding-bottom: 1px">+{{$item}}元</text>
+              </div>
+            </list-item>
+          </list>
+
+          <list class="list">
+             <list-item type="listItem" for="{{listData}}">
+              <div class="list-item">
+                <div style="flex-direction: column">
+                  <text style="margin-bottom: 9px; font-size: 28px; color: #000000; font-weight: bold">提现</text>
+                  <text style="font-size: 24px; color: #828282">2023-03-23 12:00:33</text>
+                </div>
+                <text style="width: 140px; height: 50px; border-radius: 96px; background-color: #eb6352; font-size: 26px; color: #fff; padding-left: 22px; padding-right: 22px; padding-top: 1px; padding-bottom: 1px">+0.01元</text>
+              </div>
+            </list-item>
+          </list>
+        </tab-content>
+      </tabs>
+    </div>
+  </div>
+</template>
+
+<style>
+  .container {
+    flex-direction: column;
+    padding: 27px;
+    background-color: #f5f5f5;
+  }
+  .group {
+    height: 182px;
+    width: 100%;
+    background-image: url(./img/group.png);
+  }
+  .topview {
+    flex-direction: column;
+    height: 240px;
+    width: 702px;
+    border-radius: 20px;
+    background-color: #fff;
+  }
+
+  .midview {
+    flex-direction: column;
+    width: 702px;
+    border-radius: 20px;
+    margin-top: 27px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 22px;
+    padding-right: 22px;
+    background-color: #fff;
+  }
+  .btmview {
+    flex-direction: column;
+    width: 702px;
+    height: 50%;
+    border-radius: 20px;
+    margin-top: 27px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 22px;
+    padding-right: 22px;
+    background-color: #fff;
+  }
+
+  .grid-item {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    width: 310px;
+    height: 124px;
+    border-radius: 20px;
+    margin: 8px;
+    border: 3px solid #eb6352;
+  }
+  .top-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #fff;
+    font-size: 20px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: #eb6352;
+    border-top-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  .grid-item-text {
+    display: flex;
+    height: 50px;
+    margin-top: 45px;
+  }
+  .tabs {
+    flex: 1;
+  }
+  .tab-content {
+    flex: 1;
+  }
+  .tab-bar {
+    height: 100px;
+    border-color: #bbbbbb;
+    color: #bbbbbb;
+  }
+  .tab-text {
+    text-align: center;
+    color: #828282;
+    font-size: 31px;
+    padding-bottom: 6px;
+  }
+  .tab-text:active {
+    color: #000000;
+
+    border-bottom-width: 4px;
+    border-bottom-color: #95ff37;
+    font-weight: bold;
+  }
+  .item-container {
+    padding-top: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    flex-direction: column;
+  }
+  .item-content {
+    flex-direction: column;
+    padding-bottom: 30px;
+  }
+  .item-title {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    color: #aaaaaa;
+  }
+
+  .list {
+    layout-type: stagger;
+  }
+
+  .list-item {
+    background-color: #fff;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    width: 100%;
+
+    border-bottom-width: 2px;
+    border-bottom-color: #e7e7e7;
+  }
+</style>
+
+<script>
+  module.exports = {
+    // 页面的数据模型，private段下的变量仅允许当前页面内代码更改其值。
+    private: {
+      listData: [],
+    },
+    onInit() {
+      // this.listData = this.generateRandomValues(100, 0.01, 100);
+    },
+    changeTabactive: function (e) {
+    },
+
+    generateRandomValues(count, min, max) {
+      const values = [];
+      for (let i = 0; i < count; i++) {
+        const randomValue = (Math.random() * (max - min) + min).toFixed(2);
+        values.push(parseFloat(randomValue));
+      }
+      return values;
+    }
+  };
+</script>

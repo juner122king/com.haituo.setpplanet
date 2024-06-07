@@ -1,0 +1,428 @@
+<template>
+  <div class="apex-dialog">
+    <div class="mask {{showModal?'mask-exist':'mask-none'}}" if="{{visible}}">
+      <div class="dialog" style="{{setDialog}}">
+        <div class="box">
+          <div class="top">
+            <text class="title {{defaultOptions.closable?'title-close':'title-none'}}">{{ defaultPrompt.title || defaultOptions.title || title }}</text>
+          </div>
+
+          <tabs if="{{ dialogType === 'prompt1' }}" class="tabs"  onchange="changeTabactive">
+            <tab-bar class="tab-bar">
+              <text class="tab-text">女</text>
+              <text class="tab-text">男</text>
+            </tab-bar>
+          </tabs>
+
+          <div style="align-content: center" if="{{ dialogType === 'prompt' }}">
+            <input id="focus" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ value }}" placeholder="{{ defaultPrompt.placeholder }}" onchange="bindChange" maxlength="{{ defaultPrompt.maxlength === -1?'':defaultPrompt.maxlength }}" onenterkeyclick="bindEnter" />
+            <text style="text-align: center; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border: 2px solid #e9e9e9; font-size: 28px; background-color: #f5f5f5; width: 88px; height: 88px">步</text>
+          </div>
+
+          <div style="align-content: center; margin-bottom: 20px" if="{{ dialogType === 'prompt1' }}">
+            <input id="idkg" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ kg }}" placeholder="输入体重" onchange="bindChangekg" maxlength="{{ defaultPrompt.maxlength === -1?'':defaultPrompt.maxlength }}" onenterkeyclick="bindEnterkg" />
+            <text style="text-align: center; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border: 2px solid #e9e9e9; font-size: 28px; background-color: #f5f5f5; width: 88px; height: 88px">kg</text>
+          </div>
+          <div style="align-content: center; margin-bottom: 20px" if="{{ dialogType === 'prompt1' }}">
+            <input id="idcm" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ cm }}" placeholder="输入身高" onchange="bindChangecm" maxlength="{{ defaultPrompt.maxlength === -1?'':defaultPrompt.maxlength }}" onenterkeyclick="bindEntercm" />
+            <text style="text-align: center; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border: 2px solid #e9e9e9; font-size: 28px; background-color: #f5f5f5; width: 88px; height: 88px">cm</text>
+          </div>
+          <div style="align-content: center; margin-bottom: 10px" if="{{ dialogType === 'prompt1' }}">
+            <input id="idage" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ age }}" placeholder="输入年龄" onchange="bindChangeage" maxlength="{{ defaultPrompt.maxlength === -1?'':defaultPrompt.maxlength }}" onenterkeyclick="bindEnterage" />
+            <text style="text-align: center; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border: 2px solid #e9e9e9; font-size: 28px; background-color: #f5f5f5; width: 88px; height: 88px">岁</text>
+          </div>
+        </div>
+        <div class="btn {{dialogType === 'alter'||this.vertical===true?'btn-vertical':'btn-horizontal'}}">
+          <block if="{{defaultOptions.buttons.length===0}}">
+            <div if="{{dialogType!=='alter'}}" class="btnbox1" onclick="bindCancel">
+              <text>{{ defaultOptions.cancel }}</text>
+            </div>
+            <div onclick="bindAffirm" class="btnbox">
+              <text>{{ defaultOptions.affirm }}</text>
+            </div>
+          </block>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    data: {
+      showModal: false,
+      setDialog: {},
+      value: "",
+      kg: "",
+      cm: "",
+      age: "",
+      sex: 0,//性别  1 男，0 女
+      defaultOptions: {
+        closable: false,
+        title: "",
+        content: "",
+        buttons: [],
+        cancel: "取消",
+        affirm: "确定"
+      },
+      defaultPrompt: {
+        title: "",
+        content: "",
+        value: "",
+        kg: "",
+        cm: "",
+        age: "",
+        fieldtype: "text",
+        placeholder: "请输入文本",
+        focus: false,
+        idkg: false,
+        inputStyle: {},
+        maxlength: -1
+      }
+    },
+    props: {
+      vertical: {
+        type: Boolean,
+        default: false
+      },
+      title: {
+        type: String,
+        default: "默认标题"
+      },
+      content: {
+        type: String,
+        default: "默认内容"
+      },
+      dialogStyle: {
+        type: Object,
+        default: {}
+      },
+      dialogType: {
+        type: String,
+        default: "text"
+      },
+      visible: {
+        type: Boolean,
+        default: false
+      },
+      options: {
+        type: Object,
+        default: {}
+      },
+      prompt: {
+        type: Object,
+        default: {}
+      }
+    },
+    onInit() {
+      this.$watch("visible", "modalHandler");
+      this.$watch("dialogStyle", "dialogStyleHandler");
+      this.$watch("defaultPrompt.value", "valueHandler");
+      this.resetData();
+    },
+    onReady() {
+      if (this.dialogType === "prompt" && this.$visible !== false) {
+        this.$element("focus").focus({ focus: this.defaultPrompt.focus });
+      }
+
+      if (this.dialogType === "prompt1" && this.$visible !== false) {
+        this.$element("idkg").focus({ idkg: this.defaultPrompt.idkg });
+      }
+
+    },
+    valueHandler(newV, oldV) {
+
+      this.value = newV;
+    },
+    optionsHandler(newV, oldV) {
+      newV.closable ? (this.defaultOptions.closable = newV.closable) : false;
+      newV.title ? (this.defaultOptions.title = newV.title) : "";
+      newV.content ? (this.defaultOptions.content = newV.content) : "";
+      newV.buttons ? (this.defaultOptions.buttons = newV.buttons) : [];
+      newV.cancel ? (this.defaultOptions.cancel = newV.cancel) : "";
+      newV.affirm ? (this.defaultOptions.affirm = newV.affirm) : "";
+    },
+    promptHandler(newV, oldV) {
+      newV.title ? (this.defaultPrompt.title = newV.title) : "";
+      newV.content ? (this.defaultPrompt.content = newV.content) : "";
+      newV.value ? (this.defaultPrompt.value = newV.value) : "";
+      newV.kg ? (this.defaultPrompt.kg = newV.kg) : "";
+      newV.cm ? (this.defaultPrompt.cm = newV.cm) : "";
+      newV.age ? (this.defaultPrompt.age = newV.age) : "";
+      newV.fieldtype ? (this.defaultPrompt.fieldtype = newV.fieldtype) : "";
+      newV.placeholder ? (this.defaultPrompt.placeholder = newV.placeholder) : "";
+      newV.focus ? (this.defaultPrompt.focus = newV.focus) : false;
+      newV.inputStyle ? (this.defaultPrompt.inputStyle = newV.inputStyle) : {};
+    },
+    dialogStyleHandler(newV, oldV) {
+      console.log(newV, oldV);
+      this.setDialog = newV;
+    },
+    resetData() {
+      if (this.visible === false) {
+        this.defaultOptions = {
+          closable: false,
+          title: "",
+          content: "",
+          buttons: [],
+          cancel: "取消",
+          affirm: "确定"
+        };
+        this.defaultPrompt = {
+          title: "",
+          content: "",
+          value: "",
+          fieldtype: "text",
+          placeholder: "请输入文本",
+          focus: false,
+          inputStyle: {}
+        };
+        this.setDialog = {
+
+        };
+      }
+      this.$watch("options", "optionsHandler");
+      this.$watch("prompt", "promptHandler");
+      this.$watch("dialogStyle", "dialogStyleHandler");
+      this.$watch("defaultPrompt.value", "valueHandler");
+    },
+    modalHandler(newV, oldV) {
+      this.showModal = newV;
+    },
+    bindCancel(evt) {
+      evt.stopPropagation();
+      this.$emit("cancel", { event: evt });
+      this.value = "";
+      this.kg = "";
+      this.cm = "";
+      this.age = "";
+
+    },
+    bindChange(evt) {
+
+      this.value = evt.value;
+      console.log(`---->步数=${this.value}`);
+      this.$emit("change", { event: evt });
+    },
+    bindChangekg(evt) {
+
+      this.kg = evt.value;
+      console.log(`---->体重=${evt.value}`);
+      this.$emit("change", { event: evt });
+    },
+    bindChangecm(evt) {
+
+      this.cm = evt.value;
+      console.log(`---->身高=${evt.value}`);
+      this.$emit("change", { event: evt });
+    },
+    bindChangeage(evt) {
+
+      this.age = evt.value;
+      console.log(`---->年龄=${evt.value}`);
+      this.$emit("change", { event: evt });
+    },
+
+
+    bindAffirm(evt) {
+      evt.stopPropagation();
+
+      if (this.dialogType === "prompt") {
+        evt.value = this.value;
+        this.$emit("affirm", { event: evt });
+        this.value = "";
+      }
+
+
+      if (this.dialogType === "prompt1") {
+        evt.kg = this.kg;
+        evt.cm = this.cm;
+        evt.age = this.age;
+        evt.sex = this.sex;
+        this.$emit("affirm", { event: evt });
+        console.log(`bindAffirm：${evt.kg},身高：${evt.cm},年龄：${evt.age},sex:${evt.sex}`);
+        this.kg = "";
+        this.cm = "";
+        this.age = "";
+        this.sex = 0;
+      }
+    },
+    bindEnter(evt) {
+      evt.stopPropagation();
+      console.log(`---->步数=${evt.value}`);
+      this.$emit("enter", { event: evt });
+      if (this.dialogType === "prompt") {
+        this.$element("focus").focus({ focus: false });
+        this.value = "";
+      }
+    },
+    bindEnterkg(evt) {
+      evt.stopPropagation();
+      console.log(`---->体重=${evt.value}`);
+      this.kg = evt.value;
+
+    },
+    bindEntercm(evt) {
+      evt.stopPropagation();
+      console.log(`---->身高=${evt.value}`);
+      this.cm = evt.value;
+    },
+    bindEnterage(evt) {
+      evt.stopPropagation();
+      console.log(`---->年龄=${evt.value}`);
+      this.age = evt.value;
+    },
+
+
+    //切换男女
+    changeTabactive: function (e) {
+      console.log(e.index)
+      this.sex = e.index;
+    },
+  };
+</script>
+
+<style lang="less">
+  .mask {
+    position: fixed;
+    flex: 1;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    &-exist {
+      background-color: rgba(5, 5, 5, 0.6);
+    }
+    &-none {
+      background-color: transparent;
+      visibility: hidden;
+    }
+    .dialog {
+      flex-direction: column;
+      background-color: #fff;
+      border-radius: 32px;
+      padding: 24px;
+      width: 84%;
+      &-border {
+        border: 1px solid #e7e7e7;
+      }
+      .box {
+        flex-direction: column;
+        .top {
+          width: 100%;
+          padding: 10px;
+          padding-bottom: 15px;
+          justify-content: space-between;
+          .title {
+            margin-bottom: 50px;
+            text-align: center;
+            color: #000;
+            font-size: 32px;
+            font-weight: bold;
+            &-close {
+              width: 95%;
+              margin-left: 25px;
+            }
+            &-none {
+              width: 100%;
+            }
+          }
+          .close {
+            width: 5%;
+            margin-top: -20px;
+            text {
+              text-align: center;
+              width: 100%;
+              font-size: 50px;
+            }
+          }
+        }
+        .content {
+          padding: 30px;
+          padding-top: 15px;
+          font-size: 28px;
+          color: #a0a0a0;
+          text-align: center;
+        }
+        input {
+          font-size: 28px;
+          border: 2px solid #e9e9e9;
+          width: 85%;
+          height: 88px;
+          line-height: 60px;
+          padding-left: 20px;
+          border-bottom-left-radius: 16px;
+          border-top-left-radius: 16px;
+        }
+
+        .tabs {
+          width: 100%;
+        }
+        .tab-bar {
+          border-color: #bbbbbb;
+          color: #bbbbbb;
+          margin-bottom: 20px;
+          border-radius: 54px;
+        }
+        .tab-text {
+          text-align: center;
+          color: #666666;
+          font-size: 28px;
+          width: 250px;
+          height: 80px;
+          border: 2px solid #00b2ff;
+          border-radius: 16px;
+        }
+        .tab-text:active {
+          color: #fff;
+          background-color: #00b2ff;
+        }
+      }
+      .btn {
+        margin-top: 50px;
+        justify-content: space-between;
+        .btnbox {
+          text {
+            width: 270px;
+            height: 88px;
+            text-align: center;
+            border-radius: 16px;
+            font-size: 28px;
+            background-color: #00b2ff;
+            color: #fff;
+          }
+        }
+        .btnbox1 {
+          text {
+            border: 2px solid #e9e9e9;
+            width: 270px;
+            height: 88px;
+            text-align: center;
+            border-radius: 16px;
+            font-size: 28px;
+            background-color: #fff;
+            color: #666;
+          }
+        }
+
+        .btnbox:active {
+          background-color: #e7e7e7;
+        }
+        &-vertical {
+          flex-direction: column;
+          .btnbox {
+            width: 100%;
+          }
+        }
+        &-horizontal {
+          flex-direction: row;
+          .btnbox {
+            width: 50%;
+          }
+        }
+      }
+    }
+  }
+</style>

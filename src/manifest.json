@@ -1,0 +1,46 @@
+{
+    "package": "com.haituo.setpplanet",
+    "name": "计步星球",
+    "versionName": "1.0.0",
+    "versionCode": 1,
+    "icon": "/Common/logo.png",
+    "minPlatformVersion": 1070,
+    "features": [
+        {
+            "name": "system.storage"
+        }
+    ],
+    "config": {},
+    "router": {
+        "entry": "Page_MainTab",
+        "pages": {
+            "Page_MainTab": {
+                "component": "index"
+            },
+            "Page_Tixian": {
+                "component": "index"
+            },
+            "Page_login": {
+                "component": "index"
+            }
+        }
+    },
+    "display": {
+        "pages": {
+            "Page_MainTab": {
+                "titleBar": false,
+                "menu": false,
+                "statusBarImmersive": true,
+                "statusBarBackgroundOpacity": 0
+            },
+            "Page_Tixian": {
+                "titleBar": true,
+                "menu": true
+            },
+            "Page_login": {
+                "titleBar": true,
+                "menu": false
+            }
+        }
+    }
+}
