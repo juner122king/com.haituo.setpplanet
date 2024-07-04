@@ -2,171 +2,165 @@
 <import name="pagehome" src="./Page_Home/index"></import>
 <import name="pageuser" src="./Page_User/index"></import>
 <template>
-	<div class="container">
-		<tabs onchange="changeTabactive">
-			<tab-content>
-				<block for="datas.list">
-					<div class="item-container">
-						<pagehome if="{{$item.title=='首页'?true:false}}"></pagehome>
-						<pagerecord if="{{$item.title=='步数'?true:false}}"></pagerecord>
-						<pageuser if="{{$item.title=='我的'?true:false}}"></pageuser>
-					</div>
-				</block>
-			</tab-content>
+  <div class="container">
+    <tabs onchange="changeTabactive">
+      <tab-content>
+        <block for="datas.list">
+          <div class="item-container">
+            <pagehome if="{{$item.title=='首页'?true:false}}"></pagehome>
+            <pagerecord if="{{$item.title=='步数'?true:false}}"></pagerecord>
+            <pageuser if="{{$item.title=='我的'?true:false}}"></pageuser>
+          </div>
+        </block>
+      </tab-content>
 
-			<tab-bar class="tab_bar">
-				<block for="datas.list">
-					<div class="tab_item">
-						<image src="{{$item.show?$item.pic_choice:$item.pic}}" />
-						<text style="color: {{$item.color}}">{{$item.title}}</text>
-					</div>
-				</block>
-			</tab-bar>
-		</tabs>
-	</div>
+      <tab-bar class="tab_bar">
+        <block for="datas.list">
+          <div class="tab_item">
+            <image src="{{$item.show?$item.pic_choice:$item.pic}}" />
+            <text style="color: {{$item.color}}">{{ $item.title }}</text>
+          </div>
+        </block>
+      </tab-bar>
+    </tabs>
+  </div>
 </template>
 
 <style>
-	.container {
-		background-color: #f5f5f5;
-	}
+.container {
+  background-color: #f5f5f5;
+}
 
-	.tab_bar {
-		background-color: #fff;
-		width: 750px;
-		border-top-left-radius: 20px;
-		border-top-right-radius: 20px;
-	}
+.tab_bar {
+  background-color: #fff;
+  width: 750px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
 
-	.tab_item {
-		flex-direction: column;
-		align-items: center;
-		padding-top: 14px;
-		padding-bottom: 11px;
-		width: 171px;
-		height: 104.2px;
-	}
+.tab_item {
+  flex-direction: column;
+  align-items: center;
+  padding-top: 14px;
+  padding-bottom: 11px;
+  width: 171px;
+  height: 104.2px;
+}
 
-	.tab_item image {
-		width: 50px;
-		height: 50px;
-		resize-mode: contain;
-		opacity: 0.5;
-	}
+.tab_item image {
+  width: 50px;
+  height: 50px;
+  resize-mode: contain;
+  opacity: 0.5;
+}
 
-	.tab_item image:active {
-		width: 50px;
-		height: 50px;
-		resize-mode: contain;
-	}
+.tab_item image:active {
+  width: 50px;
+  height: 50px;
+  resize-mode: contain;
+}
 
-	.tab_item text {
-		font-size: 21px;
-		margin-top: 10px;
-	}
+.tab_item text {
+  font-size: 21px;
+  margin-top: 10px;
+}
 
-	.item-container {
-		justify-content: center;
-	}
+.item-container {
+  justify-content: center;
+}
 
-	.main-text {
-		font-size: 100px;
-		color: #5f9ea0;
-	}
+.main-text {
+  font-size: 100px;
+  color: #5f9ea0;
+}
 </style>
 
 <script>
 
-	module.exports = {
-		private: {
-			datas: {
-				color_normal: '#C8C8C8',
-				color_active: '#00B2FF',
+module.exports = {
+	private: {
+		datas: {
+			color_normal: '#C8C8C8',
+			color_active: '#00B2FF',
+			show: true,
+			list: [{
+				i: 0,
+				color: '#FF7500',
+				pic: '/Common/img/bar_1.png',
+				pic_choice: '/Common/img/bar_11.png',
 				show: true,
-				list: [{
-					i: 0,
-					color: '#FF7500',
-					pic: '/Common/img/bar_1.png',
-					pic_choice: '/Common/img/bar_11.png',
-					show: true,
-					title: '首页'
-				},
-				{
-					i: 1,
-					color: '#878787',
-					pic: '/Common/img/bar_2.png',
-					pic_choice: '/Common/img/bar_22.png',
-					show: false,
-					title: '步数'
-				},
-				{
-					i: 2,
-					color: '#878787',
-					pic: '/Common/img/bar_3.png',
-					pic_choice: '/Common/img/bar_33.png',
-					show: false,
-					title: '我的'
-				}
-				]
+				title: '首页'
+			},
+			{
+				i: 1,
+				color: '#878787',
+				pic: '/Common/img/bar_2.png',
+				pic_choice: '/Common/img/bar_22.png',
+				show: false,
+				title: '步数'
+			},
+			{
+				i: 2,
+				color: '#878787',
+				pic: '/Common/img/bar_3.png',
+				pic_choice: '/Common/img/bar_33.png',
+				show: false,
+				title: '我的'
 			}
-
-
-		},
-		changeTabactive: function (e) {
-			for (let i = 0; i < this.datas.list.length; i++) {
-				let element = this.datas.list[i];
-				element.show = false;
-				element.color = this.datas.color_normal;
-				if (i === e.index) {
-					element.show = true;
-					element.color = this.datas.color_active;
-
-					if (e.index === 0) {
-						$utils.hideBanerAd()
-					} else {
-						$utils.viewBanner()
-					}
-
-				}
-			}
-		},
-
-		onInit: function () {
-
-		},
-		async onShow(options) {
-
-			$umeng_stat.resume(this)
-			console.log('主页 onShow()----------------->');
-			this.getUser();
-
-
-			const storageFlag = await $processData.getStorage("_PRIVAC");
-			console.log('用户授权= ', storageFlag);
-			if (storageFlag) {
-				//显示banner 广告高度，底部缩进
-				$utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 135)
-			} else {   //未授权，弹出授权询问
-				console.log('未授权,不加载广告');
-			}
-		},
-
-		onHide() {
-			$umeng_stat.pause(this);//在onHide方法的第一行加入此代码
-		},
-
-
-		getUser() {
-			$apis.user.getUserInfo().then((res) => {
-				console.log('用户信息----------------->' + JSON.stringify(res));
-				this.$app.$def.dataApp.userData.loginPhone = res.data.loginPhone
-				this.$app.$def.dataApp.userData.userId = res.data.userId
-				this.$app.$def.dataApp.userData.balance = res.data.balance
-			})
-		},
-		onHide() {
-			//需要隐藏时就销毁banner
-			$utils.destroyBanner();
+			]
 		}
-	};
+
+
+	},
+	changeTabactive: function (e) {
+		for (let i = 0; i < this.datas.list.length; i++) {
+			let element = this.datas.list[i];
+			element.show = false;
+			element.color = this.datas.color_normal;
+			if (i === e.index) {
+				element.show = true;
+				element.color = this.datas.color_active;
+
+				if (e.index === 0) {
+					$utils.hideBanerAd()
+				} else {
+					$utils.viewBanner()
+				}
+
+			}
+		}
+	},
+
+	onInit: function () {
+
+	},
+	async onShow(options) {
+
+		$umeng_stat.resume(this)
+		console.log('主页 onShow()----------------->');
+		this.getUser();
+		//显示banner 广告高度，底部缩进
+		$utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 135)
+
+	
+	},
+
+	onHide() {
+		$umeng_stat.pause(this);//在onHide方法的第一行加入此代码
+	},
+
+
+	getUser() {
+		$apis.user.getUserInfo().then((res) => {
+			console.log('用户信息----------------->' + JSON.stringify(res));
+			this.$app.$def.dataApp.userData.loginPhone = res.data.loginPhone
+			this.$app.$def.dataApp.userData.userId = res.data.userId
+			this.$app.$def.dataApp.userData.balance = res.data.balance
+		})
+	},
+	onHide() {
+		//需要隐藏时就销毁banner
+		$utils.destroyBanner();
+	}
+};
 </script>

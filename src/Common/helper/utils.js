@@ -64,8 +64,8 @@ const getConvertUpload = async () => {
 
   const userAdConvertUploadReq = {
     deviceId: deviceNum,
-    conversionType:'browse',
-    channelValue:''
+    conversionType: 'browse',
+    channelValue: ''
   }
   console.log('执行广告转化上传', userAdConvertUploadReq, "type: " + type);
   example.convertUpload(userAdConvertUploadReq, type).then(data => {
@@ -82,7 +82,17 @@ const getConvertUpload = async () => {
 */
 
 const tablePlaque = (id) => {
+
+  // const storageFlag = await $processData.getStorage("_PRIVAC");
+  // console.log('用户授权= ', storageFlag);
+
+  // if (!storageFlag) {
+  //   console.log('未授权,不加载广告');
+  //   return
+  // } 
+
   let Provider = $ad.getProvider();
+  
   if (!Provider) {
     console.log('没有广告返回');
     return
@@ -114,63 +124,82 @@ const tablePlaque = (id) => {
 * banner广告  margin_bot底部缩进  
 */
 
-let bannerAd; const showBannerAd = (adid, margin_bot) => {
+let bannerAd; const showBannerAd = async (adid, margin_bot) => {
+
+  // const storageFlag = await $processData.getStorage("_PRIVAC");
+  // console.log('用户授权= ', storageFlag);
+
+  // if (!storageFlag) {
+  //   console.log('未授权,不加载广告');
+  //   return
+  // } 
 
   let Provider = $ad.getProvider();
+  console.info('广告商:', Provider);
+  $prompt.showToast({
+    message: `${Provider}广告商`,
+    gravity: 'center'
+  });
   if (!Provider) {
-    console.log('没有广告返回');
+    console.info('没有广告返回');
     return
   }
-  var d = $device.getInfoSync();
-  console.info("calBannerPostion1 d= " + JSON.stringify(d));
+  $device.getInfo({
+    success: function (ret) {
+      console.info(`handling success brand = ${ret}`)
+      var d = ret
 
-  let height = 57;
-  //获取页面内可见窗口的高度和宽度，此值不包括标题栏和状态栏高度
-  let windowWidth = d.screenWidth;
-  let windowHeight = d.screenHeight - 153 - margin_bot;
-  //logicWidth对应manifest.json文件设置的designWidth值，默认是750
-  let logicWidth = 750;
-  //广告自身大小单位是dp，需要转换成px单位
-  let realAdHeighPX = height * d.screenDensity;
-  //标题栏高度一般是42dp左右，此处也需要转换成px单位
-  let titleBarHeight = 42 * d.screenDensity;
-  //此处计算很关键，需要将状态栏高度、标题栏高度加上
-  let realToppx = windowHeight - realAdHeighPX + d.statusBarHeight + titleBarHeight;
+      let height = 57;
+      //获取页面内可见窗口的高度和宽度，此值不包括标题栏和状态栏高度
+      let windowWidth = d.screenWidth;
+      let windowHeight = d.screenHeight - 153 - margin_bot;
+      //logicWidth对应manifest.json文件设置的designWidth值，默认是750
+      let logicWidth = 750;
+      //广告自身大小单位是dp，需要转换成px单位
+      let realAdHeighPX = height * d.screenDensity;
+      //标题栏高度一般是42dp左右，此处也需要转换成px单位
+      let titleBarHeight = 42 * d.screenDensity;
+      //此处计算很关键，需要将状态栏高度、标题栏高度加上
+      let realToppx = windowHeight - realAdHeighPX + d.statusBarHeight + titleBarHeight;
 
-  console.info("calBannerPostion1 realToppx=" + realToppx + ", logicWidth= " + logicWidth, "windowWidth= " + windowWidth);
-  //转换成页面基准值下的逻辑单位
-  let logicWebTop = (realToppx * logicWidth) / windowWidth;
+      console.info("calBannerPostion1 realToppx=" + realToppx + ", logicWidth= " + logicWidth, "windowWidth= " + windowWidth);
+      //转换成页面基准值下的逻辑单位
+      let logicWebTop = (realToppx * logicWidth) / windowWidth;
 
-  //此对象请自己在data下定义
-  let top = logicWebTop === 0 ? 1230 : logicWebTop;
-  console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
+      //此对象请自己在data下定义
+      let top = logicWebTop === 0 ? 1230 : logicWebTop;
+      console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
 
-  console.info("banner广告位=" + adid);
+      console.info("banner广告位=" + adid);
 
-  const style = {
-    left: 0,
-    top: top,
-    width: 360,
-    height: height
-  }
+      const style = {
+        left: 0,
+        top: top,
+        width: 360,
+        height: height
+      }
 
 
-  bannerAd = $ad.createBannerAd({
-    adUnitId: adid,//banner广告位
-    style: style,
-    adIntervals: 60//刷新时间，秒
-  });
-  console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
-  bannerAd.onLoad(e => {
-    console.info("load bannerAd  onload success e=" + JSON.stringify(e));
-  });
-  bannerAd.onError(e => {
-    console.error("load bannerAd  onError " + JSON.stringify(e));
-  });
-  bannerAd.onClose(e => {
-    console.info("load bannerAd  onClose");
-  });
-  bannerAd.show();
+      bannerAd = $ad.createBannerAd({
+        adUnitId: adid,//banner广告位
+        style: style
+      });
+      console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
+      bannerAd.onLoad(e => {
+        console.info("load bannerAd  onload success e=" + JSON.stringify(e));
+      });
+      bannerAd.onError(e => {
+        console.error("load bannerAd  onError " + JSON.stringify(e));
+      });
+      bannerAd.onClose(e => {
+        console.info("load bannerAd  onClose");
+      });
+      bannerAd.show();
+
+    }
+  })
+
+
 }
 
 const hideBanerAd = () => {
