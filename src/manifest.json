@@ -1,16 +1,35 @@
 {
     "package": "com.haituo.setpplanet",
     "name": "计步星球",
-    "versionName": "1.0.0",
-    "versionCode": 1,
-    "icon": "/Common/logo.png",
-    "minPlatformVersion": 1070,
+    "versionName": "1.0.5",
+    "versionCode": 5,
+    "icon": "/Common/img/logo.png",
+    "minPlatformVersion": 1100,
     "features": [
         {
             "name": "system.storage"
+        },
+        {
+            "name": "system.fetch"
+        },
+        {
+            "name": "system.network"
+        },
+        {
+            "name": "system.device"
+        },
+        {
+            "name": "system.file"
+        },
+        {
+            "name": "system.sensor"
         }
     ],
-    "config": {},
+    "config": {
+        "data": {
+            "umeng_appkey": "667b68fccac2a664de54f5ac"
+        }
+    },
     "router": {
         "entry": "Page_MainTab",
         "pages": {
@@ -21,6 +40,27 @@
                 "component": "index"
             },
             "Page_login": {
+                "component": "index"
+            },
+            "Page_about": {
+                "component": "index"
+            },
+            "feedback": {
+                "component": "index"
+            },
+            "logOut": {
+                "component": "index"
+            },
+            "permissions": {
+                "component": "index"
+            },
+            "Page_setPay": {
+                "component": "index"
+            },
+            "Page_cfd": {
+                "component": "index"
+            },
+            "ad/nativeAD": {
                 "component": "index"
             }
         }
@@ -33,13 +73,22 @@
                 "statusBarImmersive": true,
                 "statusBarBackgroundOpacity": 0
             },
+            "Page_cfd": {
+                "titleBar": false,
+                "menu": false,
+                "statusBarImmersive": true,
+                "statusBarBackgroundOpacity": 0,
+                "titleBarBackgroundOpacity": 0
+            },
             "Page_Tixian": {
                 "titleBar": true,
-                "menu": true
+                "menu": true,
+                "titleBarText": "收益"
             },
             "Page_login": {
                 "titleBar": true,
-                "menu": false
+                "menu": false,
+                "titleBarText": "用户登录"
             }
         }
     }

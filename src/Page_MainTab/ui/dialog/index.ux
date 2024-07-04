@@ -7,7 +7,7 @@
             <text class="title {{defaultOptions.closable?'title-close':'title-none'}}">{{ defaultPrompt.title || defaultOptions.title || title }}</text>
           </div>
 
-          <tabs if="{{ dialogType === 'prompt1' }}" class="tabs"  onchange="changeTabactive">
+          <tabs if="{{ dialogType === 'prompt1' }}" class="tabs" onchange="changeTabactive">
             <tab-bar class="tab-bar">
               <text class="tab-text">女</text>
               <text class="tab-text">男</text>
@@ -20,15 +20,15 @@
           </div>
 
           <div style="align-content: center; margin-bottom: 20px" if="{{ dialogType === 'prompt1' }}">
-            <input id="idkg" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ kg }}" placeholder="输入体重" onchange="bindChangekg" maxlength="{{ defaultPrompt.maxlength === -1?'':defaultPrompt.maxlength }}" onenterkeyclick="bindEnterkg" />
+            <input id="idkg" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ kg }}" placeholder="输入体重" onchange="bindChangekg" maxlength="3" onenterkeyclick="bindEnterkg" />
             <text style="text-align: center; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border: 2px solid #e9e9e9; font-size: 28px; background-color: #f5f5f5; width: 88px; height: 88px">kg</text>
           </div>
           <div style="align-content: center; margin-bottom: 20px" if="{{ dialogType === 'prompt1' }}">
-            <input id="idcm" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ cm }}" placeholder="输入身高" onchange="bindChangecm" maxlength="{{ defaultPrompt.maxlength === -1?'':defaultPrompt.maxlength }}" onenterkeyclick="bindEntercm" />
+            <input id="idcm" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ cm }}" placeholder="输入身高" onchange="bindChangecm" maxlength="3" onenterkeyclick="bindEntercm" />
             <text style="text-align: center; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border: 2px solid #e9e9e9; font-size: 28px; background-color: #f5f5f5; width: 88px; height: 88px">cm</text>
           </div>
           <div style="align-content: center; margin-bottom: 10px" if="{{ dialogType === 'prompt1' }}">
-            <input id="idage" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ age }}" placeholder="输入年龄" onchange="bindChangeage" maxlength="{{ defaultPrompt.maxlength === -1?'':defaultPrompt.maxlength }}" onenterkeyclick="bindEnterage" />
+            <input id="idage" type="{{ defaultPrompt.fieldtype }}" style="{{defaultPrompt.inputStyle}}" value="{{ age }}" placeholder="输入年龄" onchange="bindChangeage" maxlength="3" onenterkeyclick="bindEnterage" />
             <text style="text-align: center; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border: 2px solid #e9e9e9; font-size: 28px; background-color: #f5f5f5; width: 88px; height: 88px">岁</text>
           </div>
         </div>
@@ -72,7 +72,7 @@
         kg: "",
         cm: "",
         age: "",
-        fieldtype: "text",
+        fieldtype: "number",
         placeholder: "请输入文本",
         focus: false,
         idkg: false,
@@ -172,7 +172,7 @@
           title: "",
           content: "",
           value: "",
-          fieldtype: "text",
+          fieldtype: "number",
           placeholder: "请输入文本",
           focus: false,
           inputStyle: {}

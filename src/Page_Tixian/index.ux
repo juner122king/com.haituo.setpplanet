@@ -1,3 +1,4 @@
+<import name="dialog-box" src="../dialogBox"></import>
 <template>
   <div class="container">
     <div class="topview">
@@ -5,15 +6,15 @@
         <text style="position: absolute; top: 20px; left: 30px; color: #fff">当前余额</text>
 
         <div style="position: absolute; bottom: 20px; left: 30px; align-items: flex-end">
-          <text style="color: #ffffff; font-size: 80px; font-weight: bold">0.00</text>
+          <text style="color: #ffffff; font-size: 80px; font-weight: bold">{{userData.balance}}</text>
           <text style="color: #ffffff; font-size: 32px; margin-left: 10px; margin-bottom: 12px">元</text>
         </div>
-        <div style="border-radius: 68px; padding-left: 18px; padding-right: 18px; padding-top: 10px; padding-bottom: 10px; position: absolute; bottom: 30px; right: 30px; background-color: #fff"><text style="color: #e75846; font-size: 20px; font-weight: bold">规则说明</text></div>
+        <div onclick="openDialog(true)" style="border-radius: 68px; padding-left: 18px; padding-right: 18px; padding-top: 10px; padding-bottom: 10px; position: absolute; bottom: 30px; right: 30px; background-color: #fff"><text style="color: #e75846; font-size: 20px; font-weight: bold">规则说明</text></div>
       </div>
 
       <div style="align-items: center; position: absolute; bottom: 12px; left: 30px">
         <text style="color: #828282; font-size: 24px">提现方式：</text>
-        <image style="width: 24px; height: 24px" src="./img/icon_pay.png" />
+        <image style="width: 24px; height: 24px" src="/Common/img/icon_pay.png" />
         <text style="color: #828282; font-size: 24px; margin-left: 5px">支付宝提现</text>
       </div>
     </div>
@@ -25,34 +26,34 @@
       </div>
 
       <div style="background-color: #fff; flex-wrap: wrap; justify-content: space-between">
-        <div class="grid-item">
+        <div id="tx1" class="grid-item" onclick="getwithdraw('AMOUNT_10',0.1)">
           <text class="top-left">每日提现</text>
           <text class="grid-item-text">
-            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <image style="width: 40px; height: 40px" src="/Common//img/icon_gold.png" />
             <span style="color: #000; font-size: 45px; font-weight: bold">0.1</span>
             <span style="color: #000; font-size: 20px">元</span>
           </text>
         </div>
-        <div class="grid-item">
+        <div id="tx2" class="grid-item" onclick="getwithdraw('AMOUNT_100',1)">
           <text class="top-left">仅一次</text>
           <text class="grid-item-text">
-            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <image style="width: 40px; height: 40px" src="/Common//img/icon_gold.png" />
             <span style="color: #000; font-size: 45px; font-weight: bold">1</span>
             <span style="color: #000; font-size: 20px">元</span>
           </text>
         </div>
-        <div class="grid-item">
+        <div id="tx3" class="grid-item" onclick="getwithdraw('AMOUNT_5000',50)">
           <text class="top-left">每日提现</text>
           <text class="grid-item-text">
-            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <image style="width: 40px; height: 40px" src="/Common/img/icon_gold.png" />
             <span style="color: #000; font-size: 45px; font-weight: bold">50</span>
             <span style="color: #000; font-size: 20px">元</span>
           </text>
         </div>
-        <div class="grid-item">
+        <div id="tx4" class="grid-item" onclick="getwithdraw('AMOUNT_10000',100)">
           <text class="top-left">仅一次</text>
           <text class="grid-item-text">
-            <image style="width: 40px; height: 40px" src="./img/icon_gold.png" />
+            <image style="width: 40px; height: 40px" src="/Common/img/icon_gold.png" />
             <span style="color: #000; font-size: 45px; font-weight: bold">100</span>
             <span style="color: #000; font-size: 20px">元</span>
           </text>
@@ -61,52 +62,412 @@
     </div>
 
     <div class="btmview">
-      <tabs class="tabs" onchange="changeTabactive" >
+      <tabs class="tabs" onchange="changeTabactive">
         <tab-bar class="tab-bar">
           <text class="tab-text">收益记录</text>
           <text class="tab-text">提现记录</text>
         </tab-bar>
-        <tab-content class="tab-content" scrollable="{{scrollable}}">
+        <tab-content if="{{listshow}}" class="tab-content" scrollable="{{scrollable}}">
+          <list class="list">
+            <list-item type="listItem" for="{{listData}}">
+              <div class="list-item">
+                <div style="flex-direction: column">
+                  <text style="margin-bottom: 9px; font-size: 28px; color: #000000; font-weight: bold">{{$item.title}}</text>
+                  <text style="font-size: 24px; color: #828282">{{$item.createdDt}}</text>
+                </div>
+                <text style="height: 50px; border-radius: 96px; background-color: #eb6352; font-size: 26px; color: #fff; padding-left: 22px; padding-right: 22px; padding-top: 1px; padding-bottom: 1px">+{{$item.amount}}元</text>
+              </div>
+            </list-item>
+          </list>
 
           <list class="list">
             <list-item type="listItem" for="{{listData}}">
               <div class="list-item">
                 <div style="flex-direction: column">
-                  <text style="margin-bottom: 9px; font-size: 28px; color: #000000; font-weight: bold">收益</text>
-                  <text style="font-size: 24px; color: #828282">2023-03-23 12:00:33</text>
+                  <text style="margin-bottom: 9px; font-size: 28px; color: #000000; font-weight: bold">{{$item.title}}</text>
+                  <text style="font-size: 24px; color: #828282">{{$item.createdDt}}</text>
                 </div>
-                <text style="height: 50px; border-radius: 96px; background-color: #eb6352; font-size: 26px; color: #fff; padding-left: 22px; padding-right: 22px; padding-top: 1px; padding-bottom: 1px">+{{$item}}元</text>
-              </div>
-            </list-item>
-          </list>
-
-          <list class="list">
-             <list-item type="listItem" for="{{listData}}">
-              <div class="list-item">
-                <div style="flex-direction: column">
-                  <text style="margin-bottom: 9px; font-size: 28px; color: #000000; font-weight: bold">提现</text>
-                  <text style="font-size: 24px; color: #828282">2023-03-23 12:00:33</text>
-                </div>
-                <text style="width: 140px; height: 50px; border-radius: 96px; background-color: #eb6352; font-size: 26px; color: #fff; padding-left: 22px; padding-right: 22px; padding-top: 1px; padding-bottom: 1px">+0.01元</text>
+                <text style="width: 140px; height: 50px; border-radius: 96px; background-color: #eb6352; font-size: 26px; color: #fff; padding-left: 22px; padding-right: 22px; padding-top: 1px; padding-bottom: 1px">{{$item.amount}}元</text>
               </div>
             </list-item>
           </list>
         </tab-content>
       </tabs>
+
+      <text if="{{!listshow}}" style="font-size: 32px; text-align: center; flex: 10">暂无相关记录</text>
     </div>
+
+    <div class="mask" if="{{dialog_visible}}">
+      <div class="dialog">
+        <div class="box">
+          <div class="top">
+            <text class="title">规则说明</text>
+          </div>
+          <div class="content">
+            <text>{{rules}}</text>
+          </div>
+          <div class="btn">
+            <div class="btnbox" onclick="openDialog(false)">
+              <text>我已知晓</text>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <dialog-box show-dialog="{{showDialog}}" dialog-data="{{dialogData}}" onemit-success="successDialog" onemit-clone="cloneDialog"></dialog-box>
   </div>
 </template>
 
-<style>
+
+
+<script>
+
+  import example from '../Common/helper/apis/example.js';
+  module.exports = {
+    private: {
+      rules: `1. 一个账号且一个设备，每日只能提现一次\n2. 提现后1~3个工作日到账\n3. 平台会根据运营能力设置不同的档位额度，具体以提现页面展示为准\n4. 一个账号只能绑1次提现账户,请谨慎使用\n5. 若提现失败，提现金额将返还到您的账户\n6. 为便于您日常提现，请使用本人支付宝账号，绑定中会进行信息校验。`,
+      listData: [],
+      listshow: false,
+      dialog_visible: false,
+      dialog_visible2: false,
+      showDialog: false,
+      dialogData: {},
+      userData: {},
+      userbalance: 0,//用户想要提现的金额
+
+    },
+
+    async onInit() {
+
+      const storageFlag = await $processData.getStorage("_PRIVAC");
+      if (storageFlag) {
+        //插屏广告
+        $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId)
+      }else {   //未授权，弹出授权询问
+        console.log('用户授权= ', storageFlag);
+        console.log('未授权,不加载插屏广告');
+      }
+    },
+    onShow(options) {
+
+      $umeng_stat.resume(this)
+      console.log('提现 onShow()----------------->');
+      this.getUser();
+    },
+
+    onHide() {
+      $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
+    },
+
+
+    getUser() {
+      $apis.user.getUserInfo().then((res) => {
+        console.log('用户信息----------------->' + JSON.stringify(res));
+        this.userData = res.data
+      })
+    },
+
+    changeTabactive: function (e) {
+
+      //可用值://记录类型, REVENUE(收益), EXPENDITURE(提现),可用值:REVENUE,EXPENDITURE
+      console.log(e.index);
+      if (e.index === 0) {
+        this.record('REVENUE')
+      } else {
+        this.record('EXPENDITURE')
+      }
+    },
+    //提现
+    getwithdraw(a, ub) {
+      console.log("提现TAg:" + a + ",需要提现的金额：" + ub);
+
+      //余额是否大于提现金额
+      if (this.userData.balance < ub) {
+        console.log("余额不足！");
+        this.openDialog2()
+        return
+      }
+
+
+      //手机号为空，即未登录
+      if (!this.userData.loginPhone) {
+        console.log("用户手机号为空，未登录 ");
+        this.openLogin();
+        return
+      }
+
+      example.withdraw({
+        amount: a
+      }).then(response => {
+        console.log('提现成功:', response);
+
+        this.withdrawSuucess(response.data.amount);
+      })
+        .catch(error => {
+          console.error('提现失败:', error);
+          try {
+            var e = JSON.parse(error);
+            var code = e.code;
+            var message = e.message;
+
+            switch (code) {
+
+              case '300000':
+                //提现次数已用完
+                this.openDialog3(message)
+                break;
+
+              case '400000':
+
+                $prompt.showToast({
+                  message: ' 提现失败! ' + message,
+                  gravity: "center"
+                })
+                break;
+              case '310007':
+                $prompt.showToast({
+                  message: ' 提现失败! ' + message,
+                  gravity: "center"
+                })
+                //收款账号不存在或姓名有误
+                this.setPayAccount()
+                break;
+              case '310004':
+                // 余额不足
+                this.openDialog2()
+                break;
+              default:
+                // 处理其他 code 的逻辑
+                console.log("Other code: " + code);
+                break;
+            }
+
+
+          } catch (e) {
+            $prompt.showToast({
+              message: '提现失败err:' + e,
+              gravity: 'bottom'
+            })
+          }
+
+        });
+    },
+
+
+    //设置支付宝账号
+    setPayAccount() {
+
+      $router.push({
+        uri: 'Page_setPay'
+      });
+    },
+
+    openLogin() {
+      this.dialogData = {
+        hading: "提示",
+        subheading: "请登录后再使用该功能",
+        iconType: "hint",
+        cloneBtn: "取 消",
+        successBtn: "登录"
+      }
+      this.showDialog = true
+    },
+    //打开登录页面
+    successDialog() {
+
+      if (this.dialogData.successBtn === "登录") {//去登录
+        this.showDialog = false
+        $router.push({
+          uri: 'Page_login'
+        });
+      } else {
+        //其他确认功能
+        this.showDialog = false
+        $router.back();
+
+      }
+    },
+
+    //余额不足
+    openDialog2() {
+
+      this.dialogData = {
+        hading: "提示",
+        subheading: "余额不足，请尝试其他额度或继续赚钱",
+        iconType: "hint",
+        cloneBtn: "换个额度",
+        successBtn: "继续赚钱"
+      }
+      this.showDialog = true
+    },
+
+    //余额不足
+    openDialog3(message) {
+
+      this.dialogData = {
+        hading: "提示",
+        subheading: message,
+        iconType: "hint",
+        cloneBtn: "关闭",
+        successBtn: "继续赚钱"
+      }
+      this.showDialog = true
+    },
+    //提现成功
+    withdrawSuucess(amount) {
+      this.dialogData = {
+        hading: "提现成功",
+        subheading: `成功提现${amount}元`,
+        iconType: "success",
+        cloneBtn: "关闭",
+        successBtn: "继续赚钱"
+      }
+      this.showDialog = true
+    },
+
+
+
+    //获取记录列表
+    record(type) {
+      console.log("记录类型: " + type);
+      example.record({
+        type: type
+      }).then(response => {
+        console.log('获取成功:', response);
+        let data = response.data.records
+
+        if (data && Array.isArray(data) && data.length > 0) {
+          this.listshow = true;
+          this.listData = data;
+        } else {
+          this.listshow = false;
+          this.listData = [];
+        }
+
+
+      })
+        .catch(error => {
+          console.error('获取失败:', error);
+          var message = JSON.parse(error).message;
+          $prompt.showToast({
+            message: ' 提现失败! ' + message,
+            gravity: "center"
+          })
+        });
+    },
+
+    openDialog(b) {
+      this.dialog_visible = b
+    },
+
+
+    bindAffirm() {
+      this.dialog_visible2 = false
+    },
+    cloneDialog: function () {
+      this.showDialog = false;
+    },
+
+  }
+</script>
+<style lang="less">
+  .mask {
+    position: fixed;
+    flex: 1;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: rgba(5, 5, 5, 0.6);
+
+    .dialog {
+      flex-direction: column;
+      background-color: #fff;
+      border-radius: 32px;
+      margin-top: 60px;
+      padding: 26px;
+      width: 84%;
+      &-border {
+        border: 1px solid #e7e7e7;
+      }
+      .box {
+        flex-direction: column;
+        .top {
+          width: 100%;
+          padding: 10px;
+          padding-bottom: 15px;
+          justify-content: space-between;
+          .title {
+            text-align: center;
+            color: #000;
+            font-size: 32px;
+            font-weight: bold;
+            width: 100%;
+          }
+        }
+        .content {
+          padding: 30px;
+          font-size: 24px;
+          margin-bottom: 50px;
+          color: #828282;
+          text-align: center;
+        }
+      }
+      .btn {
+        margin-top: 50px;
+
+        .btnbox {
+          text {
+            width: 100%;
+            height: 88px;
+            text-align: center;
+            border-radius: 16px;
+            font-size: 32px;
+            background-color: #00b2ff;
+            color: #fff;
+          }
+        }
+        .btnbox1 {
+          flex: 1;
+
+          text {
+            width: 100%;
+            height: 88px;
+            text-align: center;
+            border-radius: 16px;
+            font-size: 32px;
+            background-color: #00b2ff;
+            color: #fff;
+          }
+        }
+        .btnbox2 {
+          flex: 1;
+
+          text {
+            border: 2px solid #e9e9e9;
+            width: 270px;
+            height: 88px;
+            text-align: center;
+            border-radius: 16px;
+            font-size: 28px;
+            background-color: #fff;
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+
   .container {
     flex-direction: column;
     padding: 27px;
     background-color: #f5f5f5;
   }
   .group {
-    height: 182px;
+    height: 162px;
     width: 100%;
-    background-image: url(./img/group.png);
+    background-image: url(/Common/img/group.png);
   }
   .topview {
     flex-direction: column;
@@ -118,6 +479,7 @@
 
   .midview {
     flex-direction: column;
+    justify-content: center;
     width: 702px;
     border-radius: 20px;
     margin-top: 27px;
@@ -141,7 +503,6 @@
   }
 
   .grid-item {
-    display: flex;
     justify-content: center; /* 水平居中 */
     width: 310px;
     height: 124px;
@@ -164,12 +525,13 @@
     border-bottom-right-radius: 20px;
   }
   .grid-item-text {
-    display: flex;
     height: 50px;
     margin-top: 45px;
   }
   .tabs {
     flex: 1;
+
+    /* background-color: #bd0f83; */
   }
   .tab-content {
     flex: 1;
@@ -226,26 +588,3 @@
     border-bottom-color: #e7e7e7;
   }
 </style>
-
-<script>
-  module.exports = {
-    // 页面的数据模型，private段下的变量仅允许当前页面内代码更改其值。
-    private: {
-      listData: [],
-    },
-    onInit() {
-      // this.listData = this.generateRandomValues(100, 0.01, 100);
-    },
-    changeTabactive: function (e) {
-    },
-
-    generateRandomValues(count, min, max) {
-      const values = [];
-      for (let i = 0; i < count; i++) {
-        const randomValue = (Math.random() * (max - min) + min).toFixed(2);
-        values.push(parseFloat(randomValue));
-      }
-      return values;
-    }
-  };
-</script>

@@ -24,8 +24,8 @@
           <list-item type="listItem" for="{{list30dayData}}">
             <div class="item">
               <text style="width: 120px; font-size: 20px; color: #000000">{{$item.summaryDate}}</text>
-              <div style="height: 100%; height: 32px; padding-left: 24px">
-                <progress class="progress" style="width: 100%; color: #00b2ff" percent="{{$item.percent}}"></progress>
+              <div style="height: 100%; height: 32px; margin-left:  24px;background-color:#00b2ff ;border-top-right-radius: 50px;border-bottom-right-radius: 50px">
+                <progress class="progress" style="width: 100%; color: #00b2ff;layer-color:#fff;" percent="{{$item.percent}}"></progress>
               </div>
             </div>
           </list-item>
@@ -63,7 +63,7 @@
       ],
     },
     onInit() {
-
+      this.$page.setTitleBar({ text: '步数记录' })
     },
     onReady() {
       this.initChart();
@@ -87,12 +87,16 @@
 
     },
     formatData(data) {
-      const maxSteps = 5000; // 假设最大步数为10000
+      const maxSteps = 10000; // 假设最大步数为10000
       return data.map(item => {
+        let date = (item.summaryDate).toString();
+        // 提取月份和日期部分
+        let formattedDate = date.substring(4, 6) + '-' + date.substring(6, 8);
+
         const stepCount = parseInt(item.stepCount, 10); //  
         const percent = Math.round((stepCount / maxSteps) * 100); // 计算百分比并四舍五入
         return {
-          summaryDate: item.summaryDate,
+          summaryDate: formattedDate,
           stepCount: stepCount,
           percent: percent
         };

@@ -1,9 +1,7 @@
 <import name="pagerecord" src="./Page_Record/index"></import>
 <import name="pagehome" src="./Page_Home/index"></import>
 <import name="pageuser" src="./Page_User/index"></import>
-
 <template>
-	<!-- template里只能有一个根节点 -->
 	<div class="container">
 		<tabs onchange="changeTabactive">
 			<tab-content>
@@ -78,8 +76,8 @@
 </style>
 
 <script>
+
 	module.exports = {
-		// 页面的数据模型，private段下的变量仅允许当前页面内代码更改其值。
 		private: {
 			datas: {
 				color_normal: '#C8C8C8',
@@ -88,37 +86,32 @@
 				list: [{
 					i: 0,
 					color: '#FF7500',
-					pic: './img/bar_1.png',
-					pic_choice: './img/bar_11.png',
+					pic: '/Common/img/bar_1.png',
+					pic_choice: '/Common/img/bar_11.png',
 					show: true,
 					title: '首页'
 				},
 				{
 					i: 1,
 					color: '#878787',
-					pic: './img/bar_2.png',
-					pic_choice: './img/bar_22.png',
+					pic: '/Common/img/bar_2.png',
+					pic_choice: '/Common/img/bar_22.png',
 					show: false,
 					title: '步数'
 				},
 				{
 					i: 2,
 					color: '#878787',
-					pic: './img/bar_3.png',
-					pic_choice: './img/bar_33.png',
+					pic: '/Common/img/bar_3.png',
+					pic_choice: '/Common/img/bar_33.png',
 					show: false,
 					title: '我的'
 				}
 				]
 			}
+
+
 		},
-		onInit() {
-
-			
-		},
-
-	
-
 		changeTabactive: function (e) {
 			for (let i = 0; i < this.datas.list.length; i++) {
 				let element = this.datas.list[i];
@@ -127,14 +120,53 @@
 				if (i === e.index) {
 					element.show = true;
 					element.color = this.datas.color_active;
-					this.$page.setTitleBar({
-						text: "计步",
-						backgroundColor: '#f2f2f2',
-						textColor: '#1a1a1a',
-						menu: true
-					});
+
+					if (e.index === 0) {
+						$utils.hideBanerAd()
+					} else {
+						$utils.viewBanner()
+					}
+
 				}
 			}
+		},
+
+		onInit: function () {
+
+		},
+		async onShow(options) {
+
+			$umeng_stat.resume(this)
+			console.log('主页 onShow()----------------->');
+			this.getUser();
+
+
+			const storageFlag = await $processData.getStorage("_PRIVAC");
+			console.log('用户授权= ', storageFlag);
+			if (storageFlag) {
+				//显示banner 广告高度，底部缩进
+				$utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 135)
+			} else {   //未授权，弹出授权询问
+				console.log('未授权,不加载广告');
+			}
+		},
+
+		onHide() {
+			$umeng_stat.pause(this);//在onHide方法的第一行加入此代码
+		},
+
+
+		getUser() {
+			$apis.user.getUserInfo().then((res) => {
+				console.log('用户信息----------------->' + JSON.stringify(res));
+				this.$app.$def.dataApp.userData.loginPhone = res.data.loginPhone
+				this.$app.$def.dataApp.userData.userId = res.data.userId
+				this.$app.$def.dataApp.userData.balance = res.data.balance
+			})
+		},
+		onHide() {
+			//需要隐藏时就销毁banner
+			$utils.destroyBanner();
 		}
 	};
 </script>

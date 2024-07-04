@@ -1,17 +1,18 @@
+
 <template>
   <div class="container">
     <div class="top_view">
       <div style="align-items: center; width: 100%; height: 80%" onclick="toLogin">
-        <image style="width: 113px; height: 113px; background-color: #bec9be; margin-left: 60px" />
+        <image style="width: 120px; height: 120px; margin-left: 60px" src="/Common/img/touxiang.png" />
         <div style="flex-direction: column; justify-content: space-around; height: 120px; margin-left: 10px; padding: 10px">
-          <text class="log" style="color: #000000; font-size: 32px; font-weight: bold">请点击登录</text>
-          <text class="user_id" style="color: #696969; font-size: 28px">ID: {{user_id}}</text>
+          <text class="log" style="color: #000000; font-size: 32px; font-weight: bold">{{ userData.loginPhone || '请点击登录' }}</text>
+          <text class="user_id" style="color: #696969; font-size: 28px">ID:{{userData.userId}}</text>
         </div>
       </div>
 
-      <div style="margin-top: -130px; bottom: 0; justify-content: space-between; padding-left: 50px; padding-right: 50px; align-items: center; background-image: url(./img/group.png); height: 164px; width: 702px">
+      <div style="margin-top: -110px; bottom: 0; justify-content: space-between; padding-left: 50px; padding-right: 50px; align-items: center; background-image: url(/Common/img/group.png); height: 164px; width: 702px">
         <div style="align-items: flex-end">
-          <text style="color: #ffffff; font-size: 72px; font-weight: bold">0.00</text>
+          <text style="color: #ffffff; font-size: 72px; font-weight: bold">{{userData.balance}}</text>
           <text style="color: #ffffff; font-size: 32px; margin-left: 10px; margin-bottom: 12px">元</text>
         </div>
 
@@ -22,51 +23,54 @@
     </div>
 
     <div class="bottom_view">
-      <!-- <image style="width: 100%; height: 192px; margin-bottom: 27px" src="./img/banner_me.png" /> -->
-      <div style="border-radius: 20px; background-color: #ffffff; width: 702px; height: 394px; padding: 25px; flex-direction: column">
+      <image style="width: 100%; height: 180px; margin-bottom: 20px" src="/Common/img/banner_me.png" onclick="openAd" />
+      <div style="border-radius: 20px; background-color: #ffffff; width: 702px; height: 380px; padding: 20px; flex-direction: column">
         <div style="width: 152px; height: 45px; align-items: flex-end">
           <div style="width: 130px; height: 28px; background: linear-gradient(90deg, #e9fd65, #95ff37 100%); position: absolute; border-radius: 58px"></div>
           <text style="width: 100%; height: 42px; font-size: 31px; font-weight: bold; position: absolute; color: #000000; margin-left: 3px">我的服务</text>
         </div>
 
-        <div style="width: 100%; justify-content: space-around; margin-bottom: 30px; margin-top: 30px">
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame1.png" />
+        <div style="width: 100%; justify-content: space-around; margin-bottom: 30px; margin-top: 20px">
+          <div class="frame_" onclick="addDesktop">
+            <image class="frame_ima" src="/Common/img/frame1.png" />
             <text class="frame_text">添加桌面</text>
           </div>
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame2.png" />
+          <div class="frame_" onclick="pushPagefeedback">
+            <image class="frame_ima" src="/Common/img/frame2.png" />
             <text class="frame_text">举报反馈</text>
           </div>
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame3.png" />
+          <div class="frame_" onclick="pushweb(1)">
+            <image class="frame_ima" src="/Common/img/frame3.png" />
             <text class="frame_text">帮助中心</text>
           </div>
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame4.png" />
+          <div class="frame_" onclick="pushweb(2)">
+            <image class="frame_ima" src="/Common/img/frame4.png" />
             <text class="frame_text">用户协议</text>
           </div>
         </div>
         <div style="width: 100%; justify-content: space-around">
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame5.png" />
+          <div class="frame_" onclick="pushweb(3)">
+            <image class="frame_ima" src="/Common/img/frame5.png" />
             <text class="frame_text">隐私政策</text>
           </div>
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame6.png" />
+          <div class="frame_" onclick="pushPagepermissions">
+            <image class="frame_ima" src="/Common/img/frame6.png" />
             <text class="frame_text">设置</text>
           </div>
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame7.png" />
+          <div onclick="pushPageabout" class="frame_">
+            <image class="frame_ima" src="/Common/img/frame7.png" />
             <text class="frame_text">关于</text>
           </div>
-          <div class="frame_">
-            <image class="frame_ima" src="./img/frame8.png" />
+          <div class="frame_" onclick="pushPagelogOut">
+            <image class="frame_ima" src="/Common/img/frame8.png" />
             <text class="frame_text">注销</text>
           </div>
         </div>
       </div>
     </div>
+
+
+
   </div>
 </template>
 
@@ -93,18 +97,18 @@
 
   .top_view {
     width: 100%;
-    height: 610px;
+    height: 600px;
     flex-direction: column;
     align-items: center;
-    background-image: url("./img/bg_me.png"); /* 替换为你的背景图片路径 */
+    background-image: url("/Common/img/bg_me.png"); /* 替换为你的背景图片路径 */
     background-size: cover; /* 使背景图片覆盖整个容器 */
     background-position: center; /* 将背景图片居中对齐 */
   }
 
   .bottom_view {
-    padding-top: 27px;
-    padding-left: 27px;
-    padding-right: 27px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
     width: 100%;
     flex-direction: column;
     align-items: center;
@@ -117,28 +121,120 @@
 
 
 <script>
-  import router from '@system.router'
+
+
   module.exports = {
-    // 页面的数据模型，private段下的变量仅允许当前页面内代码更改其值。
+
+
     private: {
 
+
+      userData: {},
     },
     onInit() {
 
+      this.getUser();
+
     },
 
+    getUser() {
+      this.userData = this.$app.$def.dataApp.userData
+    },
+
+
+
     toLogin() {
-      router.push({
+      var phone = this.userData.loginPhone
+      if (phone) {
+        return
+      }
+      $router.push({
         uri: 'Page_login'
       });
     },
 
     pushPageTixian() {
 
-      router.push({
+      $router.push({
         uri: 'Page_Tixian'
       });
-    }
+    },
+    pushPageabout() {
+      $router.push({
+        uri: 'Page_about'
+
+      });
+    },
+    pushPagefeedback() {
+      $router.push({
+        uri: 'feedback'
+      });
+    },
+    pushPagelogOut() {
+      $router.push({
+        uri: 'logOut'
+      });
+    },
+
+    pushPagepermissions() {
+      $router.push({
+        uri: 'permissions'
+      });
+    },
+
+    openAd() {
+      $router.push({
+        uri: 'Page_cfd'
+      });
+    },
+    addDesktop: function () {
+      console.log('添加桌面');
+      const shortcut = require("@system.shortcut")
+      shortcut.hasInstalled({
+        success: function (ret) {
+          console.log('hasInstalled success ret---' + ret);
+          if (ret) {
+            $prompt.showToast({
+              message: '桌面图标已创建',
+              gravity: 'center'
+            })
+          } else {
+            shortcut.install({
+              message: '添加桌面方式更方便',
+              success: function (ret) {
+                console.log('handling createShortCut success');
+              },
+              fail: function (erromsg, errocode) {
+                console.log('handling createShortCut fail');
+              }.bind(this),
+            })
+          }
+        }.bind(this),
+        fail: function (erromsg, errocode) {
+          console.log('hasInstalled fail ret---' + erromsg);
+        }.bind(this),
+        complete: function () {
+        }
+      })
+    },
+
+    pushweb(i) {
+
+
+      var url = ''
+      if (i === 1) {
+        url = this.$app.$def.dataApp.url1;
+      } if (i === 2) {
+        url = this.$app.$def.dataApp.url2;
+      } if (i === 3) {
+        url = this.$app.$def.dataApp.url3;
+      }
+
+      $webview.loadUrl({
+        url: url
+      });
+    },
+
 
   };
 </script>
