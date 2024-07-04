@@ -1,6 +1,6 @@
 <import name="my-circle" src="../ui/circle/index"></import>
 <import name="my-dialog" src="../ui/dialog/index"></import>
-
+<import name="privacy-pop" src="../ui/privacypop/index"></import>
 <template>
   <div class="container">
     <div class="top_view">
@@ -11,9 +11,9 @@
           <text class="tab-text">月</text>
         </tab-bar>
       </tabs>
-      <my-circle class="circle" size="350" percent="{{progress}}" stroke-color="#00B2FF" s-angle="150" show-trail="{{false}}" trail-color="#fff">
+      <my-circle class="circle" size="350" percent="{{progress}}" stroke-color="#00B2FF" s-angle="150" show-trail="{{true}}" trail-color="#fff">
         <div class="text-container">
-          <image src="./img/icon_paobu.png" class="icon-image" />
+          <image src="/Common/img/icon_paobu.png" class="icon-image" />
           <text class="title_stpes">{{segmentsText}}</text>
           <text class="title_stpes_v">{{steps_view}}</text>
         </div>
@@ -53,33 +53,51 @@
         <text style="color: #828282; padding-top: 10px; padding-left: 20px" @click="openBasicInformationDialog">填写计算></text>
       </div>
 
-      <div style="width: 100%; height: 140px; background-image: url(./img/mingroup2.png); margin-top: 15px; justify-content: space-around">
+      <div style="width: 100%; height: 140px; background-image: url(/Common/img/mingroup2.png); margin-top: 15px; justify-content: space-around">
         <div style="align-items: center; margin-left: -30px">
-          <image src="./img/icon_bmi.png" style="width: 90px; height: 90px" />
+          <image src="/Common/img/icon_bmi.png" style="width: 90px; height: 90px" />
           <div style="flex-direction: column; justify-content: space-around; margin-left: 16px">
             <text class="larger3-text">BMI</text>
             <text class="larger2-text">{{bmi}}</text>
           </div>
         </div>
         <div style="align-items: center">
-          <image src="./img/icon_tzl.png" style="width: 90px; height: 90px" />
+          <image src="/Common/img/icon_tzl.png" style="width: 90px; height: 90px" />
           <div style="flex-direction: column; justify-content: space-around; margin-left: 16px">
             <text class="larger3-text">体脂率</text>
-            <text class="larger2-text">{{tzl}}%</text>
+            <text class="larger2-text">{{tzl}}</text>
           </div>
         </div>
       </div>
 
-      <div style="background-image: url(./img/standard.png); width: 100%; height: 368px; margin-top: 14px"></div>
+      <div style="background-image: url(/Common/img/standard.png); width: 100%; height: 368px; margin-top: 14px"></div>
     </div>
     <my-dialog visible="{{open1}}" dialog-type="prompt" onaffirm="enterSteps" oncancel="close" onenter="enterSteps" prompt="{{obj}}"></my-dialog>
     <my-dialog visible="{{open2}}" dialog-type="prompt1" onaffirm="enterDetails" oncancel="close" prompt="{{obj}}"></my-dialog>
+
+    <div class="header" show="{{isShow}}">
+      <text style="font-weight: bold">申请 健身运动 权限:</text>
+      <text style="font-weight: 500">用于记录运动步数，计算运动量。</text>
+    </div>
   </div>
 </template>
 
 <style>
+  .header {
+    flex-direction: column;
+    padding: 90px;
+    background-color: #fff;
+    border-radius: 30px;
+    position: absolute;
+    align-items: flex-start;
+    top: 70px;
+    width: 700px;
+    height: 100%;
+  }
   .container {
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: 100%;
   }
 
@@ -88,7 +106,7 @@
     height: 828px;
     flex-direction: column;
     align-items: center;
-    background-image: url("./img/group.png"); /* 替换为你的背景图片路径 */
+    background-image: url("/Common/img/group2.png"); /* 替换为你的背景图片路径 */
     background-size: cover; /* 使背景图片覆盖整个容器 */
     background-position: center; /* 将背景图片居中对齐 */
   }
@@ -217,6 +235,11 @@
 
 
     private: {
+
+
+      url1: '',
+      url2: '',
+
       componentData: {},
       goalDayKey: "GOAL_DAY",
       userDetailsKey: "UserDetails",
@@ -233,7 +256,7 @@
 
       progress: 0, // 用于存储步数进度
 
-      currentPage: 0,//当前选的页，默认显示今日
+      currentPage: -1,//当前选的页，默认显示今日
       segments: [
         '今日', '周', '月'
       ],
@@ -243,58 +266,58 @@
       segmentsText: "",
 
 
-      body_weight: 75,//体重
-      body_height: 180,//身高
+      body_weight: 60,//体重
+      body_height: 0,//身高
       sex: 1,//性别  1 男，0 女
-      age: 30,
+      age: 0,
       mileage: "0.0",//里程
       calories: "0.0",//卡路里
-      bmi: "00.0",//BMI
-      tzl: "00.0",//体脂率
+      bmi: 0.0,//BMI
+      tzl: 0.0,//体脂率
 
 
       open1: false,
       open2: false,
-      obj: {}
-
+      obj: {},
+      isShow: false,//隐私询问
     },
     //首页初始化流程：
     // Step1获取用户设置的今日目标步数
     // Step2从后台获取当前步数  
     // Step3根据获取到的当前步数，更新今日进度，里程，消耗热量 
     //
-    onInit() {
+    async onInit() {
       console.log("onInit()")
+      this.url1 = this.$app.$def.dataApp.url2;
+      this.url2 = this.$app.$def.dataApp.url3;
+
       this.getGoalDaySteps();// Step1
       this.getUserDetails();
       this.apigetStpes()// Step2
-      this.subscribeStepCounter();
 
     },
 
     onReady() {
       console.log("onReady()")
-
       this.updateBMITzl();
     },
-    onShow() {
-      console.log("onShow()")
+
+    //弹出隐私询问，不能自动执行，需要用户点击功能时才执行，目前需求是点击‘今日’，‘周’，‘月’与设置今日目标时
+    async getTreatyStorage() {
+      this.subscribeStepCounter()
+
     },
-
-    onHide() {
-      console.log("onHide()")
-    },
-
-    onDestroy() {
-      console.log("onDestroy()")
-    },
-
-
     subscribeStepCounter() {
+      this.isShow = true;
       // 订阅步数计数器
       sensor.subscribeStepCounter({
         callback: (ret) => {
           console.log(`设备步数更新了！------>设备总步数=${ret.steps}`)
+
+          //保存权限
+          $processData.setStorage("_PRIVAC", true);
+          this.isShow = false;
+
           this.stepSys = ret.steps;
           //上传步数
           this.apiuploadStpes(ret.steps);
@@ -302,8 +325,10 @@
         },
         fail: (data, code) => {
           console.log(`步数计数器订阅失败, code = ${code}`);
+          this.isShow = false;
         }
       });
+
     },
 
     //获取用户设定的今日目标
@@ -342,10 +367,9 @@
       storage.get({
         key: this.userDetailsKey,
         success: function (ret) {
-          console.log('用户详情获取成功:', ret);
+          console.log('用户设定详情获取成功:', ret);
           if (ret && ret.trim()) {
             const userDetails = JSON.parse(ret)
-
             // 更新各个属性
             that.body_weight = Number(userDetails.body_weight) || that.body_weight; // 确保转换为数字类型
             that.body_height = Number(userDetails.body_height) || that.body_height; // 确保转换为数字类型
@@ -390,33 +414,24 @@
       var that = this;
       console.log(`更新步数进度！今日云步数=${that.stepsDayApi}`)
 
-
       // 对应页面的显示步数
       const service_step = [that.stepsDayApi, that.stepsWeekApi, that.stepsMoonApi];
       // 当前显示步数
       const currentsStep = service_step[that.currentPage];
 
-
-
-
       // 定义不同页面对应的目标步数
       const goals = [that.goal_day, that.goal_day * 7, that.goal_day * 30];
       // 对应页面的目标步数
       const currentGoal = goals[that.currentPage];
-
-
       // 计算步数比例
       const stepRatio = currentsStep / currentGoal;
-
       // 计算进度值并更新
       this.progress = Math.min(stepRatio * 100, 100) * 0.66;//乘0.66的原因为进度环最大角度为260度，即三分之二圆
-
 
       this.steps_view = currentsStep;
       this.segmentsText = that.segmentsTexts[that.currentPage]
 
       console.log(`目前${that.segmentsText}进度 = ${Math.min(stepRatio * 100, 100).toFixed(1)}%`);
-
 
       this.updateMileageAndCalories()//更新卡路里，里程
     },
@@ -425,25 +440,36 @@
     //更新卡路里，里程
     updateMileageAndCalories() {
       var that = this;
-      //更新里程
-      this.mileage = ((that.steps_view * 0.6) / 1000).toFixed(2);
-      // 计算卡路里消耗，并只显示一位小数
-      this.calories = (0.0175 * that.body_weight * that.steps_view).toFixed(1);
+
+      if (this.body_weight <= 0 || this.body_weight === '-') {
+        this.calories = "0.0"
+      } else {
+        //更新里程
+        this.mileage = ((that.steps_view * 0.6) / 1000).toFixed(2);
+        // 计算卡路里消耗，并只显示一位小数
+        this.calories = (0.0175 * that.body_weight * that.steps_view).toFixed(1);
+      }
     },
 
 
     //更新BMI 体脂率
     updateBMITzl() {
-      const bmi = (this.body_weight / (this.body_height * 0.01) ** 2).toFixed(1);
-      const param1 = (1.2 * bmi);
-      const param2 = this.age * 0.23;
-      const param3 = 5.4 + (10.8 * this.sex);
+      if (this.body_weight <= 0 || this.body_height <= 0 || this.age <= 0 || this.body_weight === '-' || this.body_height === '-' || this.age === '-') {
+        this.tzl = "---"
+        this.bmi = "---"
+      } else {
+        const bmi = (this.body_weight / (this.body_height * 0.01) ** 2).toFixed(1);
+        const param1 = 1.2 * parseFloat(bmi);
+        const param2 = this.age * 0.23;
+        const param3 = 5.4 + (10.8 * this.sex);
 
-
-      this.tzl = (param1 + param2 - param3).toFixed(1);
-      this.bmi = bmi;
-
+        this.tzl = parseFloat((param1 + param2 - param3).toFixed(1)) + "%";
+        this.bmi = bmi;
+      }
+      //更新了体重，需要更新卡路里
+      this.updateMileageAndCalories()
     },
+
 
     //打开基本情况窗口
     openBasicInformationDialog() {
@@ -459,6 +485,9 @@
 
     //打开设定目标步数窗口
     openSetStepsDialog() {
+
+      this.getTreatyStorage()
+
       console.log(`打开设定目标步数窗口`);
 
       this.open1 = true
@@ -508,6 +537,9 @@
 
     //切换天，周，月页面
     changeTabactive: function (e) {
+
+      if (this.currentPage !== -1) { this.getTreatyStorage() }//未点击时不询问
+
       console.log(e.index)
       this.currentPage = e.index;
 

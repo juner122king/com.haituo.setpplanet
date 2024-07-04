@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@types/quickapp": "npm:quickapp-interface@^1.0.0",
+    "cross-env": "^7.0.2",
+    "fa-toolkit": "^14.0.1-Stable.300"
+  },
+  "browserslist": [
+    "chrome 65"
+  ],
+  "scripts": {
+    "fa-build": "node node_modules/webpack/bin/webpack.js --config ./node_modules/fa-toolkit/webpack.config.js",
+    "fa-watch": "node node_modules/webpack/bin/webpack.js --watch --config ./node_modules/fa-toolkit/webpack.config.js",
+    "fa-release": "node ./node_modules/cross-env/src/bin/cross-env.js uglifyjs=true sign=release node_modules/webpack/bin/webpack.js --config ./node_modules/fa-toolkit/webpack.config.js"
+  }
+}

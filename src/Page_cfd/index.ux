@@ -1,0 +1,219 @@
+<import name="native-ad" src="../ad/nativeAD"></import>
+<template>
+  <div class="container">
+    <div style="justify-content: center; align-items: center; position: absolute; top: 72px; height: 80px; width: 100%" onclick="back">
+      <image style="position: absolute; left: 20px; margin-left: 10px; width: 28px; height: 34px" src="/Common/img/back.png"></image>
+      <text style="font-size: 35px; color: #000000; margin-left: -10px">计步星球</text>
+    </div>
+
+    <stack class="daliy">
+      <image style="position: absolute; top: 0; right: 0; bottom: 0; width: 134px; height: 52px" src="/Common/img/ad/icon_cs.png"></image>
+      <text>
+        <span style="color: #000000; font-weight: bold">{{ receivedCount === 0 ? '今日次数已用完' : '今日免费：' }}</span>
+        <span if="{{receivedCount > 0}}" style="color: #fff; font-weight: bold">{{receivedCount}}次</span>
+      </text>
+    </stack>
+
+    <div style="position: absolute; width: 282px; height: 282px; top: 800px; left: 250px" onclick="openad"></div>
+
+    <div class="btm_view">
+      <div for="{{quotaList}}" data-item="{{item}}">
+        <stack class="item-div">
+          <text class="item-div-text">{{$item.title}}</text>
+          <image if="{{$item.id===1}}" style="margin-top: 20px; width: 150px; height: 150px" src="/Common/img/ad/icon_fd.png"></image>
+        </stack>
+      </div>
+    </div>
+
+    <native-ad if="{{showDialog}}" onemit-evt="emitEvt"></native-ad>
+    ·
+
+    <stack class="coner" if="{{showDialog2}}">
+      <div style="width: 672px; height: 800px; background-image: url(/Common/img/ad/bg_coner.png)">
+        <image class="closeImg" src="/Common/img/ad/icon_x.png" onclick="close"></image>
+      </div>
+      <image style="width: 575px; height: 177px; margin-top: 500px" src="/Common/img/ad/bg_but.png" onclick="close"></image>
+    </stack>
+    <image class="image_finger" onclick="openad"></image>
+  </div>
+</template>
+<style>
+  .container {
+    align-items: center;
+    flex-direction: column;
+    background-image: url(/Common/img/ad/bg_chb.png);
+    background-repeat: no-repeat;
+    margin-top: 1px;
+  }
+  .coner {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+  }
+  .daliy {
+    justify-content: space-around;
+    margin-top: 500px;
+    width: 258px;
+    height: 50px;
+    background: linear-gradient(90deg, #e9fd65, #95ff37 100%);
+    border-radius: 154px;
+  }
+
+  .closeImg {
+    margin-bottom: 30px;
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 30px;
+    right: 0px;
+  }
+  .image_finger {
+    width: 222px;
+    height: 222px;
+    margin-top: 400px;
+    margin-left: 230px;
+    background-image: url(/Common/img/ad/icon_sz.png);
+    animation-name: float;
+    animation-duration: 1500ms;
+    animation-iteration-count: infinite;
+  }
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-60px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+    0% {
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(-60px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
+  }
+  .btm_view {
+    width: 100%;
+    height: 500px;
+    position: absolute;
+    bottom: 100px;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .item-div {
+    justify-content: center;
+    height: 172px;
+    width: 162px;
+    background-image: url(/Common/img/ad/icon_hbbg.png);
+  }
+  .item-div-text {
+    color: #d30009;
+    font-size: 60px;
+    font-weight: bold;
+    margin-top: -40px;
+  }
+</style>
+<script>
+
+  module.exports = {
+    private: {
+      quotaList: [
+        {
+          title: '',
+          id: 1,
+        },
+        {
+          title: 0.1,
+          id: 2,
+        },
+        {
+          title: 0.5,
+          id: 3,
+        },
+        {
+          title: 1,
+          id: 4,
+        },
+      ],
+      showDialog: false,
+      showDialog2: false,//次数已用完窗口
+      receivedCount: 8,//剩余次数
+
+    },
+    async onReady(options) {
+      this.getAdCount(this.$app.$def.dataApp.nativeAdUnitId)//原生广告位，判断获取次数
+
+      const storageFlag = await $processData.getStorage("_PRIVAC");
+      if (storageFlag) {
+        //显示banner 广告高度，底部缩进
+        $utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 0)
+      } else {   //未授权，弹出授权询问
+        console.log('用户授权= ', storageFlag);
+        console.log('未授权,不加载广告');
+      }
+
+
+    },
+    onShow(options) {
+      $umeng_stat.resume(this)
+    },
+    onHide() {
+      $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
+    },
+    //获取每日次数
+    getAdCount(adUnitId) {
+
+      $apis.example.getAdCount({
+        adId: adUnitId,
+        channel: ''
+      }).then((res) => {
+        console.log('获取每日次数', res);
+        this.countT(res.data)
+      })
+    },
+    openad() {
+      console.info("点击了扯");
+      if (this.receivedCount > 0) {
+
+        this.showDialog = true
+        $utils.hideBanerAd()
+
+      } else {
+        this.showDialog2 = true;
+      }
+    },
+    emitEvt(evt) {
+      console.log('拆福袋回调:emitEvt(evt)');
+      this.showDialog = false
+      this.countT(evt.detail.count)
+      $utils.viewBanner()
+    },
+    countT(c) {
+      this.receivedCount = Math.min(8, Math.max(0, 8 - c));//
+    },
+    close: function () {
+      this.showDialog2 = false;
+      this.back()
+    },
+    onDestroy() {
+      $utils.destroyBanner();
+    },
+
+    back() {
+      $router.back();
+    }
+
+
+  }
+</script>

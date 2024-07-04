@@ -1,0 +1,63 @@
+<template>
+  <!-- Only one root node is allowed in template. -->
+  <div class="permissions">
+    <div class="function-item" @click="goPremissiions">
+      <div class="left">
+        <image src="/Common/img/photoAlbum.png"></image>
+        <text class="txt">权限管理</text>
+      </div>
+      <div class="right">
+        <image src="/Common/img/go.png"></image>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<script>
+  module.exports = {
+    onInit() {
+      this.$page.setTitleBar({ text: '设置' })
+    },
+    private: {
+      title: 'World'
+    },
+    goPremissiions: function () {
+      $router.push({
+        uri: "hap://settings/permission_manager"
+      })
+    }
+  }
+</script>
+
+<style lang="less">
+  .permissions {
+    flex-direction: column;
+    padding: 32px 32px;
+  
+    .function-item {
+      justify-content: space-between;
+      align-items: center;
+      .left {
+        image {
+          width: 96px;
+          height: 96px;
+        }
+        .txt {
+          font-size: 28px;
+          font-weight: 500;
+          color: #1a1a1a;
+          line-height: 40px;
+          margin-left: 20px;
+        }
+      }
+
+      .right {
+        image {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+  }
+</style>

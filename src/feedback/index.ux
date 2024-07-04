@@ -1,0 +1,115 @@
+<template>
+  <div class="feedback-page">
+    <div class="feedback-top">
+      <image src="/Common/img/service.png"></image>
+      <div class="right">
+        <text class="txt">快应用投诉热线</text>
+        <text class="phone">400-888-8888</text>
+      </div>
+    </div>
+
+    <div class="cause">
+      <div class="title"><text >选择投诉原因</text></div>
+      <div class="selector-list">
+        <div class="selector-item {{selectTagData.id === $item.id ?'a-selector-item':''}}" @click="changeCheckedNum($item)" for="{{tagList}}"><text >{{$item.tag}}</text></div>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="title"><text >问题描述</text></div>
+      <div class="content">
+        <textarea model:value="{{txt}}" class="txt" @change="changeTxt" placeholder="请填写10字以上的详细描述,以便我们提供更好的服务和帮助..." maxlength="300"></textarea>
+      </div>
+      <div class="bottom">
+        <text>已输入{{txt.length>=300?300:txt.length}}/300</text>
+      </div>
+    </div>
+
+    <div class="contactWay">
+      <div class="title">
+        <text>联系方式</text>
+      </div>
+      <div class="content">
+        <input placeholder="请输入您的手机号码/邮箱" model:value="{{phone}}" class="ipt" />
+      </div>
+    </div>
+
+    <div class="submit" @click="submit">
+      <text class="txt">提交投诉</text>
+    </div>
+  </div>
+</template>
+
+<style lang="less">
+  @import "./index.less";
+</style>
+<script>
+  module.exports = {
+      onInit() {
+            this.$page.setTitleBar({ text: '举报反馈' })
+        },
+    private: {
+      txt: "",
+      selectTagData: {
+        id: 1,
+        tag: '广告太多'
+      },
+      phone: "",
+      tagList: [
+        {
+          id: 1,
+          tag: '广告太多'
+        }, {
+          id: 2,
+          tag: '无法正常使用'
+        }, {
+          id: 3,
+          tag: '其他问题'
+        },
+      ]
+    },
+    changeTxt: function (e) {
+      this.txt = e.value
+    },
+    changeCheckedNum: function (e) {
+      console.log(e, '查看数据');
+      this.selectTagData = e
+    },
+    submit: function () {
+      if (!this.phone) {
+        $prompt.showToast({
+          message: "请填写联系方式",
+          gravity: 'center'
+        })
+        return
+      }
+      if (this.txt.length < 10) {
+        $prompt.showToast({
+          message: "描述字数不足",
+          gravity: 'center'
+        })
+        return
+      }
+      const param = {
+        tag: this.selectTagData.tag,
+        content: this.txt,
+        contactPhone: this.phone
+      }
+      console.log('查看提交数据', param);
+
+
+      $apis.user.postUserFeedback({
+        ...param
+      }).then((res) => {
+        $prompt.showToast({
+          message: "提交成功",
+          gravity: 'center'
+        })
+        this.selectTagData = this.tagList[0];
+        this.phone = '';
+        this.txt = ''
+
+      })
+    }
+  }
+</script>

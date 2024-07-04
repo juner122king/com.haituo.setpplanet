@@ -1,0 +1,288 @@
+<template>
+  <div class="item-container">
+    <image style="width: 528px; height: 708px" src="/Common/img/ad/icon_gx.png"></image>
+    <image style="width: 340px; height: 94px" src="/Common/img/ad/bt_cpd.png" onclick="completeAdRSA"></image>
+    <div if="native.isShow" class="container">
+      <image class="closeImg" src="/Common/img/ad/icon_x.png" onclick="closeAd"></image>
+      <video id="video" if="native.isShowVideo" src="{{native.adVideoSrc}}" autoplay="true" onclick="reportNativeClick()" class="ad-video"></video>
+      <stack class="stackstyle" onclick="reportNativeClick()">
+        <image if="native.isShowImg" class="img" src="{{native.adImgSrc}}"></image>
+        <ad-button class="adbtn" onclick="startButton()" valuetype="0" adunitid="{{native.adUnitId}}" adid="{{native.adData.adId}}"></ad-button>
+        <text class="adsource">{{ native.adData.source }} 广告</text>
+        <text class="adtitle">{{ native.adData.title }}</text>
+      </stack>
+    </div>
+  </div>
+</template>
+<style>
+  .item-container {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  .container {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .stackstyle {
+    width: 540px;
+    height: 306px;
+    align-items: flex-end;
+  }
+  .img {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+  }
+  .closeImg {
+    margin-bottom: 30px;
+    width: 48px;
+    height: 48px;
+  }
+  .alert {
+    font-size: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .ad-video {
+    width: 100%;
+    height: 415px;
+  }
+  .btn {
+    height: 80px;
+    width: 60%;
+    background-color: #00bfff;
+    color: #ffffff;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .btn:active {
+    background-color: #058fbd;
+  }
+  .adbtn {
+    width: 200px;
+    height: 50px;
+    color: #ffffff;
+    background-color: #00bfff;
+    border-radius: 8px;
+    position: absolute;
+    align-self: flex-end;
+    bottom: 20px;
+    right: 20px;
+  }
+  .adbtn:active {
+    background-color: #058fbd;
+  }
+  .adsource {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    color: #ffffff;
+    position: absolute;
+    top: 0;
+    font-size: 18px;
+    border-top-left-radius: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .adtitle {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    color: #ffffff;
+    font-size: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom-left-radius: 20px;
+  }
+</style>
+<script>
+  let nativeAd;
+  module.exports = {
+    data: {
+      componentName: "ad",
+      provider: "",
+      native: {
+        adUnitId: "",
+        isShow: false,
+        adData: {},
+        isShowImg: true,
+        isShowVideo: true,
+        isShowData: true,
+        errStr: "",
+        btnTxt: "",
+        adImgSrc: "",
+        adVideoSrc: ""
+      }
+
+    },
+    onInit() {
+
+      this.native.adUnitId = this.$app.$def.dataApp.nativeAdUnitId;
+
+    },
+    async onReady(options) {
+      console.info("native ad onReady");
+
+      const storageFlag = await $processData.getStorage("_PRIVAC");
+      if (storageFlag) {
+        this.showNativeAd();
+      } else {   //未授权，弹出授权询问
+        console.log('用户授权= ', storageFlag);
+        console.log('未授权,不加载原生广告');
+      }
+
+    },
+    onShow(options) {
+      if (this.native.isShow) {
+        this.reportNativeShow();
+      }
+    },
+    getAdProvider: function () {
+      this.provider = $ad.getProvider();
+
+    },
+    isDownloadAd(creativeType) {
+      let downloadTypes = [103, 106, 107, 108, 101, 102, 110];
+      return downloadTypes.includes(creativeType);
+    },
+    showNativeAd() {
+      var that = this;
+      this.getAdProvider();
+      if (this.provider !== "huawei") {
+        console.info("the device  does not support ad.");
+        return;
+      }
+      nativeAd = $ad.createNativeAd({ adUnitId: this.native.adUnitId });
+      nativeAd.onLoad(data => {
+        console.info("ad data loaded: " + JSON.stringify(data));
+        this.native.adData = data.adList[0];
+        if (this.native.adData) {
+          if (this.native.adData.imgUrlList) {
+            this.native.adImgSrc = this.native.adData.imgUrlList[0];
+            console.info(" this.native.adImgSrc =" + this.native.adImgSrc);
+            this.native.isShowImg = true;
+          } else {
+            this.native.isShowImg = false;
+            this.native.adImgSrc = "";
+          }
+          if (this.native.adData.clickBtnTxt) {
+            this.native.btnTxt = this.native.adData.clickBtnTxt;
+          } else {
+            this.native.btnTxt = "";
+          }
+          if (this.native.adData.videoUrlList && this.native.adData.videoUrlList[0]) {
+            this.native.adVideoSrc = this.native.adData.videoUrlList[0];
+            this.native.isShowVideo = true;
+          } else {
+            this.native.isShowVideo = false;
+            this.native.adVideoSrc = "";
+          }
+          this.native.isShow = true;
+          this.native.errStr = "";
+          this.reportNativeShow();
+        }
+      });
+      nativeAd.onError(e => {
+        console.error("load ad error:" + JSON.stringify(e));
+        this.native.isShowImg = false;
+        this.native.isShowVideo = false;
+        this.native.isShow = false;
+        this.native.errStr = JSON.stringify(e);
+      });
+      nativeAd.load();
+    },
+    reportNativeShow() {
+      if (nativeAd) {
+        nativeAd.reportAdShow({ adId: this.native.adData.adId });
+      }
+    },
+    reportNativeClick() {
+      console.info(" 原生广告被点击了" );
+      nativeAd.reportAdClick({
+        adId: this.native.adData.adId
+      });
+
+      //转化上传
+      $utils.getConvertUpload()
+      
+    },
+    listenNativeAdDownloadStatus(downloadstatus) {
+      if (downloadstatus === "INSTALLED") {
+        this.native.btnTxt = "OPEN";
+      }
+    },
+    startButton(event) {
+      console.error('start download result is = ', event.resultCode)
+    },
+    removeAdListen: function () {
+      if (nativeAd) {
+        nativeAd.offDownloadProgress();
+        nativeAd.offError(() => {
+          console.log("nativeAd offError");
+        });
+        nativeAd.offLoad(() => {
+          console.log("nativeAd offLoad");
+        });
+        nativeAd.offStatusChanged();
+      }
+    },
+    onDestroy() {
+      if (nativeAd) {
+        nativeAd.destroy();
+      }
+    },
+    closeAd: function () {
+      this.native.isShow = false;
+    },
+
+    completeAdRSA() {
+      console.log('点击拆福袋');
+
+      var adType = 'NATIVE'
+      var adId = this.native.adUnitId
+      var channel = ''
+
+      // 构建参数对象
+      const params = {
+        adType,
+        adId,
+        channel,
+      };
+
+      $apis.example.completeAdRSA(params).then((res) => {
+        this.$emit('emitEvt', {
+          count: res.data.count
+        })
+        console.log(`完成广告----------> 完成次数：${res.data.count} 当次奖励：${res.data.awardAmount}`);
+        var mes = ''
+        if (res.data.awardAmount) {
+          mes = '恭喜获得0.01元红包'
+        } else {
+          if (res.data.count > 8) {
+            mes = '今天活动次数已用完'
+          } else {
+            mes = '再来一次'
+          }
+        }
+        $prompt.showToast({
+          message: mes,
+          gravity: 'center'
+        })
+      }).catch(err => {
+        console.log(err, '点击拆福袋错误');
+        $prompt.showToast({
+          message: JSON.parse(err).message,
+          gravity: 'center'
+        });
+      });
+    }
+
+
+  };
+</script>
