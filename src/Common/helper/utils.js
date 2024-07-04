@@ -65,7 +65,10 @@ const getConvertUpload = async () => {
   const userAdConvertUploadReq = {
     deviceId: deviceNum,
     conversionType:'browse',
-    channelValue:''
+    channelValue:'-1',
+    contentId:'-1',
+    adgroupId:'-1',
+    campaignId:'-1'
   }
   console.log('执行广告转化上传', userAdConvertUploadReq, "type: " + type);
   example.convertUpload(userAdConvertUploadReq, type).then(data => {

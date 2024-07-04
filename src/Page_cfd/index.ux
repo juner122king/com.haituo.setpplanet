@@ -211,7 +211,10 @@
     },
 
     back() {
-      $router.back();
+      // $router.back();
+      $router.push({
+        uri: 'Page_MainTab'
+      });
     }
 
 

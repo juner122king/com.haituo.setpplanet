@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.0.5",
-  "versionCode": 5,
+  "versionName": "1.0.6",
+  "versionCode": 6,
   "icon": "/Common/img/logo.png",
   "minPlatformVersion": 1100,
   "features": [
@@ -52,6 +52,7 @@
     "entry": "Page_MainTab",
     "pages": {
       "Page_MainTab": {
+        "launchMode": "singleTask",
         "component": "index"
       },
       "Page_Tixian": {
@@ -110,5 +111,6 @@
       }
     }
   },
-  "versionType": "release"
+  "versionType": "debug",
+  "debugable": true
 }
