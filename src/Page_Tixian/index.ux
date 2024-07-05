@@ -137,28 +137,18 @@
 
     },
 
-    async onInit() {
-
-      const storageFlag = await $processData.getStorage("_PRIVAC");
-      if (storageFlag) {
-        //插屏广告
-        $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId)
-      }else {   //未授权，弹出授权询问
-        console.log('用户授权= ', storageFlag);
-        console.log('未授权,不加载插屏广告');
-      }
+    onInit: function (e) {
+      //插屏广告
+      $utils.tablePlaque()
     },
     onShow(options) {
-
       $umeng_stat.resume(this)
-      console.log('提现 onShow()----------------->');
       this.getUser();
     },
 
     onHide() {
       $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
     },
-
 
     getUser() {
       $apis.user.getUserInfo().then((res) => {

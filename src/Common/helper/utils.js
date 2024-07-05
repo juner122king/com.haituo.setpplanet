@@ -50,48 +50,89 @@ const getUserId = async () => {
 };
 
 
-//获取匿名设备标识符，建议只在广告的场景使用
-const getOAID = async () => {
-  let ret = await $device.getOAID()
-  return ret.data.oaid;
-};
-
-//执行广告转化上传
-const getConvertUpload = async () => {
-  const type = 'jh'
-  const deviceNum = await getOAID();
-  const example = require('./apis/example.js').default;
-
-  const userAdConvertUploadReq = {
-    deviceId: deviceNum,
-    conversionType:'browse',
-    channelValue:'-1',
-    contentId:'-1',
-    adgroupId:'-1',
-    campaignId:'-1'
+/**
+ * 转化上传
+ * @param {*} that 所在this 
+ */
+function getConvertUpload() {
+  let param = {
+    ...getApp().$def.dataApp.actiParam
   }
-  console.log('执行广告转化上传', userAdConvertUploadReq, "type: " + type);
-  example.convertUpload(userAdConvertUploadReq, type).then(data => {
-    console.log('广告转化上传成功 data: ', data);
+  console.log('getConvertUpload() 转化参数param= ', param)
+  if (!param.oaid) {
+    return
+  }
+  for (const key in param) {
+    param[key] = param[key].replace(/\/$/, "");
+  }
+  const convertedParam = convertKeysToCamelCase(param);
+  console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
+  $apis.example.convertUpload({
+    ...convertedParam,
+    deviceId: convertedParam.oaid,
+    type: convertedParam.type || 'jh'
+  }).then((res) => {
+    console.log(res, '转换成功');
 
-  }).catch(err => {
-    console.log(err, '失败回调');
+  }).catch((err) => {
+    console.log(err, '转换失败');
   })
+}
 
-};
+function toCamelCase(str) {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+function convertKeysToCamelCase(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(v => convertKeysToCamelCase(v));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((result, key) => {
+      const camelCaseKey = toCamelCase(key);
+      result[camelCaseKey] = convertKeysToCamelCase(obj[key]);
+      return result;
+    }, {});
+  }
+  return obj;
+}
+
+
+
+/**
+* 保存广告回传参数   router.push(OBJECT)  例：@param {Object} e='hap://app/com.company.app/index?param1=value1'
+*/
+const saveHapUri = (e) => {
+  console.log('saveHapUri() 转化参数e= ', e)
+
+  const { channelValue = '', oaid = '' } = e
+  if (oaid) {
+    getApp().$def.dataApp.actiParam = {
+      ...e
+    }
+  }
+}
 
 /**
 * 插屏广告 
 */
 
-const tablePlaque = (id) => {
+const tablePlaque = async () => {
+
+  const storageFlag = await $processData.getStorage("_PRIVAC");
+  if (!storageFlag) {
+    //未授权，弹出授权询问
+    console.log('用户授权= ', storageFlag);
+    console.log('未授权,不加载插屏广告');
+    return
+  }
+
   let Provider = $ad.getProvider();
   if (!Provider) {
-    console.log('没有广告返回');
+    console.log('没有广告商');
     return
   }
   let interstitialAd = $ad.createInterstitialAd({
-    adUnitId: id
+    adUnitId: getApp().$def.dataApp.interstitialAdUnitId
   })
 
   interstitialAd.load().then((res) => {
@@ -117,7 +158,15 @@ const tablePlaque = (id) => {
 * banner广告  margin_bot底部缩进  
 */
 
-let bannerAd; const showBannerAd = (adid, margin_bot) => {
+let bannerAd; const showBannerAd = async (margin_bot) => {
+
+  const storageFlag = await $processData.getStorage("_PRIVAC");
+  if (!storageFlag) {
+    //未授权，弹出授权询问
+    console.log('用户授权= ', storageFlag);
+    console.log('未授权,不加载banner广告');
+    return
+  }
 
   let Provider = $ad.getProvider();
   if (!Provider) {
@@ -125,7 +174,7 @@ let bannerAd; const showBannerAd = (adid, margin_bot) => {
     return
   }
   var d = $device.getInfoSync();
-  console.info("calBannerPostion1 d= " + JSON.stringify(d));
+  console.info("banner广告-设备信息 " + JSON.stringify(d));
 
   let height = 57;
   //获取页面内可见窗口的高度和宽度，此值不包括标题栏和状态栏高度
@@ -148,7 +197,7 @@ let bannerAd; const showBannerAd = (adid, margin_bot) => {
   let top = logicWebTop === 0 ? 1230 : logicWebTop;
   console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
 
-  console.info("banner广告位=" + adid);
+
 
   const style = {
     left: 0,
@@ -157,7 +206,8 @@ let bannerAd; const showBannerAd = (adid, margin_bot) => {
     height: height
   }
 
-
+  let adid = getApp().$def.dataApp.bannerAdUnitId
+  console.info("banner广告位=" + adid);
   bannerAd = $ad.createBannerAd({
     adUnitId: adid,//banner广告位
     style: style,
@@ -256,4 +306,5 @@ export default {
   hideBanerAd,
   viewBanner,
   destroyBanner,
+  saveHapUri
 }

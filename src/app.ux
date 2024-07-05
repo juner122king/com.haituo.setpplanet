@@ -39,8 +39,6 @@
       console.info('Application onDestroy');
 
 
-      //退app插屏广告
-      // $utils.tablePlaque(this.dataApp.interstitialAdUnitId)
     },
     dataApp: {
 
@@ -55,10 +53,12 @@
       interstitialAdUnitId: "a7nvl7fm00",//插屏广告位id
       //保存用户信息对象
       userData: {
-        loginPhone: '', 
+        loginPhone: '',
         userId: '',
         balance: 0,
       },
+
+      actiParam: ''
 
     }
 

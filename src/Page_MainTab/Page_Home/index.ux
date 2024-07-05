@@ -237,9 +237,7 @@
     private: {
 
 
-      url1: '',
-      url2: '',
-
+ 
       componentData: {},
       goalDayKey: "GOAL_DAY",
       userDetailsKey: "UserDetails",
@@ -288,8 +286,6 @@
     //
     async onInit() {
       console.log("onInit()")
-      this.url1 = this.$app.$def.dataApp.url2;
-      this.url2 = this.$app.$def.dataApp.url3;
 
       this.getGoalDaySteps();// Step1
       this.getUserDetails();

@@ -91,11 +91,11 @@ const completeAdRSA = async (data) => {
 
 
 //广告转化上传   type:广告渠道类型: jh(鲸鸿), ks(快手), jl(巨量), ,可用值:jh,ks,jl
-const convertUpload = (data, type) => {
-    console.log('data= ', data, `   url= /qa/mini/basic/ad/convert/upload/${type}`);
+const convertUpload = (data) => {
+    console.log('data= ', data, `   url= /qa/mini/basic/ad/convert/upload/${data.type}`);
     return request({
         method: "POST",
-        url: `/qa/mini/basic/ad/convert/upload/${type}`,
+        url: `/qa/mini/basic/ad/convert/upload/${data.type}`,
         data
     });
 }

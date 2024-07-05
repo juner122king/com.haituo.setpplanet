@@ -1,4 +1,3 @@
-
 <template>
   <div class="container">
     <div class="top_view">
@@ -68,9 +67,6 @@
         </div>
       </div>
     </div>
-
-
-
   </div>
 </template>
 
@@ -158,6 +154,8 @@
       $router.push({
         uri: 'Page_Tixian'
       });
+
+
     },
     pushPageabout() {
       $router.push({
@@ -184,8 +182,12 @@
 
     openAd() {
       $router.push({
-        uri: 'Page_cfd'
+        uri: 'Page_cfd/'
       });
+
+      // $router.push({
+      //   uri: "hap://app/com.haituo.setpplanet/Page_cfd/?content_id=-1&adgroup_id=-1&campaign_id=-1&callback=45079911%26-1%261452791613074987520%262024-07-05%2014%3A14%3A03%26rCMJoyTdgq2D7EMHQ7FHvDqMyXres9fOf7lXj1WSSKtyES2YU4m7QDsh80zoiP0%3D%260&referrer=-1&channel=-1&ip=127.0.0.1&oaid=20e39575-f2c5-436c-949c-76776e5dbc66/"
+      // });
     },
     addDesktop: function () {
       console.log('添加桌面');
