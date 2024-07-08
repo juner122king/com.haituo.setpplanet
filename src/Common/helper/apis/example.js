@@ -92,11 +92,29 @@ const completeAdRSA = async (data) => {
 
 //广告转化上传   type:广告渠道类型: jh(鲸鸿), ks(快手), jl(巨量), ,可用值:jh,ks,jl
 const convertUpload = (data) => {
-    console.log('data= ', data, `   url= /qa/mini/basic/ad/convert/upload/${data.type}`);
+    console.log('data= ', data, `url= /qa/mini/basic/ad/convert/upload/${data.type}`);
     return request({
         method: "POST",
         url: `/qa/mini/basic/ad/convert/upload/${data.type}`,
         data
+    });
+}
+
+//获取手势返回配置信息
+const bolckReturn = () => {
+    let brand = getApp().$def.dataApp.brand
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/clickControl/return/info/${brand}`
+    });
+}
+
+//获取页面透明层配置信息
+const showTclayer = () => {
+    let brand = getApp().$def.dataApp.brand
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/clickControl/transparentLayer/info/${brand}`
     });
 }
 
@@ -111,5 +129,7 @@ export default {
     getAdCount,
     completeAd,
     completeAdRSA,
-    convertUpload
+    convertUpload,
+    bolckReturn,
+    showTclayer
 };

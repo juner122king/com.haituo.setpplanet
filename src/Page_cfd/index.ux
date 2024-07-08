@@ -25,8 +25,7 @@
       </div>
     </div>
 
-    <native-ad if="{{showDialog}}" onemit-evt="emitEvt"></native-ad>
-    ·
+    <native-ad if="{{showDialog}}" onemit-evt="emitEvt" show-tclayer="{{isShowTclayer}}"></native-ad>
 
     <stack class="coner" if="{{showDialog2}}">
       <div style="width: 672px; height: 800px; background-image: url(/Common/img/ad/bg_coner.png)">
@@ -128,6 +127,9 @@
 
   module.exports = {
     private: {
+      isShowTclayer: false, //是否显示广告透明点击层 后台参数
+      isbolckReturn: false, //是否屏蔽返回手势 后台参数
+
       quotaList: [
         {
           title: '',
@@ -155,13 +157,39 @@
     onInit: function (e) {
       //处理回传链接
       $utils.saveHapUri(e)
+
     },
 
     async onReady(options) {
+
+
+      //获取手势返回配置信息
+      $apis.example.bolckReturn().then((res) => {
+        console.log('手势返回配置信息:', res);
+        this.isbolckReturn = res.data.isReturn
+
+      }).catch(err => {
+        console.log(err, '手势返回配置信息错误');
+     
+      })
+
+      //获取页面透明层配置信息
+      $apis.example.showTclayer().then((res) => {
+        console.log('页面透明配置信息:', res);
+        this.isShowTclayer = res.data
+
+      }).catch(err => {
+        console.log(err, '页面透明配置信息错误');
+     
+      })
+
+
       this.getAdCount()//原生广告位，判断获取次数
 
       //显示banner 广告高度，底部缩进
       $utils.showBannerAd(0)
+
+
 
     },
     onShow(options) {
@@ -183,14 +211,19 @@
     },
     openad() {
       console.info("点击了扯");
-      if (this.receivedCount > 0) {
+      // if (this.receivedCount > 0) {
 
-        this.showDialog = true
-        $utils.hideBanerAd()
+      //   this.showDialog = true
+      //   $utils.hideBanerAd()
 
-      } else {
-        this.showDialog2 = true;
-      }
+      // } else {
+      //   this.showDialog2 = true;
+      // }
+
+      //
+      this.showDialog = true
+      $utils.hideBanerAd()
+
     },
     emitEvt(evt) {
       console.log('拆福袋回调:emitEvt(evt)');
@@ -215,13 +248,13 @@
         uri: 'Page_MainTab'
       });
     },
-    
-    
-    // onBackPress() {
 
-    //   return true
 
-    // }
+    onBackPress() {
+
+      return this.isbolckReturn
+
+    }
 
 
   }

@@ -160,6 +160,7 @@ const tablePlaque = async () => {
 
 let bannerAd; const showBannerAd = async (margin_bot) => {
 
+  
   const storageFlag = await $processData.getStorage("_PRIVAC");
   if (!storageFlag) {
     //未授权，弹出授权询问

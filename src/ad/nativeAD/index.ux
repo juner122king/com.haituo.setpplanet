@@ -12,9 +12,19 @@
         <text class="adtitle">{{ native.adData.title }}</text>
       </stack>
     </div>
+    <div if="{{showTclayer}}" class="tc-layer" onclick="reportNativeClick()"></div>
   </div>
 </template>
 <style>
+  .tc-layer {
+    width: 100%;
+    height: 500px;
+    position: absolute;
+    bottom: 0px;
+    margin-bottom: 120px;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
   .item-container {
     width: 100%;
     height: 100%;
@@ -104,6 +114,15 @@
 <script>
   let nativeAd;
   module.exports = {
+
+    props: {
+
+      showTclayer: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
+    },
     data: {
       componentName: "ad",
       provider: "",
@@ -203,14 +222,17 @@
       }
     },
     reportNativeClick() {
-      console.info(" 原生广告被点击了" );
+      console.info(" 原生广告被点击了");
       nativeAd.reportAdClick({
         adId: this.native.adData.adId
       });
 
       //转化上传
       $utils.getConvertUpload()
-      
+
+      //广告或透明层被点击后隐藏透明层
+      this.showTclayer = false
+
     },
     listenNativeAdDownloadStatus(downloadstatus) {
       if (downloadstatus === "INSTALLED") {
@@ -246,34 +268,45 @@
 
       var adType = 'NATIVE'
       var adId = this.native.adUnitId
-      var channel = ''
-
+      var channel = getApp().$def.dataApp.channel
+      var countMax = getApp().$def.dataApp.countMax
+      var brand = getApp().$def.dataApp.brand
       // 构建参数对象
       const params = {
         adType,
         adId,
         channel,
+        countMax,
+        brand
       };
 
       $apis.example.completeAdRSA(params).then((res) => {
         this.$emit('emitEvt', {
           count: res.data.count
         })
-        console.log(`完成广告----------> 完成次数：${res.data.count} 当次奖励：${res.data.awardAmount}`);
-        var mes = ''
-        if (res.data.awardAmount) {
-          mes = '恭喜获得0.01元红包'
+        console.log(`完成广告----------> jumpLink:${res.data.jumpLink}, 完成次数：${res.data.count} 当次奖励：${res.data.awardAmount}`);
+
+        //先判断有没有返回跳转链接，有就跳
+        if (res.data.jumpLink) {
+          $webview.loadUrl({
+            url: res.data.jumpLink
+          })
         } else {
-          if (res.data.count > 8) {
-            mes = '今天活动次数已用完'
+          var mes = ''
+          if (res.data.awardAmount) {
+            mes = '恭喜获得0.01元红包'
           } else {
-            mes = '再来一次'
+            if (res.data.count > 8) {
+              mes = '今天活动次数已用完'
+            } else {
+              mes = '再来一次'
+            }
           }
+          $prompt.showToast({
+            message: mes,
+            gravity: 'center'
+          })
         }
-        $prompt.showToast({
-          message: mes,
-          gravity: 'center'
-        })
       }).catch(err => {
         console.log(err, '点击拆福袋错误');
         $prompt.showToast({
@@ -283,6 +316,5 @@
       });
     }
 
-
-  };
+  }
 </script>

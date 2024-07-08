@@ -46,8 +46,10 @@
       url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",
       url3: "http://www.ihaituo.cn/xy/jb/yszc.html",
 
-
-
+      countMax:8,//拆红包最大次数,当超过该次数则返回跳转链接
+      brand:'HUAWEI',
+      channel:'jh',
+      
       bannerAdUnitId: "z1v6jykvy9",//banner广告位id
       nativeAdUnitId: "v5h5xsklp2",//广告位id
       interstitialAdUnitId: "a7nvl7fm00",//插屏广告位id
