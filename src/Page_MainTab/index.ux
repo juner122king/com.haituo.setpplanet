@@ -141,7 +141,12 @@
 			this.getUser();
 
 			//显示banner 广告高度，底部缩进
-			$utils.showBannerAd(135)
+				$utils.showBannerAd(135)
+			// const storageFlag = await $processData.getStorage("_PRIVAC");
+			// if (storageFlag) {
+			// 	//显示banner 广告高度，底部缩进
+			// 	$utils.showBannerAd(135)
+			// }
 		},
 
 		onHide() {

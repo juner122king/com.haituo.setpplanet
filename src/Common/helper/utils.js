@@ -161,13 +161,13 @@ const tablePlaque = async () => {
 let bannerAd; const showBannerAd = async (margin_bot) => {
 
   
-  const storageFlag = await $processData.getStorage("_PRIVAC");
-  if (!storageFlag) {
-    //未授权，弹出授权询问
-    console.log('用户授权= ', storageFlag);
-    console.log('未授权,不加载banner广告');
-    return
-  }
+  // const storageFlag = await $processData.getStorage("_PRIVAC");
+  // if (!storageFlag) {
+  //   //未授权，弹出授权询问
+  //   console.log('用户授权= ', storageFlag);
+  //   console.log('未授权,不加载banner广告');
+  //   return
+  // }
 
   let Provider = $ad.getProvider();
   if (!Provider) {
@@ -199,7 +199,7 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
   console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
 
 
-
+  
   const style = {
     left: 0,
     top: top,
@@ -208,6 +208,7 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
   }
 
   let adid = getApp().$def.dataApp.bannerAdUnitId
+  // let adid = 'z1v6jykvy9'
   console.info("banner广告位=" + adid);
   bannerAd = $ad.createBannerAd({
     adUnitId: adid,//banner广告位

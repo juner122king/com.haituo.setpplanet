@@ -34,11 +34,13 @@
       console.log("[app.ux] onCreate...");
       $umeng_stat.init(this);   //在onCreate函数中加入该行代码，必须添加！！
 
+
+
+  
+
     },
     onDestroy() {
       console.info('Application onDestroy');
-
-
     },
     dataApp: {
 
@@ -46,10 +48,10 @@
       url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",
       url3: "http://www.ihaituo.cn/xy/jb/yszc.html",
 
-      countMax:8,//拆红包最大次数,当超过该次数则返回跳转链接
-      brand:'HUAWEI',
-      channel:'jh',
-      
+      countMax: 8,//拆红包最大次数,当超过该次数则返回跳转链接
+      brand: 'HUAWEI',
+      channel: 'jh',
+
       bannerAdUnitId: "z1v6jykvy9",//banner广告位id
       nativeAdUnitId: "v5h5xsklp2",//广告位id
       interstitialAdUnitId: "a7nvl7fm00",//插屏广告位id
@@ -60,7 +62,8 @@
         balance: 0,
       },
 
-      actiParam: ''
+      actiParam: '',
+
 
     }
 

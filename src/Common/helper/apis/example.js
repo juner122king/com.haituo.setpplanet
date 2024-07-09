@@ -109,12 +109,17 @@ const bolckReturn = () => {
     });
 }
 
-//获取页面透明层配置信息
-const showTclayer = () => {
+/**
+ * 获取页面透明层配置信息  
+ *
+ */
+
+const showTclayer = (data) => {
     let brand = getApp().$def.dataApp.brand
     return request({
         method: "GET",
-        url: `/qa/mini/basic/clickControl/transparentLayer/info/${brand}`
+        url: `/qa/mini/basic/clickControl/transparentLayer/info/${brand}`,
+        data
     });
 }
 

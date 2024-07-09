@@ -22,7 +22,6 @@
     position: absolute;
     bottom: 0px;
     margin-bottom: 120px;
-    background-color: rgba(0, 0, 0, 0.5);
   }
 
   .item-container {
@@ -142,19 +141,20 @@
     },
     onInit() {
 
-      this.native.adUnitId = this.$app.$def.dataApp.nativeAdUnitId;
+      this.native.adUnitId = getApp().$def.dataApp.nativeAdUnitId
 
+      // this.native.adUnitId = 'v5h5xsklp2'
     },
     async onReady(options) {
       console.info("native ad onReady");
-
-      const storageFlag = await $processData.getStorage("_PRIVAC");
-      if (storageFlag) {
-        this.showNativeAd();
-      } else {   //未授权，弹出授权询问
-        console.log('用户授权= ', storageFlag);
-        console.log('未授权,不加载原生广告');
-      }
+      this.showNativeAd();
+      // const storageFlag = await $processData.getStorage("_PRIVAC");
+      // if (storageFlag) {
+      //   this.showNativeAd();
+      // } else {   //未授权，弹出授权询问
+      //   console.log('用户授权= ', storageFlag);
+      //   console.log('未授权,不加载原生广告');
+      // }
 
     },
     onShow(options) {

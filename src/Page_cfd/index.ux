@@ -2,7 +2,7 @@
 <template>
   <div class="container">
     <div style="justify-content: center; align-items: center; position: absolute; top: 72px; height: 80px; width: 100%" onclick="back">
-      <image style="position: absolute; left: 20px; margin-left: 10px; width: 28px; height: 34px" src="/Common/img/back.png"></image>
+      <image if="{{isbolckReturn}}" style="position: absolute; left: 20px; margin-left: 10px; width: 28px; height: 34px" src="/Common/img/back.png"></image>
       <text style="font-size: 35px; color: #000000; margin-left: -10px">计步星球</text>
     </div>
 
@@ -128,7 +128,7 @@
   module.exports = {
     private: {
       isShowTclayer: false, //是否显示广告透明点击层 后台参数
-      isbolckReturn: false, //是否屏蔽返回手势 后台参数
+      isbolckReturn: true, //是否可以返回手势 后台参数
 
       quotaList: [
         {
@@ -157,44 +157,61 @@
     onInit: function (e) {
       //处理回传链接
       $utils.saveHapUri(e)
+      //显示banner 广告高度，底部缩进
+      $utils.showBannerAd(0)
+    },
+    async onReady(options) {
+      this.getAdCount()//原生广告位，判断获取次数
+      await $processData.resetTodayClicksIfNeeded()//检查是否需要重置广告点击次数
 
     },
+    async onShow(options) {
+      $umeng_stat.resume(this)
+      this.adControlLogic() //广告点击控制逻辑
+    },
+    //广告点击控制逻辑
+    adControlLogic() {
+      //先判断是否是从超链接进行页面的，正常进入页面，不执行逻辑
 
-    async onReady(options) {
-
-
-      //获取手势返回配置信息
-      $apis.example.bolckReturn().then((res) => {
-        console.log('手势返回配置信息:', res);
-        this.isbolckReturn = res.data.isReturn
-
-      }).catch(err => {
-        console.log(err, '手势返回配置信息错误');
-     
-      })
-
+      let actiParam = getApp().$def.dataApp.actiParam
+      if (!actiParam.oaid) {
+        console.log('oaid为空,不执行广告点击控制逻辑 ')
+        return
+      }
       //获取页面透明层配置信息
-      $apis.example.showTclayer().then((res) => {
+      this.showTclayer()
+      //获取手势返回配置信息
+      this.bolckReturn()
+    },
+
+    async showTclayer() {
+
+      await $processData.incrementTodayClicks()//执行一次进入广告页面
+      let count = await $processData.getStorage("todayClicks")
+      // let count = 1
+      console.log('今天进入广告页面次数', count);
+      $apis.example.showTclayer({
+        count: count//广告进入次数(非必填),有传才会匹配规则
+      }).then((res) => {
         console.log('页面透明配置信息:', res);
         this.isShowTclayer = res.data
 
       }).catch(err => {
         console.log(err, '页面透明配置信息错误');
-     
+      })
+    },
+
+    bolckReturn() {
+      //获取手势返回配置信息
+      $apis.example.bolckReturn().then((res) => {
+        console.log('手势返回配置信息:', res);
+        this.isbolckReturn = res.data.isReturn
+      }).catch(err => {
+        console.log(err, '手势返回配置信息错误');
       })
 
-
-      this.getAdCount()//原生广告位，判断获取次数
-
-      //显示banner 广告高度，底部缩进
-      $utils.showBannerAd(0)
-
-
-
     },
-    onShow(options) {
-      $umeng_stat.resume(this)
-    },
+
     onHide() {
       $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
     },
@@ -202,7 +219,7 @@
     getAdCount() {
 
       $apis.example.getAdCount({
-        adId: this.$app.$def.dataApp.nativeAdUnitId,
+        adId: getApp().$def.dataApp.nativeAdUnitId,
         channel: ''
       }).then((res) => {
         console.log('获取每日次数', res);
@@ -210,17 +227,7 @@
       })
     },
     openad() {
-      console.info("点击了扯");
-      // if (this.receivedCount > 0) {
 
-      //   this.showDialog = true
-      //   $utils.hideBanerAd()
-
-      // } else {
-      //   this.showDialog2 = true;
-      // }
-
-      //
       this.showDialog = true
       $utils.hideBanerAd()
 
@@ -251,9 +258,7 @@
 
 
     onBackPress() {
-
-      return this.isbolckReturn
-
+      return !this.isbolckReturn
     }
 
 
