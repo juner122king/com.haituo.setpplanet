@@ -192,14 +192,14 @@ module.exports = {
   async onReady(options) {
     this.getAdCount(this.$app.$def.dataApp.nativeAdUnitId)//原生广告位，判断获取次数
 
-    const storageFlag = await $processData.getStorage("_PRIVAC");
-    if (storageFlag) {
-      //显示banner 广告高度，底部缩进
-      $utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 0)
-    } else {   //未授权，弹出授权询问
-      console.log('用户授权= ', storageFlag);
-      console.log('未授权,不加载广告');
-    }
+    // const storageFlag = await $processData.getStorage("_PRIVAC");
+    // if (storageFlag) {
+    //   //显示banner 广告高度，底部缩进
+    //   $utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 0)
+    // } else {   //未授权，弹出授权询问
+    //   console.log('用户授权= ', storageFlag);
+    //   console.log('未授权,不加载广告');
+    // }
 
 
   },

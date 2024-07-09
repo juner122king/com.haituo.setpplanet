@@ -136,10 +136,10 @@ let bannerAd; const showBannerAd = async (adid, margin_bot) => {
 
   let Provider = $ad.getProvider();
   console.info('广告商:', Provider);
-  $prompt.showToast({
-    message: `${Provider}广告商`,
-    gravity: 'center'
-  });
+  // $prompt.showToast({
+  //   message: `${Provider}广告商`,
+  //   gravity: 'center'
+  // });
   if (!Provider) {
     console.info('没有广告返回');
     return

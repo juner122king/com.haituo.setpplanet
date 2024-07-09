@@ -139,8 +139,8 @@ module.exports = {
 		$umeng_stat.resume(this)
 		console.log('主页 onShow()----------------->');
 		this.getUser();
-		//显示banner 广告高度，底部缩进
-		$utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 135)
+		// //显示banner 广告高度，底部缩进
+		// $utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 135)
 
 	
 	},

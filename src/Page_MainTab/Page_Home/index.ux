@@ -1,7 +1,9 @@
 <import name="my-circle" src="../ui/circle/index"></import>
 <import name="my-dialog" src="../ui/dialog/index"></import>
+<import name="my-privacypop" src="../ui/privacypop/index"></import>
 <template>
   <div class="container">
+        
     <div class="top_view">
       <tabs class="tabs" onchange="changeTabactive">
         <tab-bar class="tab-bar">
@@ -39,7 +41,7 @@
           </div>
           <text class="n-text">消耗热量</text>
         </div>
-        <div class="detail-item" @click="openSetStepsDialog">
+        <div class="detail-item" onclick="openSetStepsDialog">
           <div class="detail-value">
             <text id="u" class="detail-value3 larger-text">{{ goal_day }}</text>
             <text class="smaller-text">步></text>
@@ -60,10 +62,7 @@
             >BMI/体脂率计算</text
           >
         </div>
-        <text
-          style="color: #828282; padding-top: 10px; padding-left: 20px"
-          @click="openBasicInformationDialog"
-          >填写计算></text
+        <text style="color: #828282; padding-top: 10px; padding-left: 20px" onclick="openBasicInformationDialog">填写计算></text
         >
       </div>
 
@@ -74,7 +73,7 @@
           <image
             src="/Common/img/icon_bmi.png"
             style="width: 90px; height: 90px"
-          />
+          ></image>
           <div
             style="flex-direction: column; justify-content: space-around; margin-left: 16px"
           >
@@ -86,7 +85,7 @@
           <image
             src="/Common/img/icon_tzl.png"
             style="width: 90px; height: 90px"
-          />
+          ></image>
           <div
             style="flex-direction: column; justify-content: space-around; margin-left: 16px"
           >
@@ -114,10 +113,10 @@
       prompt="{{obj}}"
     ></my-dialog>
 
-    <div class="header" if="{{isShow}}">
-      <text style="font-weight: bold">申请 健身运动 权限:</text>
-      <text style="font-weight: 500">用于记录运动步数，计算运动量。</text>
-    </div>
+
+<my-privacypop @agree="agree" @cancel="cancel" show-pop="{{isShow}}" />
+    
+    
   </div>
 </template>
 
@@ -279,8 +278,7 @@
 import sensor from '@system.sensor';
 module.exports = {
   data: {
-    url1: '',
-    url2: '',
+
 
     componentData: {},
     goalDayKey: "GOAL_DAY",
@@ -330,41 +328,41 @@ module.exports = {
   //
   async onInit() {
     console.log("onInit()")
-    this.url1 = this.$app.$def.dataApp.url2;
-    this.url2 = this.$app.$def.dataApp.url3;
 
     this.getGoalDaySteps();// Step1
     this.getUserDetails();
     this.apigetStpes()// Step2
 
-    this.subscribeStepCounter();
+    //在页面完成初始化后调用该方法来判断是否展示隐私组件
+    await this.getTreatyStorage();
   },
+  async getTreatyStorage() {
+    //用来判断应用数据中是否有同意隐私条款的数据
+    const storageFlag = await $processData.getStorage("_PRIVAC");
+    //有则为true，不展示隐私组件，没有为false，展示隐私组件
+    this.isShow = !storageFlag;
+    if (storageFlag) {
+      this.subscribeStepCounter()
+    }
 
+  },
   onReady() {
     console.log("onReady()")
     this.updateBMITzl();
   },
 
-
   subscribeStepCounter() {
-    this.isShow = true;
     // 订阅步数计数器
     sensor.subscribeStepCounter({
       callback: (ret) => {
         console.log(`设备步数更新了！------>设备总步数=${ret.steps}`)
-
-        //保存权限
-        $processData.setStorage("_PRIVAC", true);
-        this.isShow = false;
-
         this.stepSys = ret.steps;
         //上传步数
         this.apiuploadStpes(ret.steps);
-
       },
       fail: (data, code) => {
         console.log(`步数计数器订阅失败, code = ${code}`);
-        this.isShow = false;
+
       }
     });
 
@@ -618,6 +616,15 @@ module.exports = {
       .catch(error => {
         console.error(' 上传步数failed:', error);
       });
+  },
+
+  agree() {
+    //点击同意后关闭隐私组件
+    this.isShow = false;
+    this.subscribeStepCounter()
+  },
+  cancel() {
+    this.isShow = false;
   },
 }
 </script>
