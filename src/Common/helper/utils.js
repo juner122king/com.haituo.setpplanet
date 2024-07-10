@@ -58,7 +58,7 @@ function getConvertUpload() {
   let param = {
     ...getApp().$def.dataApp.actiParam
   }
-  console.log('getConvertUpload() 转化参数param= ', param)
+  // console.log('getConvertUpload() 转化参数param= ', param)
   if (!param.oaid) {
     return
   }
@@ -66,7 +66,7 @@ function getConvertUpload() {
     param[key] = param[key].replace(/\/$/, "");
   }
   const convertedParam = convertKeysToCamelCase(param);
-  console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
+  // console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
   $apis.example.convertUpload({
     ...convertedParam,
     deviceId: convertedParam.oaid,
@@ -102,7 +102,7 @@ function convertKeysToCamelCase(obj) {
 * 保存广告回传参数   router.push(OBJECT)  例：@param {Object} e='hap://app/com.company.app/index?param1=value1'
 */
 const saveHapUri = (e) => {
-  console.log('saveHapUri() 转化参数e= ', e)
+  // console.log('saveHapUri() 转化参数e= ', e)
 
   const { channelValue = '', oaid = '' } = e
   if (oaid) {
@@ -175,7 +175,7 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
     return
   }
   var d = $device.getInfoSync();
-  console.info("banner广告-设备信息 " + JSON.stringify(d));
+  // console.info("banner广告-设备信息 " + JSON.stringify(d));
 
   let height = 57;
   //获取页面内可见窗口的高度和宽度，此值不包括标题栏和状态栏高度
@@ -190,13 +190,13 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
   //此处计算很关键，需要将状态栏高度、标题栏高度加上
   let realToppx = windowHeight - realAdHeighPX + d.statusBarHeight + titleBarHeight;
 
-  console.info("calBannerPostion1 realToppx=" + realToppx + ", logicWidth= " + logicWidth, "windowWidth= " + windowWidth);
+  // console.info("calBannerPostion1 realToppx=" + realToppx + ", logicWidth= " + logicWidth, "windowWidth= " + windowWidth);
   //转换成页面基准值下的逻辑单位
   let logicWebTop = (realToppx * logicWidth) / windowWidth;
 
   //此对象请自己在data下定义
   let top = logicWebTop === 0 ? 1230 : logicWebTop;
-  console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
+  // console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
 
 
   
@@ -209,21 +209,21 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
 
   let adid = getApp().$def.dataApp.bannerAdUnitId
   // let adid = 'z1v6jykvy9'
-  console.info("banner广告位=" + adid);
+  // console.info("banner广告位=" + adid);
   bannerAd = $ad.createBannerAd({
     adUnitId: adid,//banner广告位
     style: style,
     adIntervals: 60//刷新时间，秒
   });
-  console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
+  // console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
   bannerAd.onLoad(e => {
     console.info("load bannerAd  onload success e=" + JSON.stringify(e));
   });
   bannerAd.onError(e => {
-    console.error("load bannerAd  onError " + JSON.stringify(e));
+    // console.error("load bannerAd  onError " + JSON.stringify(e));
   });
   bannerAd.onClose(e => {
-    console.info("load bannerAd  onClose");
+    // console.info("load bannerAd  onClose");
   });
   bannerAd.show();
 }

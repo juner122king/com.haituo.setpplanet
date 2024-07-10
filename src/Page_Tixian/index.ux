@@ -152,7 +152,7 @@
 
     getUser() {
       $apis.user.getUserInfo().then((res) => {
-        console.log('用户信息----------------->' + JSON.stringify(res));
+        // console.log('用户信息----------------->' + JSON.stringify(res));
         this.userData = res.data
       })
     },
@@ -160,7 +160,7 @@
     changeTabactive: function (e) {
 
       //可用值://记录类型, REVENUE(收益), EXPENDITURE(提现),可用值:REVENUE,EXPENDITURE
-      console.log(e.index);
+      // console.log(e.index);
       if (e.index === 0) {
         this.record('REVENUE')
       } else {
@@ -169,11 +169,11 @@
     },
     //提现
     getwithdraw(a, ub) {
-      console.log("提现TAg:" + a + ",需要提现的金额：" + ub);
+      // console.log("提现TAg:" + a + ",需要提现的金额：" + ub);
 
       //余额是否大于提现金额
       if (this.userData.balance < ub) {
-        console.log("余额不足！");
+        // console.log("余额不足！");
         this.openDialog2()
         return
       }
@@ -181,7 +181,7 @@
 
       //手机号为空，即未登录
       if (!this.userData.loginPhone) {
-        console.log("用户手机号为空，未登录 ");
+        // console.log("用户手机号为空，未登录 ");
         this.openLogin();
         return
       }
@@ -189,7 +189,7 @@
       example.withdraw({
         amount: a
       }).then(response => {
-        console.log('提现成功:', response);
+        // console.log('提现成功:', response);
 
         this.withdrawSuucess(response.data.amount);
       })
@@ -228,7 +228,7 @@
                 break;
               default:
                 // 处理其他 code 的逻辑
-                console.log("Other code: " + code);
+                // console.log("Other code: " + code);
                 break;
             }
 
@@ -319,11 +319,11 @@
 
     //获取记录列表
     record(type) {
-      console.log("记录类型: " + type);
+      // console.log("记录类型: " + type);
       example.record({
         type: type
       }).then(response => {
-        console.log('获取成功:', response);
+        // console.log('获取成功:', response);
         let data = response.data.records
 
         if (data && Array.isArray(data) && data.length > 0) {

@@ -18,10 +18,10 @@
 <style>
   .tc-layer {
     width: 100%;
-    height: 500px;
+    height: 850px;
     position: absolute;
-    bottom: 0px;
-    margin-bottom: 120px;
+    bottom: 100px;
+
   }
 
   .item-container {
@@ -179,7 +179,7 @@
       }
       nativeAd = $ad.createNativeAd({ adUnitId: this.native.adUnitId });
       nativeAd.onLoad(data => {
-        console.info("ad data loaded: " + JSON.stringify(data));
+        // console.info("ad data loaded: " + JSON.stringify(data));
         this.native.adData = data.adList[0];
         if (this.native.adData) {
           if (this.native.adData.imgUrlList) {
@@ -263,8 +263,22 @@
       this.native.isShow = false;
     },
 
-    completeAdRSA() {
+     completeAdRSA() {
       console.log('点击拆福袋');
+
+      //先判断广告没有没加载出来，没有就直接返回不执行接口
+
+      if (!this.native.isShow) {
+        console.log('广告展示不成功,拆红包不成功');
+        $prompt.showToast({
+          message: '拆红包失败！请重试',
+          gravity: 'center'
+        });
+
+        this.$emit('emitClose')
+        return
+      }
+      
 
       var adType = 'NATIVE'
       var adId = this.native.adUnitId
@@ -281,16 +295,15 @@
       };
 
       $apis.example.completeAdRSA(params).then((res) => {
-        this.$emit('emitEvt', {
-          count: res.data.count
-        })
+
         console.log(`完成广告----------> jumpLink:${res.data.jumpLink}, 完成次数：${res.data.count} 当次奖励：${res.data.awardAmount}`);
 
         //先判断有没有返回跳转链接，有就跳
         if (res.data.jumpLink) {
-          $webview.loadUrl({
-            url: res.data.jumpLink
-          })
+          $router.push({
+            uri: res.data.jumpLink
+          });
+
         } else {
           var mes = ''
           if (res.data.awardAmount) {
@@ -307,6 +320,10 @@
             gravity: 'center'
           })
         }
+
+        this.$emit('emitEvt', {
+          count: res.data.count
+        })
       }).catch(err => {
         console.log(err, '点击拆福袋错误');
         $prompt.showToast({

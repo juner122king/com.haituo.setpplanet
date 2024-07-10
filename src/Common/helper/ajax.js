@@ -25,8 +25,8 @@ const getTokenData = () => {
   return new Promise(async (resolve, reject) => {
     const example = require('./apis/example.js').default;
     const deviceNum = await getUserId();
-    console.log(`getTokenData()---->deviceNum=${deviceNum}`);
-    console.log('是否触发的这里');
+    // console.log(`getTokenData()---->deviceNum=${deviceNum}`);
+    // console.log('是否触发的这里');
     example.toLogin({
       loginType: "DEVICE",
       appId: 'SC_0001',

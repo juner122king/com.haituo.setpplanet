@@ -85,7 +85,6 @@ export function resetTodayClicksIfNeeded() {
         key: 'lastResetDate',
         default: '-1',
         success: function (data) {
-
             console.log('本次检查日期：', currentDate, '--- 最后进入广告页日期：', data);
             if (data !== currentDate) { //日期不相同
                 // 重置广告点击次数
@@ -104,13 +103,14 @@ export function incrementTodayClicks() {
         key: 'todayClicks',
         default: '0',//默认0次
         success: function (data) {
+            console.log('点击次数+1,当前次数', data);
             let todayClicks = parseInt(data) || 0;
-            todayClicks += 1;
+            todayClicks = todayClicks + 1;
             storage.set({
                 key: 'todayClicks',
                 value: todayClicks.toString()
             })
-          
+
             storage.set({
                 key: 'lastResetDate',
                 value: new Date().toLocaleDateString()
