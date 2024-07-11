@@ -52,36 +52,60 @@ const getUserId = async () => {
 
 //获取匿名设备标识符，建议只在广告的场景使用
 const getOAID = async () => {
-  let ret = await $device.getOAID()
+  let ret = await $device.getAdvertisingId()
   return ret.data.oaid;
 };
 
 //执行广告转化上传
 const getConvertUpload = async () => {
-  const type = 'jh'
-  const deviceNum = await getOAID();
-  const example = require('./apis/example.js').default;
 
-  const userAdConvertUploadReq = {
-    deviceId: deviceNum,
-    conversionType: 'browse',
-    channelValue: ''
-  }
-  console.log('执行广告转化上传', userAdConvertUploadReq, "type: " + type);
-  example.convertUpload(userAdConvertUploadReq, type).then(data => {
-    console.log('广告转化上传成功 data: ', data);
+  $device.getAdvertisingId({
+    success: function (data) {
+      console.log(`handling success广告唯一标识: ${data.advertisingId}`)
+      const type = 'jh'
+      const deviceNum = data.advertisingId
+      const example = require('./apis/example.js').default;
 
-  }).catch(err => {
-    console.log(err, '失败回调');
+      const userAdConvertUploadReq = {
+        deviceId: deviceNum,
+        conversionType: 'browse',
+        channelValue: ''
+      }
+      console.log('执行广告转化上传', userAdConvertUploadReq, "type: " + type);
+      example.convertUpload(userAdConvertUploadReq, type).then(data => {
+        console.log('广告转化上传成功 data: ', data);
+
+      }).catch(err => {
+        console.log(err, '失败回调');
+      })
+
+    },
+    fail: function (code) {
+      console.log(`handling fail, code = ${code}`)
+    }
   })
 
 };
+
+/**
+* 保存广告回传参数   router.push(OBJECT)  例：@param {Object} e='hap://app/com.company.app/index?param1=value1'
+*/
+const saveHapUri = (e) => {
+  // console.log('saveHapUri() 转化参数e= ', e)
+
+  const { channelValue = '', oaid = '' } = e
+  if (oaid) {
+    getApp().$def.dataApp.actiParam = {
+      ...e
+    }
+  }
+}
+
 
 /**
 * 插屏广告 
 */
-
-const tablePlaque = (id) => {
+const tablePlaque = (adid) => {
 
   // const storageFlag = await $processData.getStorage("_PRIVAC");
   // console.log('用户授权= ', storageFlag);
@@ -92,112 +116,85 @@ const tablePlaque = (id) => {
   // } 
 
   let Provider = $ad.getProvider();
-  
+
   if (!Provider) {
     console.log('没有广告返回');
     return
   }
-  let interstitialAd = $ad.createInterstitialAd({
-    adUnitId: id
-  })
 
-  interstitialAd.load().then((res) => {
-    console.log(res, '查屏加载成功');
-    interstitialAd.show().then(
-      () => { console.log('插屏广告show成功') },
-      () => { console.log('插屏广告show失败') }
-    )
-  }).catch((err) => {
-    console.log(err, '插屏加载失败');
+  console.info('插屏广告= ', adid);
+  let interstitialAd = $ad.createInterstitialAd({
+    adUnitId: adid
   })
-  interstitialAd.onClick(() => {
-    console.log('插屏广告点击了');
-    //转化上传
+  interstitialAd.onLoad(() => { // 监听广告加载
+    console.log('查屏加载成功');
+    interstitialAd.show()
     getConvertUpload()
   })
-
+  interstitialAd.onError((err) => { // 监听广告出错
+    console.info('插屏广告onError event emit', err)
+  })
+  interstitialAd.onClose((res) => { // 监听广告关闭
+    console.info('插屏广告onClose event emit', res)
+  })
+  // interstitialAd.onClick(() => {
+  //   console.log('插屏广告点击了');
+  //   // //转化上传
+  //   // getConvertUpload()
+  // })
 
 };
 
 
 /**
-* banner广告  margin_bot底部缩进  
+* banner广告  margin_bot底部缩进    @param isbuttom 是否显示在最底部
 */
 
-let bannerAd; const showBannerAd = async (adid, margin_bot) => {
+let bannerAd; const showBannerAd = async () => {
 
   // const storageFlag = await $processData.getStorage("_PRIVAC");
-  // console.log('用户授权= ', storageFlag);
-
   // if (!storageFlag) {
-  //   console.log('未授权,不加载广告');
+  //   //未授权，弹出授权询问
+  //   console.log('用户授权= ', storageFlag);
+  //   console.log('未授权,不加载banner广告');
   //   return
-  // } 
+  // }
 
+  let adid = '4095f11c8658440b9075da95705d6313'
   let Provider = $ad.getProvider();
   console.info('广告商:', Provider);
-  // $prompt.showToast({
-  //   message: `${Provider}广告商`,
-  //   gravity: 'center'
-  // });
-  if (!Provider) {
-    console.info('没有广告返回');
-    return
+  $prompt.showToast({
+    message: `${Provider}广告商`,
+    gravity: 'center'
+  });
+  console.info("banner广告位=" + adid);
+
+
+  const style = {
+    left: 0,     // banner 广告组件的左上角横坐标
+    top: 1430,    // banner 广告组件的左上角纵坐标
+    width: 1080, // banner 广告组件的宽度
+    Height: 170  // banner 广告组件的高度
   }
-  $device.getInfo({
-    success: function (ret) {
-      console.info(`handling success brand = ${ret}`)
-      var d = ret
-
-      let height = 57;
-      //获取页面内可见窗口的高度和宽度，此值不包括标题栏和状态栏高度
-      let windowWidth = d.screenWidth;
-      let windowHeight = d.screenHeight - 153 - margin_bot;
-      //logicWidth对应manifest.json文件设置的designWidth值，默认是750
-      let logicWidth = 750;
-      //广告自身大小单位是dp，需要转换成px单位
-      let realAdHeighPX = height * d.screenDensity;
-      //标题栏高度一般是42dp左右，此处也需要转换成px单位
-      let titleBarHeight = 42 * d.screenDensity;
-      //此处计算很关键，需要将状态栏高度、标题栏高度加上
-      let realToppx = windowHeight - realAdHeighPX + d.statusBarHeight + titleBarHeight;
-
-      console.info("calBannerPostion1 realToppx=" + realToppx + ", logicWidth= " + logicWidth, "windowWidth= " + windowWidth);
-      //转换成页面基准值下的逻辑单位
-      let logicWebTop = (realToppx * logicWidth) / windowWidth;
-
-      //此对象请自己在data下定义
-      let top = logicWebTop === 0 ? 1230 : logicWebTop;
-      console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
-
-      console.info("banner广告位=" + adid);
-
-      const style = {
-        left: 0,
-        top: top,
-        width: 360,
-        height: height
-      }
 
 
-      bannerAd = $ad.createBannerAd({
-        adUnitId: adid,//banner广告位
-        style: style
-      });
-      console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
-      bannerAd.onLoad(e => {
-        console.info("load bannerAd  onload success e=" + JSON.stringify(e));
-      });
-      bannerAd.onError(e => {
-        console.error("load bannerAd  onError " + JSON.stringify(e));
-      });
-      bannerAd.onClose(e => {
-        console.info("load bannerAd  onClose");
-      });
-      bannerAd.show();
+  bannerAd = $ad.createBannerAd({
+    adUnitId: adid,//banner广告位
+    style: style
+  });
 
-    }
-  })
+
+  console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
+  bannerAd.onLoad(e => {
+    console.info("load bannerAd  onload success e=" + JSON.stringify(e));
+  });
+  bannerAd.onError(e => {
+    console.error("load bannerAd  onError " + JSON.stringify(e));
+  });
+  bannerAd.onClose(e => {
+    console.info("load bannerAd  onClose");
+  });
+  bannerAd.show();
 
 
 }
@@ -218,20 +215,7 @@ const destroyBanner = () => {
   }
 }
 
-const extractYearMonth = (input) => {
-  if (input.length !== 6 || isNaN(input)) {
-    throw new Error('Invalid input format');
-  }
-  const year = input.slice(0, 4);
-  let month = input.slice(4, 6);
 
-  if (month[0] === '0') {
-    month = month[1];
-  } else {
-    month = parseInt(month, 10).toString();
-  }
-  return { year, month };
-}
 
 
 
@@ -274,7 +258,6 @@ export default {
   throttle,
   getUserId,
   getConvertUpload,
-  extractYearMonth,
   startCountDown,
   dataEncryption,
   tablePlaque,
@@ -282,4 +265,5 @@ export default {
   hideBanerAd,
   viewBanner,
   destroyBanner,
+  saveHapUri
 }

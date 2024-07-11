@@ -1,0 +1,436 @@
+
+<import name="ad-logs" src="../../Common/adLogs.ux"></import>
+<template>
+  <!-- banner -->
+  <div class="page-container">
+    <ad-logs></ad-logs>
+    <div class="ad-id">
+      <text>广告ID</text>
+      <input  value="{{adUnitId}}" onchange="changeAdUnitAd" />
+    </div>
+    <div class="ad-style">
+      <div class="style-row">
+        <div class="style-column">
+          <text>channel: </text>
+          <input
+            type="text"
+            class="input-text"
+            value="{{channel}}"
+            onchange="channelchange"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="ad-style">
+      <div class="style-row">
+        <div class="style-column">
+          <text>width: </text>
+          <input
+            type="number"
+            name="width"
+            class="input-text"
+            value="{{adStyle.width}}"
+            onchange="bannerStyleAttrValCreateChange"
+          />
+        </div>
+        <div class="style-column">
+          <text>height: </text>
+          <input
+            type="number"
+            name="height"
+            class="input-text"
+            value="{{adStyle.height}}"
+            onchange="bannerStyleAttrValCreateChange"
+          />
+        </div>
+      </div>
+
+      <div class="style-row">
+        <div class="style-column">
+          <text>top: </text>
+          <input
+            type="number"
+            name="top"
+            class="input-text"
+            value="{{adStyle.top}}"
+            onchange="bannerStyleAttrValCreateChange"
+          />
+        </div>
+        <div class="style-column">
+          <text>left: </text>
+          <input
+            type="number"
+            name="left"
+            class="input-text"
+            value="{{adStyle.left}}"
+            onchange="bannerStyleAttrValCreateChange"
+          />
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <input type="button" value="清空 style" onclick="clearStyle" />
+        <input type="button" value="设置 style" onclick="setStyle" />
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <input type="button" value="获取服务提供商" onclick="getProvider" />
+    </div>
+
+    <div class="btn-row">
+      <input type="button" value="创建广告" onclick="initAd" />
+      <input type="button" value="销毁广告" onclick="destroyAd" />
+    </div>
+
+    <div class="btn-row">
+      <input type="button" value="展示广告" onclick="showAd" />
+      <input type="button" value="隐藏广告" onclick="hideAd" />
+    </div>
+
+    <div class="btn-row">
+      <input
+        type="button"
+        value="新增一个 Resize 事件"
+        onclick="onEvent('Resize')"
+      />
+      <input
+        type="button"
+        value="取消一个 Resize 事件"
+        onclick="offEvent('Resize', 'offLast')"
+      />
+      <input
+        type="button"
+        value="取消所有 Resize 事件"
+        onclick="offEvent('Resize','all')"
+      />
+    </div>
+
+    <div class="btn-row">
+      <input
+        type="button"
+        value="新增一个 Error 事件"
+        onclick="onEvent('Error')"
+      />
+      <input
+        type="button"
+        value="取消一个 Error 事件"
+        onclick="offEvent('Error', 'offLast')"
+      />
+      <input
+        type="button"
+        value="取消所有 Error 事件"
+        onclick="offEvent('Error','all')"
+      />
+    </div>
+
+    <div class="btn-row">
+      <input
+        type="button"
+        value="新增一个 Load 事件"
+        onclick="onEvent('Load')"
+      />
+      <input
+        type="button"
+        value="取消一个 Load 事件"
+        onclick="offEvent('Load', 'offLast')"
+      />
+      <input
+        type="button"
+        value="取消所有 Load 事件"
+        onclick="offEvent('Load','all')"
+      />
+    </div>
+
+    <div class="btn-row">
+      <input
+        type="button"
+        value="新增一个 Close 事件"
+        onclick="onEvent('Close')"
+      />
+      <input
+        type="button"
+        value="取消一个 Close 事件"
+        onclick="offEvent('Close', 'offLast')"
+      />
+      <input
+        type="button"
+        value="取消所有 Close 事件"
+        onclick="offEvent('Close','all')"
+      />
+    </div>
+  </div>
+</template>
+    
+<script>
+import prompt from '@system.prompt'
+import device from '@system.device'
+
+export default {
+    private: {
+        ad: null, // 广告实例
+        adUnitId: '4095f11c8658440b9075da95705d6313', // 这里替换上你申请的广告ID
+        adEvent: {},
+        adStyle: {
+            width: '',
+            height: '',
+            top: '',
+            left: ''
+        },
+        channel: 'test_channel',
+    },
+    onShow() {
+        this.initAd()
+    },
+    changeAdUnitAd(e) {
+        this.adUnitId = e.value
+    },
+    channelchange(e) {
+        this.channel = e.value
+    },
+    bannerStyleAttrValCreateChange(e) {
+        let attrName = e.target.attr.name
+        this.adStyle[attrName] = e.value
+    },
+    clearStyle() {
+        this.adStyle = {
+            width: '',
+            height: '',
+            top: '',
+            left: ''
+        }
+        this.$broadcast('logsUnshift', `清空 style`)
+    },
+    setStyle() {
+        if (this.ad) {
+            Object.keys(this.adStyle).forEach(item => {
+                this.ad.style[item] = this.adStyle[item]
+            })
+            this.$broadcast('logsUnshift', `设置 style, bannerAd style: ${JSON.stringify(this.ad.style)}`)
+        }
+    },
+    async getProvider() {
+        try {
+            let res;
+            res = require("@service.ad").getProvider()
+            this.$broadcast('logsUnshift', `ad.getProvider 成功, res = ${res}`)
+        } catch (e) {
+            prompt.showToast({ message: JSON.stringify(err) })
+            this.$broadcast('logsUnshift', `捕获异常 ${err}`)
+        }
+
+    },
+    async initAd() {
+        if (this.ad) {
+            this.$broadcast('logsUnshift', '已存在一个广告实例')
+            return
+        }
+
+        // try {
+            let res;
+
+            res = await device.getInfo();
+            if (res.data.brand !== "vivo") {
+                this.$broadcast('logsUnshift', `brand !== vivo`)
+                return;
+            }
+            if (res.data.engine_host !== "vivo_browser" && res.data.platformVersionCode < 1052) {
+                this.$broadcast('logsUnshift', `engine_host !== vivo_browser && platformVersionCode < 1052`)
+                return;
+            }
+
+            let adStyle = {}
+            Object.keys(this.adStyle).forEach(key => {
+                if (this.adStyle[key]) {
+                    adStyle[key] = this.adStyle[key]
+                }
+            })
+            this.ad = require("@service.ad").createBannerAd({
+                adUnitId: this.adUnitId,
+                style: adStyle,
+                channel: this.channel,
+            })
+            this.$broadcast('logsUnshift', `ad.createBannerAd 成功`)
+
+            this.onEvent('Resize')
+            this.onEvent('Error')
+            this.onEvent('Load')
+            this.onEvent('Close')
+
+            this.$broadcast('logsUnshift', `bannerAd 初始化成功, 请点击 "展示广告"`)
+            this.showAd()
+        // } catch (err) {
+        //     prompt.showToast({ message: JSON.stringify(err) })
+        //     this.$broadcast('logsUnshift', `捕获异常 ${err}`)
+        // }
+    },
+    showAd() {
+        if (!this.ad) {
+            this.$broadcast('logsUnshift', '请先创建一个广告实例')
+            return
+        }
+        this.ad.show().then(() => {
+            this.$broadcast('logsUnshift', `bannerAd.show 成功`)
+        }, () => {
+            this.$broadcast('logsUnshift', `bannerAd.show 失败, err = ${JSON.stringify(err)}`)
+        })
+    },
+    hideAd() {
+        if (!this.ad) {
+            this.$broadcast('logsUnshift', '请先创建一个广告实例')
+            return
+        }
+        this.ad.hide().then(() => {
+            this.$broadcast('logsUnshift', `bannerAd.hide 成功`)
+        }, () => {
+            this.$broadcast('logsUnshift', `bannerAd.hide 失败, err = ${JSON.stringify(err)}`)
+        })
+    },
+    destroyAd() {
+        if (!this.ad) {
+            this.$broadcast('logsUnshift', '请先创建一个广告实例')
+            return
+        }
+        this.ad.destroy()
+        this.$broadcast('logsUnshift', `bannerAd.destroy 成功`)
+        this.ad = null
+        this.adEvent = {}
+    },
+    onEvent(event) {
+        if (!this.ad) {
+            this.$broadcast('logsUnshift', '请先创建一个广告实例')
+            return
+        }
+
+        if (!this.adEvent[event]) {
+            this.adEvent[event] = []
+        }
+
+        let fn = null;
+        let fnIndex = this.adEvent[event].length
+
+        if (event == 'Resize') {
+            fn = (res) => {
+                this.$broadcast('logsUnshift', `触发 ${event} 事件${fnIndex + 1}, res = ${res ? JSON.stringify(res) : ''}, bannerAd style: ${JSON.stringify(this.ad.style)}`)
+            }
+        } else {
+            fn = (res) => {
+                this.$broadcast('logsUnshift', `触发 ${event} 事件${fnIndex + 1}, res = ${res ? JSON.stringify(res) : ''}`)
+            }
+        }
+
+        this.ad[`on${event}`](fn)
+        this.adEvent[event].push(fn)
+        this.$broadcast('logsUnshift', `监听 ${event} 事件${fnIndex + 1}`)
+    },
+    offEvent(event, offType) {
+        if (!this.ad) {
+            this.$broadcast('logsUnshift', '请先创建一个广告实例')
+            return
+        }
+        if (offType == 'all') {
+            this.ad[`off${event}`]()
+            this.ad[event] = []
+            this.$broadcast('logsUnshift', `取消所有 ${event} 事件`)
+        } else {
+            let lastIndex = this.adEvent[event].length - 1;
+            this.ad[`off${event}`](this.adEvent[event][lastIndex])
+            this.adEvent[event].pop()
+            this.$broadcast('logsUnshift', `取消 ${event} 事件${lastIndex + 1}`)
+        }
+    }
+}
+</script>
+    
+<style lang="less">
+.page-container {
+    flex-direction: column;
+}
+
+.ad-logs{
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #000;
+    margin: 50px;
+    padding: 30px;
+    .title{
+        border-bottom: 1px solid #000;
+        margin-bottom: 30px;
+    }
+    list{
+        width: 100%;
+        height: 250px;
+        background-color: #eee;
+        margin-bottom: 30px;
+    }
+    .btn-row{
+        margin-bottom: 0;
+        input{
+            padding: 20px 70px;
+        }
+    }
+}
+
+.ad-id{
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    text{
+        margin-bottom: 10px;
+    }
+    input{
+        font-size: 30px;
+        padding: 20px 30px;
+        border-bottom: 1px solid #000;
+    }
+}
+
+.ad-style{
+    flex-direction: column;
+    padding: 0 30px;
+    .style-row{
+        flex:1;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-bottom: 50px;
+        .style-column{
+            flex: 1;
+            margin: 0 30px;
+            text{
+                width: 100px;
+                text-align: right;
+            }
+            input{
+                flex: 1;
+                border-bottom: 1px solid #000;
+                margin: 0 20px;
+                padding: 10px 20px;
+                font-size: 30px;
+            }
+        }
+    }
+    .btn-row{
+        input{
+            padding: 20px 70px;
+            margin: 0 30px;
+            color: #fff;
+            background-color: #2d8cf0;
+        }
+    }
+}
+
+.btn-row{
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 50px;
+    input{
+        font-size: 30px;
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin: 0 20px;
+        color: #fff;
+        background-color: #2d8cf0;
+    }
+}
+
+</style>

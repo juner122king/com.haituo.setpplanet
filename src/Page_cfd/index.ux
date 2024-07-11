@@ -2,10 +2,11 @@
 <template>
   <div class="container">
     <div
-      style="justify-content: center; align-items: center; position: absolute; top: 72px; height: 80px; width: 100%"
+      style="justify-content: center; align-items: center; position: absolute; top: 122px; height: 80px; width: 100%"
       onclick="back"
     >
       <image
+        show="{{isbolckReturn}}"
         style="position: absolute; left: 20px; margin-left: 10px; width: 28px; height: 34px"
         src="/Common/img/back.png"
       ></image>
@@ -28,7 +29,12 @@
         >
       </text>
     </stack>
-
+    <text style="color: #fff; font-weight: bold"
+      >当天广告点击次数：{{ countNow }}次</text
+    >
+    <text style="color: #fff; font-weight: bold"
+      >是否开启点击层{{ isShowTclayer }}</text
+    >
     <div
       style="position: absolute; width: 282px; height: 282px; top: 800px; left: 250px"
       onclick="openad"
@@ -40,15 +46,19 @@
           <text class="item-div-text">{{ $item.title }}</text>
           <image
             if="{{$item.id===1}}"
-            style="margin-top: 20px; width: 150px; height: 150px "
+            style="margin-top: 20px; width: 150px; height: 150px"
             src="/Common/img/ad/icon_fd.png"
           ></image>
         </stack>
       </div>
     </div>
 
-    <native-ad if="{{showDialog}}" onemit-evt="emitEvt"></native-ad>
-    ·
+    <native-ad
+      if="{{showDialog}}"
+      onemit-evt="emitEvt"
+      onemit-close="emitClose"
+      show-tclayer="{{isShowTclayer}}"
+    ></native-ad>
 
     <stack class="coner" if="{{showDialog2}}">
       <div
@@ -75,7 +85,7 @@
   flex-direction: column;
   background-image: url(/Common/img/ad/bg_chb.png);
   background-repeat: no-repeat;
-  background-size: cover; /* 等比例缩放背景图片以完全覆盖容器，可能背景图片部分不可见 */
+  margin-top: -50px;
 }
 .coner {
   width: 100%;
@@ -111,9 +121,6 @@
   margin-top: 400px;
   margin-left: 230px;
   background-image: url(/Common/img/ad/icon_sz.png);
-    /* 背景图片不重复绘制 */
-  background-repeat: no-repeat;
-  background-size: cover; /* 等比例缩放背景图片以完全覆盖容器，可能背景图片部分不可见 */
   animation-name: float;
   animation-duration: 1500ms;
   animation-iteration-count: infinite;
@@ -150,9 +157,6 @@
   justify-content: center;
   height: 172px;
   width: 162px;
-  /* 背景图片不重复绘制 */
-  background-repeat: no-repeat;
-  background-size: cover; /* 等比例缩放背景图片以完全覆盖容器，可能背景图片部分不可见 */
   background-image: url(/Common/img/ad/icon_hbbg.png);
 }
 .item-div-text {
@@ -166,6 +170,15 @@
 
 module.exports = {
   private: {
+
+
+    isShowTclayer: false, //是否显示广告透明点击层 后台参数
+    isbolckReturn: true, //是否可以返回手势 后台参数
+    returnPage: '',//手势返回配置信息,返回页面
+    countNow: 0,
+
+    isShowLogin: false,//是否开启广告后台参数逻辑
+    isShowTclayerLogin: false,//是否开启广告页面透明层配置逻辑
     quotaList: [
       {
         title: '',
@@ -188,55 +201,148 @@ module.exports = {
     showDialog2: false,//次数已用完窗口
     receivedCount: 8,//剩余次数
 
-  },
-  async onReady(options) {
-    this.getAdCount(this.$app.$def.dataApp.nativeAdUnitId)//原生广告位，判断获取次数
-
-    // const storageFlag = await $processData.getStorage("_PRIVAC");
-    // if (storageFlag) {
-    //   //显示banner 广告高度，底部缩进
-    //   $utils.showBannerAd(this.$app.$def.dataApp.bannerAdUnitId, 0)
-    // } else {   //未授权，弹出授权询问
-    //   console.log('用户授权= ', storageFlag);
-    //   console.log('未授权,不加载广告');
-    // }
 
 
   },
-  onShow(options) {
+
+  onInit: function (e) {
+    //插屏广告
+    $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId)
+
+
+    //处理回传链接
+    $utils.saveHapUri(e)
+    //显示banner 广告高度，底部缩进
+    $utils.showBannerAd(0)
+    //oaid为空,不执行广告点击控制逻辑
+    this.isShowLogin = this.$app.$def.dataApp.actiParam.oaid ? true : false
+
+
+    //透明层展示比例判断
+    this.isShowTclayerOfBL()
+    //获取手势返回配置信息
+    this.bolckReturn()
+
+  },
+  onReady(options) {
+    this.getAdCount()//原生广告位，获取次数
+  },
+  async onShow(options) {
     $umeng_stat.resume(this)
   },
+
+
+  //透明层展示比例判断
+  isShowTclayerOfBL() {
+    if (!this.isShowLogin) {
+      console.log('oaid为空,不执行透明层展示比例判断')
+      return
+    }
+
+    $apis.example.showTclayer().then((res) => {
+      console.log('页面透明比例判断:', res);
+      this.isShowTclayerLogin = res.data
+      if (this.isShowTclayerLogin) {//当前需要执行透明点击层规则
+        this.onpeShowTclayerLogin()
+      }
+    }).catch(err => {
+      console.log(err, '页面透明比例判断错误');
+      this.isShowTclayerLogin = false
+    })
+  },
+
+  // 执行透明点击层规则 根据当天点击次数判断
+  async onpeShowTclayerLogin() {
+
+    await $processData.resetTodayClicksIfNeeded()//检查是否需要重置广告点击次数
+    let count = await $processData.getStorage("todayClicks")
+    //获取页面透明层配置信息
+    this.showTclayer(count)
+
+
+  },
+
+  //获取页面透明层配置信息 传次数
+  showTclayer(count) {
+    if (!this.isShowTclayerLogin) {
+      console.log('当前透明层执行比例分配为否,不执行透明层逻辑')
+      return
+    }
+    if (!count) {
+      count = 0
+    }
+
+    // console.log('当前广告点击次数', count);
+
+    this.countNow = count
+    $apis.example.showTclayer({
+      count: count//点击广告次数(非必填),有传才会匹配规则
+    }).then((res) => {
+      console.log('页面透明配置信息:', res);
+      this.isShowTclayer = res.data
+
+    }).catch(err => {
+      console.log(err, '页面透明配置信息错误');
+      this.isShowTclayer = false
+    })
+  },
+
+  bolckReturn() {
+    if (!this.isShowLogin) {
+      console.log('oaid为空,不执行手势返回控制逻辑 ')
+      return
+    }
+    //获取手势返回配置信息
+    $apis.example.bolckReturn().then((res) => {
+      console.log('手势返回配置信息:', res);
+      this.isbolckReturn = res.data.isReturn
+      this.returnPage = res.data.returnPage
+    }).catch(err => {
+      console.log(err, '手势返回配置信息错误');
+    })
+
+  },
+
   onHide() {
     $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
   },
   //获取每日次数
-  getAdCount(adUnitId) {
+  getAdCount() {
 
     $apis.example.getAdCount({
-      adId: adUnitId,
+      adId: this.$app.$def.dataApp.nativeAdUnitId,
       channel: ''
     }).then((res) => {
-      console.log('获取每日次数', res);
+      // console.log('获取每日次数', res);
       this.countT(res.data)
     })
   },
   openad() {
-    console.info("点击了扯");
-    if (this.receivedCount > 0) {
 
-      this.showDialog = true
-      $utils.hideBanerAd()
+    this.showDialog = true
+    $utils.hideBanerAd()
 
-    } else {
-      this.showDialog2 = true;
-    }
   },
-  emitEvt(evt) {
-    console.log('拆福袋回调:emitEvt(evt)');
+  async emitEvt(evt) {
+    // console.log('拆福袋回调:emitEvt(evt)');
+
     this.showDialog = false
     this.countT(evt.detail.count)
     $utils.viewBanner()
+
+
+    await $processData.incrementTodayClicks()//执行一次点击广告
+    //获取页面透明层配置信息  传入当前点击次数
+    this.showTclayer(await $processData.getStorage("todayClicks") + 1)
+
   },
+
+  emitClose() {
+    // console.log('拆福袋失败');
+    this.showDialog = false
+    $utils.viewBanner()
+  },
+
   countT(c) {
     this.receivedCount = Math.min(8, Math.max(0, 8 - c));//
   },
@@ -249,12 +355,29 @@ module.exports = {
   },
 
   back() {
-    // $router.back();
+    let u = 'Page_MainTab'
+    if (this.returnPage) {
+      u = this.returnPage
+    }
     $router.push({
-      uri: 'Page_MainTab'
-    });
+      uri: u
+    })
+  },
+
+  onBackPress() {
+    return this.showDialog ? true : this.onReturnPage()    //如果native-ad显示了，就不能返回键
+  },
+
+  onReturnPage() {
+    // console.log('jumpLink:', this.returnPage);
+    if (this.returnPage) {
+      $router.push({
+        uri: this.returnPage
+      });
+      return true
+    } else {
+      return !this.isbolckReturn
+    }
   }
-
-
 }
 </script>

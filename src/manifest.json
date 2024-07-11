@@ -5,7 +5,7 @@
     "versionCode": 7,
     "permissions": [{ "origin": "*" }], 
     "icon": "/Common/img/logo.png",
-    "minPlatformVersion": 1100,
+    "minPlatformVersion": 1050,
     "features": [
         {
             "name": "system.storage"
@@ -82,7 +82,12 @@
             },
             "ad/nativeAD": {
                 "component": "index"
+            },
+            "ad/AdBanner": {
+              "component": "index",
+              "launchMode": "singleTask"
             }
+            
         }
     },
     "display": {

@@ -1,6 +1,13 @@
 {
   "modeOptions": {
-    "current": -1,
-    "list": []
+    "current": 0,
+    "list": [
+      {
+        "name": "拆福袋",
+        "pathName": "Page_cfd",
+        "query": "",
+        "id": 0
+      }
+    ]
   }
 }
