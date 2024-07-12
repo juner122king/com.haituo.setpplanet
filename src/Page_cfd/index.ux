@@ -29,12 +29,12 @@
         >
       </text>
     </stack>
-    <text style="color: #fff; font-weight: bold"
+    <!-- <text style="color: #fff; font-weight: bold"
       >当天广告点击次数：{{ countNow }}次</text
     >
     <text style="color: #fff; font-weight: bold"
       >是否开启点击层{{ isShowTclayer }}</text
-    >
+    > -->
     <div
       style="position: absolute; width: 282px; height: 282px; top: 800px; left: 250px"
       onclick="openad"
@@ -62,7 +62,7 @@
 
     <stack class="coner" if="{{showDialog2}}">
       <div
-        style="width: 672px; height: 800px; background-image: url(/Common/img/ad/bg_coner.png)"
+        style=" width: 672px; height: 800px; background-image: url(/Common/img/ad/bg_coner.png)"
       >
         <image
           class="closeImg"
@@ -85,6 +85,8 @@
   flex-direction: column;
   background-image: url(/Common/img/ad/bg_chb.png);
   background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
   margin-top: -50px;
 }
 .coner {
@@ -100,7 +102,7 @@
 }
 .daliy {
   justify-content: space-around;
-  margin-top: 500px;
+  margin-top: 550px;
   width: 258px;
   height: 50px;
   background: linear-gradient(90deg, #e9fd65, #95ff37 100%);
@@ -124,6 +126,8 @@
   animation-name: float;
   animation-duration: 1500ms;
   animation-iteration-count: infinite;
+  background-position: center;
+  background-size: 100%;
 }
 @keyframes float {
   0% {
@@ -157,6 +161,8 @@
   justify-content: center;
   height: 172px;
   width: 162px;
+  background-position: center;
+  background-size: 100%;
   background-image: url(/Common/img/ad/icon_hbbg.png);
 }
 .item-div-text {

@@ -79,6 +79,7 @@ module.exports = {
 		}
 	},
 	onInit() {
+		// this.$page.setExitPopupAdEnable(true)
 	},
 	onShow(options) {
 		$umeng_stat.resume(this)

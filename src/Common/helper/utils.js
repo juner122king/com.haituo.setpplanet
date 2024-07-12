@@ -163,10 +163,10 @@ let bannerAd; const showBannerAd = async () => {
   let adid = '4095f11c8658440b9075da95705d6313'
   let Provider = $ad.getProvider();
   console.info('广告商:', Provider);
-  $prompt.showToast({
-    message: `${Provider}广告商`,
-    gravity: 'center'
-  });
+  // $prompt.showToast({
+  //   message: `${Provider}广告商`,
+  //   gravity: 'center'
+  // });
   console.info("banner广告位=" + adid);
 
 

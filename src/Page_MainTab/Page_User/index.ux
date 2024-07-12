@@ -191,13 +191,13 @@ module.exports = {
 
   pushPageTixian() {
 
-    // $router.push({
-    //   uri: 'Page_Tixian'
-    // });
-
     $router.push({
-      uri: 'ad/AdBanner'
+      uri: 'Page_Tixian'
     });
+
+    // $router.push({
+    //   uri: 'ad/AdBanner'
+    // });
   },
   pushPageabout() {
     $router.push({
