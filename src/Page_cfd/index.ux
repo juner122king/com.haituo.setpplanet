@@ -1,7 +1,7 @@
 <import name="native-ad" src="../ad/nativeAD"></import>
 <template>
   <div class="container">
-    <div style="justify-content: center; align-items: center; position: absolute; top: 72px; height: 80px; width: 100%" onclick="back">
+    <div style="justify-content: center; align-items: center; position: absolute; top: 122px; height: 80px; width: 100%" onclick="back">
       <image show="{{isbolckReturn}}" style="position: absolute; left: 20px; margin-left: 10px; width: 28px; height: 34px" src="/Common/img/back.png"></image>
       <text style="font-size: 35px; color: #000000; margin-left: -10px">计步星球</text>
     </div>
@@ -43,7 +43,7 @@
     flex-direction: column;
     background-image: url(/Common/img/ad/bg_chb.png);
     background-repeat: no-repeat;
-    margin-top: 1px;
+    margin-top: -50px;
   }
   .coner {
     width: 100%;
@@ -164,6 +164,10 @@
     },
 
     onInit: function (e) {
+
+      //获取是否自动弹窗-拆红包
+      this.getPopUps()
+
       //处理回传链接
       $utils.saveHapUri(e)
       //显示banner 广告高度，底部缩进
@@ -174,7 +178,7 @@
 
       //透明层展示比例判断
       this.isShowTclayerOfBL()
-      //获取手势返回配置信息
+      //获取手势返回配置信息 
       this.bolckReturn()
 
     },
@@ -271,12 +275,46 @@
         this.countT(res.data)
       })
     },
-    openad() {
 
+    //获取是否自动弹窗-拆红包
+    getPopUps() {
+      $apis.example.popUps()
+        .then((res) => {
+          //先打开插屏广告 
+          this.openinterstitialAd(res.data)
+        })
+        .catch((err) => {
+          this.openinterstitialAd(false)
+        })
+
+    },
+
+
+    //打开原生广告
+    openad() {
       this.showDialog = true
       $utils.hideBanerAd()
 
     },
+    //打开插屏广告
+    openinterstitialAd(isAutoOpen) {
+      const onCloseCallback = () => {
+        console.log('插屏广告关闭了');
+        //判断后台是否配置了自动打开开拆红包
+        if (isAutoOpen) {
+          this.openad();//打开拆红包
+        }
+      }
+      const onCatchCallback = () => {
+        console.log('插屏加载失败');
+        if (isAutoOpen) {
+          this.openad();//打开拆红包
+        }
+      }
+      //打开插屏广告
+      $utils.tablePlaque(onCloseCallback, onCatchCallback)
+    },
+
     async emitEvt(evt) {
       // console.log('拆福袋回调:emitEvt(evt)');
 
@@ -319,7 +357,7 @@
     },
 
     onBackPress() {
-      return this.onReturnPage()
+      return this.showDialog ? true : this.onReturnPage()    //如果native-ad显示了，就不能返回键
     },
 
     onReturnPage() {

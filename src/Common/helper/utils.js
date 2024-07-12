@@ -48,7 +48,10 @@ const getUserId = async () => {
   let userId = await $device.getUserId()
   return userId.data.userId;
 };
-
+const getOAID = async () => {
+  let oaid = await $device.getOAID()
+  return oaid
+};
 
 /**
  * 转化上传
@@ -58,14 +61,16 @@ function getConvertUpload() {
   let param = {
     ...getApp().$def.dataApp.actiParam
   }
-  // console.log('getConvertUpload() 转化参数param= ', param)
-  if (!param.oaid) {
-    return
-  }
+  console.log('getConvertUpload() 转化参数param= ', param)
+
   for (const key in param) {
     param[key] = param[key].replace(/\/$/, "");
   }
   const convertedParam = convertKeysToCamelCase(param);
+
+  if (!convertedParam.oaid && !convertedParam.adgroupId) {
+    return
+  }
   // console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
   $apis.example.convertUpload({
     ...convertedParam,
@@ -116,15 +121,15 @@ const saveHapUri = (e) => {
 * 插屏广告 
 */
 
-const tablePlaque = async () => {
+const tablePlaque = async (onCloseCallback, onCatchCallback) => {
 
-  const storageFlag = await $processData.getStorage("_PRIVAC");
-  if (!storageFlag) {
-    //未授权，弹出授权询问
-    console.log('用户授权= ', storageFlag);
-    console.log('未授权,不加载插屏广告');
-    return
-  }
+  // const storageFlag = await $processData.getStorage("_PRIVAC");
+  // if (!storageFlag) {
+  //   //未授权，弹出授权询问
+  //   console.log('用户授权= ', storageFlag);
+  //   console.log('未授权,不加载插屏广告');
+  //   return
+  // }
 
   let Provider = $ad.getProvider();
   if (!Provider) {
@@ -141,15 +146,20 @@ const tablePlaque = async () => {
       () => { console.log('插屏广告show成功') },
       () => { console.log('插屏广告show失败') }
     )
-  }).catch((err) => {
-    console.log(err, '插屏加载失败');
   })
+    // .catch((err) => {
+    //   console.log(err, '插屏加载失败');
+    // })
+    .catch(onCatchCallback)
+
+
   interstitialAd.onClick(() => {
     console.log('插屏广告点击了');
     //转化上传
     getConvertUpload()
   })
 
+  interstitialAd.onClose(onCloseCallback)
 
 };
 
@@ -160,7 +170,7 @@ const tablePlaque = async () => {
 
 let bannerAd; const showBannerAd = async (margin_bot) => {
 
-  
+
   // const storageFlag = await $processData.getStorage("_PRIVAC");
   // if (!storageFlag) {
   //   //未授权，弹出授权询问
@@ -177,7 +187,7 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
   var d = $device.getInfoSync();
   // console.info("banner广告-设备信息 " + JSON.stringify(d));
 
-  let height = 57;
+  let height = 144;  //两种高度  57与144
   //获取页面内可见窗口的高度和宽度，此值不包括标题栏和状态栏高度
   let windowWidth = d.screenWidth;
   let windowHeight = d.screenHeight - 153 - margin_bot;
@@ -199,7 +209,7 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
   // console.info("calBannerPostion1 top=" + top + ", logicWebTop= " + logicWebTop);
 
 
-  
+
   const style = {
     left: 0,
     top: top,
@@ -244,21 +254,6 @@ const destroyBanner = () => {
   }
 }
 
-const extractYearMonth = (input) => {
-  if (input.length !== 6 || isNaN(input)) {
-    throw new Error('Invalid input format');
-  }
-  const year = input.slice(0, 4);
-  let month = input.slice(4, 6);
-
-  if (month[0] === '0') {
-    month = month[1];
-  } else {
-    month = parseInt(month, 10).toString();
-  }
-  return { year, month };
-}
-
 
 
 /**
@@ -300,7 +295,6 @@ export default {
   throttle,
   getUserId,
   getConvertUpload,
-  extractYearMonth,
   startCountDown,
   dataEncryption,
   tablePlaque,
@@ -308,5 +302,6 @@ export default {
   hideBanerAd,
   viewBanner,
   destroyBanner,
-  saveHapUri
+  saveHapUri,
+  getOAID
 }

@@ -123,6 +123,19 @@ const showTclayer = (data) => {
     });
 }
 
+/**
+ * 获取是否自动弹窗  
+ *
+ */
+
+const popUps = () => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/ad/auto/popUps`
+
+    });
+}
+
 
 export default {
     toLogin,
@@ -136,5 +149,6 @@ export default {
     completeAdRSA,
     convertUpload,
     bolckReturn,
-    showTclayer
+    showTclayer,
+    popUps
 };

@@ -21,13 +21,12 @@
     height: 850px;
     position: absolute;
     bottom: 100px;
-
   }
 
   .item-container {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.9);
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -263,7 +262,7 @@
       this.native.isShow = false;
     },
 
-     completeAdRSA() {
+    completeAdRSA() {
       console.log('点击拆福袋');
 
       //先判断广告没有没加载出来，没有就直接返回不执行接口
@@ -278,22 +277,34 @@
         this.$emit('emitClose')
         return
       }
-      
+
 
       var adType = 'NATIVE'
       var adId = this.native.adUnitId
       var channel = getApp().$def.dataApp.channel
       var countMax = getApp().$def.dataApp.countMax
       var brand = getApp().$def.dataApp.brand
+      var oaid = getApp().$def.dataApp.actiParam.oaid
+      var info = $device.getInfoSync();
+      var ua = ''
+      // 确保 ua 对象包含所需的参数
+      if (info) {
+        ua = `${info.model}, ${info.product}, ${info.manufacturer}, ${info.osType}`;
+      } else {
+        console.error('ua 对象未定义或不包含所需的参数');
+      }
+      console.log(`构建参数对象oaid:${oaid}  构建参数对象ua:${ua}`);
       // 构建参数对象
       const params = {
         adType,
         adId,
         channel,
         countMax,
-        brand
+        brand,
+        oaid,
+        ua
       };
-
+      console.log(`构建参数对象:${params}`);
       $apis.example.completeAdRSA(params).then((res) => {
 
         console.log(`完成广告----------> jumpLink:${res.data.jumpLink}, 完成次数：${res.data.count} 当次奖励：${res.data.awardAmount}`);
