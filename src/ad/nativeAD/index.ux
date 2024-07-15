@@ -1,7 +1,10 @@
 <template>
   <div class="item-container">
-    <image style="width: 528px; height: 708px" src="/Common/img/ad/icon_gx.png"></image>
-    <image style="width: 340px; height: 94px" src="/Common/img/ad/bt_cpd.png" onclick="completeAdRSA"></image>
+    <image class="closeView" src="/Common/img/ad/icon_x.png" onclick="closeAdview"></image>
+    <!-- <image style="width: 340px; height: 94pxz" src="/Common/img/ad/bt_cpd.png" onclick="completeAdRSA"></image> -->
+    <image style="margin-top: -100px; width: 528px; height: 708px" src="/Common/img/ad/icon_gx.png"></image>
+    <text style=" margin-top: -130px; width: 360px; height: 94px; font-size: 38px; color: #fff; border-radius: 60px; background-color: #ec5d0a; font-weight: bold; text-align: center" onclick="completeAdRSA">打开并领取</text>
+
     <div if="native.isShow" class="container">
       <image class="closeImg" src="/Common/img/ad/icon_x.png" onclick="closeAd"></image>
       <video id="video" if="native.isShowVideo" src="{{native.adVideoSrc}}" autoplay="true" onclick="reportNativeClick()" class="ad-video"></video>
@@ -21,6 +24,7 @@
     height: 850px;
     position: absolute;
     bottom: 100px;
+
   }
 
   .item-container {
@@ -46,12 +50,21 @@
   .img {
     width: 100%;
     height: 100%;
-    border-radius: 20px;
+    border-radius: 0px;
   }
   .closeImg {
-    margin-bottom: 30px;
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 20px;
+  }
+
+  .closeView {
+    position: absolute;
+    left: 100px;
+    top: 140px;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(0, 0, 0, 0.5);
   }
   .alert {
     font-size: 40px;
@@ -94,8 +107,9 @@
     color: #ffffff;
     position: absolute;
     top: 0;
+    right: 0;
     font-size: 18px;
-    border-top-left-radius: 20px;
+    border-top-left-radius: 0px;
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -106,7 +120,7 @@
     font-size: 18px;
     padding-left: 10px;
     padding-right: 10px;
-    border-bottom-left-radius: 20px;
+    border-bottom-left-radius: 0px;
   }
 </style>
 <script>
@@ -258,9 +272,17 @@
         nativeAd.destroy();
       }
     },
+    //关闭广告内容
     closeAd: function () {
       this.native.isShow = false;
     },
+    //关闭广告页面
+    closeAdview: function () {
+
+      this.$emit('emitClose')
+
+    },
+
 
     completeAdRSA() {
       console.log('点击拆福袋');

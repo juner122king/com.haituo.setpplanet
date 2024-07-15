@@ -187,7 +187,7 @@ let bannerAd; const showBannerAd = async (margin_bot) => {
   var d = $device.getInfoSync();
   // console.info("banner广告-设备信息 " + JSON.stringify(d));
 
-  let height = 144;  //两种高度  57与144
+  let height = 57;  //两种高度  57与144
   //获取页面内可见窗口的高度和宽度，此值不包括标题栏和状态栏高度
   let windowWidth = d.screenWidth;
   let windowHeight = d.screenHeight - 153 - margin_bot;

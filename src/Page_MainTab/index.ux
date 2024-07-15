@@ -141,15 +141,9 @@
 			this.getUser();
 
 			//显示banner 广告高度，底部缩进
-				$utils.showBannerAd(175)
-		
+			$utils.showBannerAd(175)
+
 		},
-
-		onHide() {
-			$umeng_stat.pause(this);//在onHide方法的第一行加入此代码
-		},
-
-
 		getUser() {
 			$apis.user.getUserInfo().then((res) => {
 				console.log('用户信息----------------->' + JSON.stringify(res));
@@ -159,6 +153,7 @@
 			})
 		},
 		onHide() {
+			$umeng_stat.pause(this);//在onHide方法的第一行加入此代码
 			//需要隐藏时就销毁banner
 			$utils.destroyBanner();
 		}
