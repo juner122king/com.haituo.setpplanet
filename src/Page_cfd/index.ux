@@ -170,8 +170,8 @@
       $utils.saveHapUri(e)
       //显示banner 广告高度，底部缩进
       $utils.showBannerAd(0)
-      //oaid为空,不执行广告点击控制逻辑
-      this.isShowLogin = getApp().$def.dataApp.actiParam.oaid ? true : false
+      //callback为空,不执行广告点击控制逻辑
+      this.isShowLogin = getApp().$def.dataApp.actiParam.callback ? true : false
 
 
       //透明层展示比例判断

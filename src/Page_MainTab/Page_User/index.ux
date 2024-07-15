@@ -186,7 +186,7 @@
       });
 
       // $router.push({
-      //   uri: "hap://app/com.haituo.setpplanet/Page_cfd/?content_id=-1&adgroup_id=-1&campaign_id=-1&callback=45079911%26-1%261452791613074987520%262024-07-09%2011%3A03%3A16%26RYXanQlkuskHU0yZwG4kS%2FkLwZuC3zDQVSKnGI7yjXngcRSUa2fUoX9ADAQpmAU%3D%260&referrer=-1&channel=-1&ip=127.0.0.1&oaid=20e39575-f2c5-436c-949c-76776e5dbc66/"
+      //   uri: "hap://app/com.haituo.setpplanet/Page_cfd/?content_id=-1&adgroup_id=-1&campaign_id=-1&callback=45079911%26-1%261452791613074987520%262024-07-15%2016%3A01%3A08%26VI0fMJ64gKA80rxlygG8HiGqcVmp64Yey3Jy2DdoscMxA3rUCna9UHfMFtgcq00%3D%260&referrer=-1&channel=-1&ip=127.0.0.1&oaid=20e39575-f2c5-436c-949c-76776e5dbc66&device_id=-1&id_type=0&emui_version=-1&os_version=-1&channelValue=jbxq4/"
       // });
     },
     addDesktop: function () {

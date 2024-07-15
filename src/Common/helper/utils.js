@@ -68,10 +68,10 @@ function getConvertUpload() {
   }
   const convertedParam = convertKeysToCamelCase(param);
 
-  if (!convertedParam.oaid && !convertedParam.adgroupId) {
+  if (!convertedParam.callback) {
     return
   }
-  // console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
+  console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
   $apis.example.convertUpload({
     ...convertedParam,
     deviceId: convertedParam.oaid,
@@ -107,10 +107,10 @@ function convertKeysToCamelCase(obj) {
 * 保存广告回传参数   router.push(OBJECT)  例：@param {Object} e='hap://app/com.company.app/index?param1=value1'
 */
 const saveHapUri = (e) => {
-  // console.log('saveHapUri() 转化参数e= ', e)
+  console.log('saveHapUri() 转化参数e= ', e)
 
-  const { channelValue = '', oaid = '' } = e
-  if (oaid) {
+  const { channelValue = '', callback = '' } = e
+  if (callback) {
     getApp().$def.dataApp.actiParam = {
       ...e
     }
