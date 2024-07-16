@@ -36,7 +36,7 @@
 
 
 
-  
+
 
     },
     onDestroy() {
@@ -53,6 +53,7 @@
       channel: 'jh',
 
       bannerAdUnitId: "z1v6jykvy9",//banner广告位id
+      nAbannerAdUnitId: "i8zsc3gcbg",//原生banner广告位id
       nativeAdUnitId: "v5h5xsklp2",//广告位id
       interstitialAdUnitId: "a7nvl7fm00",//插屏广告位id
       //保存用户信息对象

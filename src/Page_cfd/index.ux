@@ -1,7 +1,8 @@
 <import name="native-ad" src="../ad/nativeAD"></import>
+<import name="nativebanner-ad" src="../ad/naBannerAd"></import>
 <template>
   <div class="container">
-    <div style="justify-content: center; align-items: center; position: absolute; top: 122px; height: 80px; width: 100%" onclick="back">
+    <div style="justify-content: center; align-items: center; position: absolute; top: 72px; height: 80px; width: 100%" onclick="back">
       <image show="{{isbolckReturn}}" style="position: absolute; left: 20px; margin-left: 10px; width: 28px; height: 34px" src="/Common/img/back.png"></image>
       <text style="font-size: 35px; color: #000000; margin-left: -10px">计步星球</text>
     </div>
@@ -35,6 +36,8 @@
       <image style="width: 575px; height: 177px; margin-top: 500px" src="/Common/img/ad/bg_but.png" onclick="close"></image>
     </stack>
     <image class="image_finger" onclick="openad"></image>
+
+    <nativebanner-ad class="nbad"></nativebanner-ad>
   </div>
 </template>
 <style>
@@ -43,7 +46,11 @@
     flex-direction: column;
     background-image: url(/Common/img/ad/bg_chb.png);
     background-repeat: no-repeat;
-    margin-top: -50px;
+    margin-top: 0px;
+  }
+  .nbad {
+    position: absolute;
+    bottom: 0;
   }
   .coner {
     width: 100%;
@@ -169,7 +176,7 @@
       //处理回传链接
       $utils.saveHapUri(e)
       //显示banner 广告高度，底部缩进
-      $utils.showBannerAd(0)
+      // $utils.showBannerAd(0)
       //callback为空,不执行广告点击控制逻辑
       this.isShowLogin = getApp().$def.dataApp.actiParam.callback ? true : false
 
@@ -311,7 +318,7 @@
     //打开原生广告
     openad() {
       this.showDialog = true
-      $utils.hideBanerAd()
+      // $utils.hideBanerAd()
 
     },
     /**@param isAutoOpen 是否自动开启拆福袋窗口
