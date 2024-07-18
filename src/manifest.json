@@ -1,8 +1,8 @@
 {
     "package": "com.haituo.setpplanet",
     "name": "计步星球",
-    "versionName": "1.0.18",
-    "versionCode": 18,
+    "versionName": "1.0.20",
+    "versionCode": 20,
     "icon": "/Common/img/logo.png",
     "minPlatformVersion": 1100,
     "features": [
@@ -23,6 +23,21 @@
         },
         {
             "name": "system.sensor"
+        },
+        {
+            "name": "system.webview"
+        },
+        {
+            "name": "system.request"
+        },
+        {
+            "name": "system.package"
+        },
+        {
+            "name": "service.account"
+        },
+        {
+            "name": "service.ad"
         }
     ],
     "config": {
@@ -61,7 +76,13 @@
             "Page_cfd/": {
                 "component": "index"
             },
+            "Page_cfd-taku/": {
+                "component": "index"
+            },
             "ad/nativeAD": {
+                "component": "index"
+            },
+            "TopOn/AdLanding": {
                 "component": "index"
             }
         }
@@ -81,6 +102,13 @@
                 "statusBarBackgroundOpacity": 0,
                 "titleBarBackgroundOpacity": 0
             },
+            "Page_cfd-taku/": {
+                "titleBar": false,
+                "menu": false,
+                "statusBarImmersive": true,
+                "statusBarBackgroundOpacity": 0,
+                "titleBarBackgroundOpacity": 0
+            },
             "Page_Tixian": {
                 "titleBar": true,
                 "menu": true,
@@ -90,6 +118,14 @@
                 "titleBar": true,
                 "menu": false,
                 "titleBarText": "用户登录"
+            },
+            "TopOn/AdLanding": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menuBarData": {
+                    "menuBar": false
+                }
             }
         }
     }

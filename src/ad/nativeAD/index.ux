@@ -1,9 +1,10 @@
+
 <template>
   <div class="item-container">
     <image class="closeView" src="/Common/img/ad/icon_x.png" onclick="closeAdview"></image>
     <!-- <image style="width: 340px; height: 94pxz" src="/Common/img/ad/bt_cpd.png" onclick="completeAdRSA"></image> -->
     <image style="margin-top: -100px; width: 528px; height: 708px" src="/Common/img/ad/icon_gx.png"></image>
-    <text style=" margin-top: -130px; width: 360px; height: 94px; font-size: 38px; color: #fff; border-radius: 60px; background-color: #ec5d0a; font-weight: bold; text-align: center" onclick="completeAdRSA">打开并领取</text>
+    <text style="margin-top: -130px; width: 360px; height: 94px; font-size: 38px; color: #fff; border-radius: 60px; background-color: #ec5d0a; font-weight: bold; text-align: center" onclick="completeAdRSA">打开并领取</text>
 
     <div if="native.isShow" class="container">
       <image class="closeImg" src="/Common/img/ad/icon_x.png" onclick="closeAd"></image>
@@ -15,6 +16,9 @@
         <text class="adtitle">{{ native.adData.title }}</text>
       </stack>
     </div>
+
+
+
     <div if="{{showTclayer}}" class="tc-layer" onclick="reportNativeClick()"></div>
   </div>
 </template>
@@ -24,7 +28,7 @@
     height: 850px;
     position: absolute;
     bottom: 100px;
-
+    background-color: rgba(0, 0, 0, 0.9);
   }
 
   .item-container {
@@ -134,6 +138,11 @@
         default: false,
         required: true,
       },
+      adUpload: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
     },
     data: {
       componentName: "ad",
@@ -161,13 +170,7 @@
     async onReady(options) {
       console.info("native ad onReady");
       this.showNativeAd();
-      // const storageFlag = await $processData.getStorage("_PRIVAC");
-      // if (storageFlag) {
-      //   this.showNativeAd();
-      // } else {   //未授权，弹出授权询问
-      //   console.log('用户授权= ', storageFlag);
-      //   console.log('未授权,不加载原生广告');
-      // }
+
 
     },
     onShow(options) {
@@ -177,14 +180,8 @@
     },
     getAdProvider: function () {
       this.provider = $ad.getProvider();
-
-    },
-    isDownloadAd(creativeType) {
-      let downloadTypes = [103, 106, 107, 108, 101, 102, 110];
-      return downloadTypes.includes(creativeType);
     },
     showNativeAd() {
-      var that = this;
       this.getAdProvider();
       if (this.provider !== "huawei") {
         console.info("the device  does not support ad.");
@@ -232,6 +229,9 @@
     reportNativeShow() {
       if (nativeAd) {
         nativeAd.reportAdShow({ adId: this.native.adData.adId });
+
+        //如果转化点击次数为0 则广告加载成功就转化上传
+        this.$emit('showNvad')
       }
     },
     reportNativeClick() {
@@ -240,32 +240,15 @@
         adId: this.native.adData.adId
       });
 
-      //转化上传
-      $utils.getConvertUpload()
+      //广告被点击时触发主页面方法
+      this.$emit('addAdc')
 
       //广告或透明层被点击后隐藏透明层
       this.showTclayer = false
 
     },
-    listenNativeAdDownloadStatus(downloadstatus) {
-      if (downloadstatus === "INSTALLED") {
-        this.native.btnTxt = "OPEN";
-      }
-    },
     startButton(event) {
       console.error('start download result is = ', event.resultCode)
-    },
-    removeAdListen: function () {
-      if (nativeAd) {
-        nativeAd.offDownloadProgress();
-        nativeAd.offError(() => {
-          console.log("nativeAd offError");
-        });
-        nativeAd.offLoad(() => {
-          console.log("nativeAd offLoad");
-        });
-        nativeAd.offStatusChanged();
-      }
     },
     onDestroy() {
       if (nativeAd) {
@@ -282,8 +265,6 @@
       this.$emit('emitClose')
 
     },
-
-
     completeAdRSA() {
       console.log('点击拆福袋');
 
@@ -299,8 +280,6 @@
         this.$emit('emitClose')
         return
       }
-
-
       var adType = 'NATIVE'
       var adId = this.native.adUnitId
       var channel = getApp().$def.dataApp.channel

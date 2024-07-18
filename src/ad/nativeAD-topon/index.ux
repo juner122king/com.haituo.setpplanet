@@ -1,0 +1,282 @@
+<import name="topon-ad" src="@topon/quick-app-sdk-hw/placement.ux"></import>
+
+<template>
+  <div class="page-container">
+    <image class="closeView" src="/Common/img/ad/icon_x.png" onclick="closeAdview"></image>
+    <image style="margin-top: -100px; width: 528px; height: 708px" src="/Common/img/ad/icon_gx.png"></image>
+    <text style="margin-top: -130px; width: 360px; height: 94px; font-size: 38px; color: #fff; border-radius: 60px; background-color: #ec5d0a; font-weight: bold; text-align: center" onclick="completeAdRSA">打开并领取</text>
+
+    <!-- 使用Placement组件 -->
+    <topon-ad id="topon-ad-{{placementId}}" placement-id="{{placementId}}" config="{{config}}" @ad-load="handleAdLoad" @ad-show="handleAdShow" @ad-close="handleAdClose" @ad-click="handleAdClick" @ad-error="handleAdError"></topon-ad>
+    <div if="{{showTclayer}}" class="tc-layer" onclick="reportNativeClick()"></div>
+  </div>
+</template>
+    
+<script>
+
+  export default {
+    data() {
+      return {
+        loaded: false,
+        isGetAd: false,
+        config: {
+          entry: '/pages/Home', // 开屏广告结束后打开的第一个页面
+          timeout: 30000 // 默认0（走默认，开屏5秒，其他300秒），单位毫秒
+        },
+
+        placementId: 'b669889dbd4d83', // 请替换为您在topon 开发者后台上的placementId
+
+        adData: null, // 广告物料，通过getAd获取
+        displayed: false // 自渲染广告组件展示控制
+      }
+    },
+
+    onReady() {
+      // 组件未挂载完成
+    },
+
+    // 广告源Load成功回调
+    handleAdLoad(e) {
+      console.log('demo接收load回调', e)
+      this.loaded = true
+
+      this.handleGetAd()
+    },
+
+    // 广告源Show成功回调
+    handleAdShow(e) {
+      console.log('demo接收show回调', e)
+      this.displayed = true
+
+      this.handleReportShow(e)
+    },
+
+    // 广告源Close成功回调
+    handleAdClose(e) {
+      console.log('demo接收close回调', e)
+      this.displayed = false
+    },
+
+    handleAdClick(e) {
+      console.log('demo接收click回调', e)
+
+      this.handleReportClick(e)//广告上报
+
+      this.reportNativeClick()//后台上报
+    },
+
+    handleAdError(e) {
+      console.log('demo接收error回调', e)
+    },
+
+
+    // 展示广告广告
+    handleDisplayAd() {
+      if (this.isSelfRendering) {
+        this.displayed = true
+      } else {
+        const placement = this.getSdkElement();
+        if (placement.show) {
+          placement.show()
+        }
+      }
+    },
+
+    // load加载广告【首次挂载组件时，sdk会自动加载一次广告，无需调用.load()方法】
+    handleLoadAd() {
+      /**
+       * 重置
+       */
+      this.isGetAd = false
+      this.displayed = false
+      this.adData = null
+      const placement = this.getSdkElement();
+      if (placement.load) {
+        placement.load()
+      }
+    },
+
+    handleIsReady() {
+      const placement = this.getSdkElement();
+      if (placement.isReady) {
+        const isReady = placement.isReady()
+        return isReady
+      }
+    },
+
+    // 获取广告素材
+    handleGetAd() {
+      if (!this.loaded) {
+        console.log('请等待加载完成后再获取数据')
+        return
+      }
+      this.displayed = false
+      this.adData = null
+      const placement = this.getSdkElement()
+      if (placement) {
+        const currentAd = placement.getAd()
+        console.log('currentAd', currentAd)
+        if (!currentAd) {
+          return;
+        }
+        this.adData = currentAd
+
+        this.isGetAd = true
+        this.handleDisplayAd()
+      }
+
+    },
+
+    // 上报广告展示统计
+    handleReportShow(e) {
+      console.log('demo接收show回调', e)
+      const placement = this.getSdkElement()
+      if (placement?.reportShow) {
+        console.log('上报show')
+        placement.reportShow()
+      }
+    },
+
+    // 上报广告点击统计
+    handleReportClick(e) {
+      console.log('demo接收show回调', e)
+      const placement = this.getSdkElement()
+      if (placement?.reportClick) {
+        console.log('上报click')
+        placement.reportClick()
+      }
+    },
+
+    // 获取广告组件实例
+    getSdkElement() {
+      return this.$child(`topon-ad-${this.placementId}`)
+    },
+
+    //关闭广告页面
+    closeAdview: function () {
+
+      this.$emit('emitClose')
+
+    },
+    reportNativeClick() {
+      console.info(" 原生广告被点击了");
+
+      //广告被点击时触发主页面方法
+      this.$emit('addAdc')
+
+      //广告或透明层被点击后隐藏透明层
+      this.showTclayer = false
+
+    },
+
+
+    completeAdRSA() {
+      console.log('点击拆福袋');
+
+      //先判断广告没有没加载出来，没有就直接返回不执行接口
+
+      if (!this.displayed) {
+        console.log('广告展示不成功,拆红包不成功');
+        $prompt.showToast({
+          message: '拆红包失败！请重试',
+          gravity: 'center'
+        });
+
+        this.$emit('emitClose')
+        return
+      }
+      var adType = 'NATIVE'
+      var adId = this.adData.unitId
+      var channel = getApp().$def.dataApp.channel
+      var countMax = getApp().$def.dataApp.countMax
+      var brand = getApp().$def.dataApp.brand
+      var oaid = getApp().$def.dataApp.actiParam.oaid
+      var info = $device.getInfoSync();
+      var ua = ''
+      // 确保 ua 对象包含所需的参数
+      if (info) {
+        ua = `${info.model}, ${info.product}, ${info.manufacturer}, ${info.osType}`;
+      } else {
+        console.error('ua 对象未定义或不包含所需的参数');
+      }
+      // 构建参数对象
+      const params = {
+        adType,
+        adId,
+        channel,
+        countMax,
+        brand,
+        oaid,
+        ua
+      };
+      console.log(`构建参数对象:${params}`);
+      $apis.example.completeAdRSA(params).then((res) => {
+
+        console.log(`完成广告----------> jumpLink:${res.data.jumpLink}, 完成次数：${res.data.count} 当次奖励：${res.data.awardAmount}`);
+
+        //先判断有没有返回跳转链接，有就跳
+        if (res.data.jumpLink) {
+          $router.push({
+            uri: res.data.jumpLink
+          });
+
+        } else {
+          var mes = ''
+          if (res.data.awardAmount) {
+            mes = '恭喜获得0.01元红包'
+          } else {
+            if (res.data.count > 8) {
+              mes = '今天活动次数已用完'
+            } else {
+              mes = '再来一次'
+            }
+          }
+          $prompt.showToast({
+            message: mes,
+            gravity: 'center'
+          })
+        }
+
+        this.$emit('emitEvt', {
+          count: res.data.count
+        })
+      }).catch(err => {
+        console.log(err, '点击拆福袋错误');
+        $prompt.showToast({
+          message: JSON.parse(err).message,
+          gravity: 'center'
+        });
+      });
+    }
+  }
+</script>
+    
+<style >
+  .tc-layer {
+    width: 100%;
+    height: 850px;
+    position: absolute;
+    bottom: 100px;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .page-container {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  .closeView {
+    position: absolute;
+    left: 100px;
+    top: 140px;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+</style>

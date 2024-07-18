@@ -1,6 +1,6 @@
 <script>
   import './Common/libs/umeng/umenganalysis.es.min';   //友盟sdk 必须添加！！！
-
+  import TOPON_AD_SDK from '@topon/quick-app-sdk-hw/app.js'
   module.exports = {
     onCreate() {
       console.info('Application onCreate');
@@ -37,10 +37,26 @@
 
 
 
-
+      try {
+        const instance = new TOPON_AD_SDK({
+          app: this,
+          appId: 'a6690ddbfd2bbc', // 请替换为您在topon开发者后台上的appId（您在topon开发者后台上所创建的应用ID）
+          appKey: 'ac7b8c3807532084e93fdf61490e25fa5' // 请替换为您在topon开发者后台上的 app key（topon开发者后台 => 账户信息 => key即为appKey）
+        });
+        this.$def.topon_sdk_instance = instance
+      } catch (error) {
+        console.log('error', error);
+      }
+    },
+    // onShow() {
+    //   this.instance.onShow()
+    // },
+    onHide() {
+      this.instance.onHide()
     },
     onDestroy() {
       console.info('Application onDestroy');
+      this.instance.onDestroy()
     },
     dataApp: {
 
@@ -64,8 +80,6 @@
       },
 
       actiParam: '',
-
-
     }
 
   }

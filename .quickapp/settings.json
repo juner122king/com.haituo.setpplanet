@@ -1,4 +1,5 @@
 {
     "workbench.devecoPanel.visible": false,
-    "workbench.devecoModule.visible": false
+    "workbench.devecoModule.visible": false,
+    "git.ignoreLimitWarning": true
 }

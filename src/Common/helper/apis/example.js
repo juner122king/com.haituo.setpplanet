@@ -136,6 +136,18 @@ const popUps = () => {
     });
 }
 
+/**
+ * 转化点击次数
+ *
+ */
+const clickCount = (data) => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/ad/convert/clickCount/${data.type}`,
+        data
+    });
+}
+
 
 export default {
     toLogin,
@@ -150,5 +162,6 @@ export default {
     convertUpload,
     bolckReturn,
     showTclayer,
-    popUps
+    popUps,
+    clickCount
 };
