@@ -55,7 +55,7 @@
         onclick="openAd"
       />
       <div
-        style="border-radius: 20px; background-color: #ffffff; width: 702px; height: 380px; padding: 20px; flex-direction: column"
+        style="border-radius: 20px; background-color: #ffffff; width: 702px; height: 526px; padding: 20px; flex-direction: column"
       >
         <div style="width: 152px; height: 45px; align-items: flex-end">
           <div
@@ -103,6 +103,26 @@
           <div class="frame_" onclick="pushPagelogOut">
             <image class="frame_ima" src="/Common/img/frame8.png" />
             <text class="frame_text">注销</text>
+          </div>
+        </div>
+        <div
+          style="width: 100%; justify-content:space-around; margin-bottom: 30px; margin-top: 30px"
+        >
+          <div class="frame_" onclick="signOut">
+            <image class="frame_ima" src="/Common/img/frame9.png" />
+            <text class="frame_text">退出</text>
+          </div>
+          <div class="frame_">
+            <image class="frame_ima" />
+            <text class="frame_text"></text>
+          </div>
+          <div class="frame_">
+            <image class="frame_ima" />
+            <text class="frame_text"></text>
+          </div>
+          <div class="frame_">
+            <image class="frame_ima" />
+            <text class="frame_text"></text>
           </div>
         </div>
       </div>
@@ -222,6 +242,18 @@ module.exports = {
     });
   },
 
+
+  //用户退出登录
+  signOut() {
+    $apis.user.phoneLogout().then(res => {
+      $prompt.showToast({
+        message: "退出成功！",
+        gravity: "center"
+      })
+    }).catch((err) => {
+      console.log(err);
+    })
+  },
   openAd() {
     $router.push({
       uri: 'Page_cfd'

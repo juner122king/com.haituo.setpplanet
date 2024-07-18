@@ -42,6 +42,16 @@ const putForeverLogout = (data) => {
     });
 }
 
+//用户退出手机登录
+const phomeLogout = () => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/user/phone/logout`,
+    });
+}
+
+
+
 
 // 用户余额记录
 const getUserCashRecord = (data) => {
@@ -87,7 +97,8 @@ let user = {
     getUserGoldRecord,
     putForeverLogout,
     putAlipayAccount,
-    postSendCode
+    postSendCode,
+    phomeLogout
 }
 
 export default user

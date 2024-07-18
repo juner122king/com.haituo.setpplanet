@@ -3,7 +3,6 @@
 <import name="my-privacypop" src="../ui/privacypop/index"></import>
 <template>
   <div class="container">
-        
     <div class="top_view">
       <tabs class="tabs" onchange="changeTabactive">
         <tab-bar class="tab-bar">
@@ -62,7 +61,10 @@
             >BMI/体脂率计算</text
           >
         </div>
-        <text style="color: #828282; padding-top: 10px; padding-left: 20px" onclick="openBasicInformationDialog">填写计算></text
+        <text
+          style="color: #828282; padding-top: 10px; padding-left: 20px"
+          onclick="openBasicInformationDialog"
+          >填写计算></text
         >
       </div>
 
@@ -113,10 +115,7 @@
       prompt="{{obj}}"
     ></my-dialog>
 
-
-<my-privacypop @agree="agree" @cancel="cancel" show-pop="{{isShow}}" />
-    
-    
+    <my-privacypop @agree="agree" @cancel="cancel" show-pop="{{isShow}}" />
   </div>
 </template>
 
@@ -625,6 +624,8 @@ module.exports = {
   },
   cancel() {
     this.isShow = false;
+
+    $router.back();
   },
 }
 </script>

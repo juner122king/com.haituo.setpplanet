@@ -16,7 +16,7 @@
           class="ad-native"
           show="{{adList.length > 0}}"
           @error="error"
-          @adclick="adClick"
+          @adclick="reportNativeClick"
           @adclose="closeAd"
         >
           <div class="ad-content">
@@ -180,10 +180,7 @@ module.exports = {
 
   reportNativeClick() {
     console.info(" 原生广告被点击了");
-    nativeAd.reportAdClick({
-      adId: this.native.adData.adId
-    });
-
+ 
     //转化上传
     $utils.getConvertUpload()
 
