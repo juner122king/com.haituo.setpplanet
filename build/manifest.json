@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.0.21",
-  "versionCode": 21,
+  "versionName": "1.0.22",
+  "versionCode": 22,
   "icon": "/Common/img/logo.png",
   "minPlatformVersion": 1100,
   "features": [
@@ -68,6 +68,18 @@
     },
     {
       "name": "system.downloadtask"
+    },
+    {
+      "name": "system.configuration"
+    },
+    {
+      "name": "system.websocketfactory"
+    },
+    {
+      "name": "system.requesttask"
+    },
+    {
+      "name": "system.uploadtask"
     }
   ],
   "config": {
@@ -159,6 +171,5 @@
       }
     }
   },
-  "versionType": "debug",
-  "debugable": true
+  "versionType": "release"
 }
