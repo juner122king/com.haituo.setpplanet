@@ -30,6 +30,7 @@
 
       hook2global.$device = $device
       hook2global.$processData = $processData
+      
       //友盟sdk
       console.log("[app.ux] onCreate...");
       $umeng_stat.init(this);   //在onCreate函数中加入该行代码，必须添加！！

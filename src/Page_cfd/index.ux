@@ -343,6 +343,9 @@
       this.showDialog = true
       // $utils.hideBanerAd()
 
+      //友盟事件打点
+      $umeng_stat.trackEvent('xyfddhj_cfd', '点击');
+
     },
     /**@param isAutoOpen 是否自动开启拆福袋窗口
      * @param isOpenInterAd 是否自动开启插屏广告
