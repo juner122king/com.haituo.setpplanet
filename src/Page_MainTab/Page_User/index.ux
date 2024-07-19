@@ -211,6 +211,8 @@ module.exports = {
 
   pushPageTixian() {
 
+
+
     $router.push({
       uri: 'Page_Tixian'
     });
@@ -255,6 +257,10 @@ module.exports = {
     })
   },
   openAd() {
+    //友盟事件打点
+    $umeng_stat.trackEvent('wd_xyfddhj', '点击');
+
+
     $router.push({
       uri: 'Page_cfd'
     });

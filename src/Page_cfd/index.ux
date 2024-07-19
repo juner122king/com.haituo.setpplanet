@@ -325,6 +325,10 @@ module.exports = {
   },
   openad() {
 
+    //友盟事件打点
+    $umeng_stat.trackEvent('xyfddhj_cfd', '点击');
+
+
     this.showDialog = true
     $utils.hideBanerAd()
 
