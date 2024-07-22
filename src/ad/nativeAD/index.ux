@@ -109,47 +109,7 @@ module.exports = {
     this.provider = $ad.getProvider();
 
   },
-  showNativeAd() {
 
-    nativeAd = $ad.preloadAd({ adUnitId: this.native.adUnitId });
-    nativeAd.onLoad(data => {
-      // console.info("ad data loaded: " + JSON.stringify(data));
-      this.native.adData = data.adList[0];
-      if (this.native.adData) {
-        if (this.native.adData.imgUrlList) {
-          this.native.adImgSrc = this.native.adData.imgUrlList[0];
-          console.info(" this.native.adImgSrc =" + this.native.adImgSrc);
-          this.native.isShowImg = true;
-        } else {
-          this.native.isShowImg = false;
-          this.native.adImgSrc = "";
-        }
-        if (this.native.adData.clickBtnTxt) {
-          this.native.btnTxt = this.native.adData.clickBtnTxt;
-        } else {
-          this.native.btnTxt = "";
-        }
-        if (this.native.adData.videoUrlList && this.native.adData.videoUrlList[0]) {
-          this.native.adVideoSrc = this.native.adData.videoUrlList[0];
-          this.native.isShowVideo = true;
-        } else {
-          this.native.isShowVideo = false;
-          this.native.adVideoSrc = "";
-        }
-        this.native.isShow = true;
-        this.native.errStr = "";
-        this.reportNativeShow();
-      }
-    });
-    nativeAd.onError(e => {
-      console.error("load ad error:" + JSON.stringify(e));
-      this.native.isShowImg = false;
-      this.native.isShowVideo = false;
-      this.native.isShow = false;
-      this.native.errStr = JSON.stringify(e);
-    });
-    nativeAd.load();
-  },
   showNativeAd2() {
     let adParams = {
       adUnitId: this.native.adUnitId, // 原生自渲染2.0广告广告位id
@@ -182,7 +142,7 @@ module.exports = {
     console.info(" 原生广告被点击了");
 
     //转化上传
-    $utils.getConvertUpload()
+    $utils.getConvertUpload(this)
 
     //广告或透明层被点击后隐藏透明层
     this.showTclayer = false

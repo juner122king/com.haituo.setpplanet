@@ -224,7 +224,7 @@ module.exports = {
 
   async onInit() {
     //插屏广告
-    $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId)
+    $utils.tablePlaque(this)
   },
   onShow(options) {
 
