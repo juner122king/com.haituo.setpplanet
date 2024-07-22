@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.0.22",
-  "versionCode": 22,
+  "versionName": "1.0.23",
+  "versionCode": 23,
   "icon": "/Common/img/logo.png",
   "minPlatformVersion": 1100,
   "features": [
@@ -115,10 +115,10 @@
       "Page_setPay": {
         "component": "index"
       },
-      "Page_cfd/": {
+      "Page_cfd": {
         "component": "index"
       },
-      "Page_cfd-taku/": {
+      "Page_cfd-taku": {
         "component": "index"
       },
       "ad/nativeAD": {
@@ -137,14 +137,14 @@
         "statusBarImmersive": true,
         "statusBarBackgroundOpacity": 0
       },
-      "Page_cfd/": {
+      "Page_cfd": {
         "titleBar": false,
         "menu": false,
         "statusBarImmersive": true,
         "statusBarBackgroundOpacity": 0,
         "titleBarBackgroundOpacity": 0
       },
-      "Page_cfd-taku/": {
+      "Page_cfd-taku": {
         "titleBar": false,
         "menu": false,
         "statusBarImmersive": true,

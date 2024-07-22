@@ -39,7 +39,7 @@
     </stack>
     <image class="image_finger" onclick="openad"></image>
 
-    <!-- <nativebanner-ad class="nbad" onadd-adc="addAdc" onshow-nvad="showNvad"></nativebanner-ad> -->
+    
   </div>
 </template>
 <style>

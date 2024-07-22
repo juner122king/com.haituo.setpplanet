@@ -78,6 +78,14 @@ const postSendCode = (data) => {
 }
 
 
+//获取福利入口信息
+const wealentry = () => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/user/weal/entry`,
+    });
+}
+
 let user = {
     getUserInfo,
     getDailySignDay,
@@ -87,7 +95,8 @@ let user = {
     getUserGoldRecord,
     putForeverLogout,
     putAlipayAccount,
-    postSendCode
+    postSendCode,
+    wealentry
 }
 
 export default user
