@@ -274,7 +274,7 @@
 </style>
 
 <script>
-import sensor from '@system.sensor';
+import sensor from '@system.sensor'
 module.exports = {
   data: {
 
@@ -341,7 +341,7 @@ module.exports = {
     //有则为true，不展示隐私组件，没有为false，展示隐私组件
     this.isShow = !storageFlag;
     if (storageFlag) {
-      this.subscribeStepCounter()
+      // this.subscribeStepCounter()
     }
 
   },
