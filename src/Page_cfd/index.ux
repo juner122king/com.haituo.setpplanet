@@ -217,7 +217,7 @@ module.exports = {
 
 
     //处理回传链接
-    $utils.saveHapUri(e)
+    $utils.saveHapUri(this,e)
     //显示banner 广告高度，底部缩进
     $utils.showBannerAd(0)
     //oaid为空,不执行广告点击控制逻辑

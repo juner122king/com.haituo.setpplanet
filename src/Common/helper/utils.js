@@ -52,37 +52,34 @@ const getUserId = async () => {
  * 转化上传
  * @param {*} that 所在this 
  */
- function getConvertUpload(that) {
+function getConvertUpload(that) {
   let param = {
     ...that.$app.$def.dataApp.actiParam
   }
   console.log('getConvertUpload() 转化参数param= ', param)
 
+  if (!param.channelValue) {
+    return
+  }
   for (const key in param) {
     param[key] = param[key].replace(/\/$/, "");
   }
   const convertedParam = convertKeysToCamelCase(param);
-
-  if (!convertedParam.callback) {
-    return
-  }
   console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
   $apis.example.convertUpload({
     ...convertedParam,
     deviceId: convertedParam.oaid,
     type: convertedParam.type || 'jh'
   }).then((res) => {
-    console.log(res, '转换成功');
+    console.log(res, '转化上传');
 
   }).catch((err) => {
     console.log(err, '转换失败');
   })
 }
-
 function toCamelCase(str) {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
-
 function convertKeysToCamelCase(obj) {
   if (Array.isArray(obj)) {
     return obj.map(v => convertKeysToCamelCase(v));
@@ -96,18 +93,22 @@ function convertKeysToCamelCase(obj) {
   return obj;
 }
 
-
 /**
 * 保存广告回传参数   router.push(OBJECT)  例：@param {Object} e='hap://app/com.company.app/index?param1=value1'
 */
-const saveHapUri = (e) => {
-  // console.log('saveHapUri() 转化参数e= ', e)
+const saveHapUri = (that, e) => {
+  console.log('saveHapUri() 转化参数e= ', e)
 
-  const { channelValue = '', oaid = '' } = e
-  if (oaid) {
-    this.$app.$def.dataApp.actiParam = {
+  const { channelValue = '', backurl = '', type } = e
+  if (channelValue) {
+    that.$app.$def.dataApp.actiParam = {
       ...e
     }
+
+    // $prompt.showToast({
+    //   message: `回传参数:channelValue${channelValue}`,
+    //   gravity: 'center'
+    // });
   }
 }
 
@@ -115,7 +116,7 @@ const saveHapUri = (e) => {
 /**
 * 插屏广告 
 */
-const tablePlaque = (adid,that) => {
+const tablePlaque = (adid, that) => {
 
   // const storageFlag = await $processData.getStorage("_PRIVAC");
   // console.log('用户授权= ', storageFlag);
@@ -266,8 +267,11 @@ const startCountDown = (countDownData, that) => {
 const openAd = () => {
   //友盟事件打点
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
+
+  var r = 'Page_cfd'
+  // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1815664293615603713&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
-    uri: 'Page_cfd'
+    uri: r
   });
 
 }
