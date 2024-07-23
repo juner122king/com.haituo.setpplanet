@@ -1,5 +1,6 @@
 <import name="topon-ad" src="@topon/quick-app-sdk-hw/placement.ux"></import>
-
+<!-- 自渲染示例组件，请根据自身业务实现自渲染组件 -->
+<import name="ad-self-render" src="../AdSelfRender.ux"></import>
 <template>
   <div class="page-container">
     <image class="closeView" src="/Common/img/ad/icon_x.png" onclick="closeAdview"></image>
@@ -8,6 +9,10 @@
 
     <!-- 使用Placement组件 -->
     <topon-ad id="topon-ad-{{placementId}}" placement-id="{{placementId}}" config="{{config}}" @ad-load="handleAdLoad" @ad-show="handleAdShow" @ad-close="handleAdClose" @ad-click="handleAdClick" @ad-error="handleAdError"></topon-ad>
+    <!-- 信息流自渲染广告 物料展示示例代码，ad-self-render组件于限与该demo展示使用，请根据业务所需完成自己的ad-self-render组件包括但不限于样式、广告要素、交互事件等的开发 -->
+    <block if="adData && displayed && isSelfRendering">
+      <ad-self-render ad-data="{{adData}}" ad-type="native" @cus-show="handleReportShow" @cus-click="handleReportClick"></ad-self-render>
+    </block>
     <div if="{{showTclayer}}" class="tc-layer" onclick="reportNativeClick()"></div>
   </div>
 </template>
@@ -18,13 +23,14 @@
     data() {
       return {
         loaded: false,
+        isSelfRendering: false, // 是否自渲染，通过getAd获取
         isGetAd: false,
         config: {
           entry: '/pages/Home', // 开屏广告结束后打开的第一个页面
           timeout: 30000 // 默认0（走默认，开屏5秒，其他300秒），单位毫秒
         },
 
-        placementId: 'b669889dbd4d83', // 请替换为您在topon 开发者后台上的placementId
+        placementId: 'b669f1f0a0db8e', // 请替换为您在topon 开发者后台上的placementId
 
         adData: null, // 广告物料，通过getAd获取
         displayed: false // 自渲染广告组件展示控制
@@ -119,7 +125,15 @@
         if (!currentAd) {
           return;
         }
-        this.adData = currentAd
+        // 判断是否为自渲染广告
+        this.isSelfRendering = currentAd.isSelfRendering
+        // 若是自渲染
+        if (currentAd.isSelfRendering) {
+          this.adData = currentAd.ad
+        } else {
+          this.adData = null
+          this.displayed = false
+        }
 
         this.isGetAd = true
         this.handleDisplayAd()

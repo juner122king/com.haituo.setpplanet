@@ -259,14 +259,14 @@ const destroyBanner = () => {
 //打开拆福袋页面
 const openAd = () => {
     //友盟事件打点
-    $umeng_stat.trackEvent('wd_xyfddhj', '点击');
-    $router.push({
-      uri: 'Page_cfd'
-    });
-
+    // $umeng_stat.trackEvent('wd_xyfddhj', '点击');
     // $router.push({
-    //   uri: "hap://app/com.haituo.setpplanet/Page_cfd/?content_id=-1&adgroup_id=-1&campaign_id=-1&callback=45079911%26-1%261462950467511282944%262024-07-17%2017%3A24%3A24%263HIjMZPlw%2BU3AoPtUQs1AoCB745hJ3PJkwekwPFrcWPVdQiizOl5YewX3Ob3dqs%3D%260&referrer=-1&channel=KYY&ip=127.0.0.1&oaid=30ac1840-06aa-461f-9594-7f7b365f0dfe&corp_id=1462950467511282944&channelValue=KYY"
+    //   uri: 'Page_cfd'
     // });
+
+    $router.push({
+      uri: "hap://app/com.haituo.setpplanet/Page_cfd-taku?content_id=-1&adgroup_id=-1&campaign_id=-1&callback=45079911%26-1%261462950467511282944%262024-07-17%2017%3A24%3A24%263HIjMZPlw%2BU3AoPtUQs1AoCB745hJ3PJkwekwPFrcWPVdQiizOl5YewX3Ob3dqs%3D%260&referrer=-1&channel=KYY&ip=127.0.0.1&oaid=30ac1840-06aa-461f-9594-7f7b365f0dfe&corp_id=1462950467511282944&channelValue=KYY"
+    });
 }
 
 

@@ -44,8 +44,8 @@
       try {
         const instance = new TOPON_AD_SDK({
           app: this,
-          appId: 'a6690ddbfd2bbc', // 请替换为您在topon开发者后台上的appId（您在topon开发者后台上所创建的应用ID）
-          appKey: 'ac7b8c3807532084e93fdf61490e25fa5' // 请替换为您在topon开发者后台上的 app key（topon开发者后台 => 账户信息 => key即为appKey）
+          appId: 'a669f1dd02c4c4', // 请替换为您在topon开发者后台上的appId（您在topon开发者后台上所创建的应用ID）
+          appKey: 'a25e2743eecc2d23f66176b150a593e21' // 请替换为您在topon开发者后台上的 app key（topon开发者后台 => 账户信息 => key即为appKey）
         });
         this.$def.topon_sdk_instance = instance
       } catch (error) {
