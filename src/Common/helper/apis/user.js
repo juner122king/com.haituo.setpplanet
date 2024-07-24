@@ -86,6 +86,15 @@ const wealentry = () => {
     });
 }
 
+//获取是否开启广告页入口
+const entrance = () => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/ad/adPage/entrance`,
+    });
+}
+
+
 let user = {
     getUserInfo,
     getDailySignDay,
@@ -96,7 +105,8 @@ let user = {
     putForeverLogout,
     putAlipayAccount,
     postSendCode,
-    wealentry
+    wealentry,
+    entrance
 }
 
 export default user

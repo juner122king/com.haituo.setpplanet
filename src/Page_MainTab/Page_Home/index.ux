@@ -237,7 +237,7 @@
     private: {
 
 
- 
+
       componentData: {},
       goalDayKey: "GOAL_DAY",
       userDetailsKey: "UserDetails",
@@ -278,42 +278,38 @@
       open2: false,
       obj: {},
       isShow: false,//隐私询问
+
     },
     //首页初始化流程：
     // Step1获取用户设置的今日目标步数
     // Step2从后台获取当前步数  
     // Step3根据获取到的当前步数，更新今日进度，里程，消耗热量 
     //
-    async onInit() {
+    onInit() {
       console.log("onInit()")
 
       this.getGoalDaySteps();// Step1
       this.getUserDetails();
       this.apigetStpes()// Step2
-
     },
-
     onReady() {
       console.log("onReady()")
       this.updateBMITzl();
     },
-
     //弹出隐私询问，不能自动执行，需要用户点击功能时才执行，目前需求是点击‘今日’，‘周’，‘月’与设置今日目标时
-    async getTreatyStorage() {
+    getTreatyStorage() {
       this.subscribeStepCounter()
-
     },
-    subscribeStepCounter() {
-      this.isShow = true;
+    async subscribeStepCounter() {
+      var is = await $processData.getStorage("_PRIVAC")
+      this.isShow = !is
       // 订阅步数计数器
       sensor.subscribeStepCounter({
         callback: (ret) => {
           console.log(`设备步数更新了！------>设备总步数=${ret.steps}`)
-
           //保存权限
           $processData.setStorage("_PRIVAC", true);
           this.isShow = false;
-
           this.stepSys = ret.steps;
           //上传步数
           this.apiuploadStpes(ret.steps);

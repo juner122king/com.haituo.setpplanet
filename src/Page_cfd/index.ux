@@ -225,8 +225,6 @@
       let count = await $processData.getStorage("todayClicks")
       //获取页面透明层配置信息
       this.showTclayer(count)
-
-
     },
 
     //获取页面透明层配置信息 传次数

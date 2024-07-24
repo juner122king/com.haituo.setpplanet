@@ -54,6 +54,9 @@
 
 
       this.initAnalytics()
+
+
+   
     },
 
 
@@ -159,6 +162,8 @@
     onDestroy() {
       console.info('Application onDestroy');
       this.instance.onDestroy()
+
+  
     },
     dataApp: {
 
@@ -182,6 +187,7 @@
       },
 
       actiParam: '',
+
     }
 
   }
