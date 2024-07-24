@@ -1,0 +1,28 @@
+<template>
+  <div class="container"></div>
+</template>
+<style>
+  .container {
+    align-items: center;
+    flex-direction: column;
+    background-image: url(/Common/img/ad/bg_chb.png);
+    background-repeat: no-repeat;
+  }
+</style>
+<script>
+  //该page为独立页面，多个应用共用
+
+  module.exports = {
+    private: {
+
+    },
+
+    onInit: function (e) {
+
+    },
+    async onShow(options) {
+      $umeng_stat.resume(this)
+    },
+
+  }
+</script>
