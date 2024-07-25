@@ -2,3 +2,5 @@
 
 # 忽略 node_modules 文件夹及其所有内容
 node_modules/
+build/
+dist/
