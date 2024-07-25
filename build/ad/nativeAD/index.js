@@ -1,7 +1,4 @@
-(function(){
-    
-    var createPageHandler = function() {
-      return /******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/dsl-xvm/lib/loaders/script-loader.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/packager/lib/loaders/module-loader.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/babel-loader/lib/index.js?cwd=d:\\quickappWorkspaceAll\\com.haituo.setpplanet&cacheDirectory&plugins[]=d:\\Quick App IDE\\resources\\app\\extensions\\hap-debugger\\node_modules\\@hap-toolkit\\dsl-xvm\\lib\\loaders\\babel-plugin-jsx.js&comments=false&configFile=d:\\Quick App IDE\\resources\\app\\extensions\\hap-debugger\\node_modules\\@hap-toolkit\\packager\\babel.config.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/dsl-xvm/lib/loaders/access-loader.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/dsl-xvm/lib/loaders/fragment-loader.js?index=0&type=script!./src/ad/nativeAD/index.ux?uxType=page":
@@ -70,23 +67,20 @@ module.exports = {
       adUnitId: this.native.adUnitId,
       type: 'native'
     };
+    if (this.canIUseAdCount === true) {
+      adParams.adCount = 1;
+    }
     $ad.preloadAd(_objectSpread(_objectSpread({}, adParams), {}, {
       success: data => {
-        try {
-          this.adList = data.adList;
-          this.native.isShow = true;
-        } catch (e) {
-          console.log(e);
-        }
+        console.info("success 广告数据:" + JSON.stringify(data));
+        this.adList = data.adList;
+        this.native.isShow = true;
       },
       fail: (data, code) => {
-        try {
-          if (code === 205) {
-            this.adList = data.adList;
-            this.native.isShow = true;
-          }
-        } catch (e) {
-          console.log(e);
+        console.info("fail 广告数据:" + JSON.stringify(data));
+        if (code === 205) {
+          this.adList = data.adList;
+          this.native.isShow = true;
         }
       }
     }));
@@ -521,6 +515,7 @@ module.exports = {
                           "attr": {
                             "type": "click"
                           },
+                          "shown": function () {return this.$item.imgUrlList},
                           "children": [
                             {
                               "type": "image",
@@ -644,12 +639,4 @@ $app_bootstrap$('@app-component/index',{ packagerVersion: "1.9.14" });
 
 /******/ })()
 ;
-    };
-    if (typeof window === "undefined") {
-      return createPageHandler();
-    }
-    else {
-      window.createPageHandler = createPageHandler
-    }
-  })();
 //# sourceMappingURL=ad\nativeAD\index.js.map

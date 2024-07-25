@@ -47,7 +47,7 @@ module.exports = {
     url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",
     url3: "http://www.ihaituo.cn/xy/jb/yszc.html",
     bannerAdUnitId: "4095f11c8658440b9075da95705d6313",
-    nativeAdUnitId: "7efb97d405eb432fa2d4a4f08ef81156",
+    nativeAdUnitId: "5ba6ebc4ac8b4a13a52edd4e4ef680e0",
     interstitialAdUnitId: "572c41d7e93945ca8e9db8150df89aed",
     userData: {
       loginPhone: '',
@@ -8304,7 +8304,7 @@ module.exports = webpackEmptyContext;
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"package":"com.haituo.setpplanet","name":"计步星球","versionName":"1.0.15","versionCode":15,"permissions":[{"origin":"*"}],"icon":"/Common/img/logo.png","minPlatformVersion":1095,"features":[{"name":"system.storage"},{"name":"system.fetch"},{"name":"system.network"},{"name":"system.device"},{"name":"system.file"},{"name":"system.sensor"},{"name":"system.cipher"},{"name":"system.prompt"},{"name":"system.webview"},{"name":"service.ad"},{"name":"system.shortcut"},{"name":"system.request"}],"config":{"data":{"umeng_appkey":"667b68fccac2a664de54f5ac"}},"router":{"entry":"Page_MainTab","pages":{"Page_MainTab":{"launchMode":"singleTask","component":"index"},"Page_Tixian":{"component":"index"},"Page_login":{"component":"index"},"Page_about":{"component":"index"},"feedback":{"component":"index"},"logOut":{"component":"index"},"permissions":{"component":"index"},"Page_setPay":{"component":"index"},"Page_cfd":{"component":"index"},"ad/nativeAD":{"component":"index"},"ad/AdBanner":{"component":"index","launchMode":"singleTask"}}},"display":{"pages":{"Page_MainTab":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"enableExitPopupAd":true},"Page_cfd":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"titleBarBackgroundOpacity":0},"Page_Tixian":{"titleBar":true,"menu":true,"titleBarText":"收益"},"Page_login":{"titleBar":true,"menu":false,"titleBarText":"用户登录"}}}}');
+module.exports = JSON.parse('{"package":"com.haituo.setpplanet","name":"计步星球","versionName":"1.0.16","versionCode":16,"permissions":[{"origin":"*"}],"icon":"/Common/img/logo.png","minPlatformVersion":1095,"features":[{"name":"system.storage"},{"name":"system.fetch"},{"name":"system.network"},{"name":"system.device"},{"name":"system.file"},{"name":"system.sensor"},{"name":"system.cipher"},{"name":"system.prompt"},{"name":"system.webview"},{"name":"service.ad"},{"name":"system.shortcut"},{"name":"system.request"}],"config":{"data":{"umeng_appkey":"667b68fccac2a664de54f5ac"},"logLevel":"debug"},"router":{"entry":"Page_MainTab","pages":{"Page_MainTab":{"launchMode":"singleTask","component":"index"},"Page_Tixian":{"component":"index"},"Page_login":{"component":"index"},"Page_about":{"component":"index"},"feedback":{"component":"index"},"logOut":{"component":"index"},"permissions":{"component":"index"},"Page_setPay":{"component":"index"},"Page_cfd":{"component":"index"},"ad/nativeAD":{"component":"index"},"ad/AdBanner":{"component":"index","launchMode":"singleTask"}}},"display":{"pages":{"Page_MainTab":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"enableExitPopupAd":true},"Page_cfd":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"titleBarBackgroundOpacity":0},"Page_Tixian":{"titleBar":true,"menu":true,"titleBarText":"收益"},"Page_login":{"titleBar":true,"menu":false,"titleBarText":"用户登录"}}}}');
 
 /***/ })
 

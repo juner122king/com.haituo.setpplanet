@@ -1,9 +1,13 @@
 {
     "package": "com.haituo.setpplanet",
     "name": "计步星球",
-    "versionName": "1.0.15",
-    "versionCode": 15,
-    "permissions": [{ "origin": "*" }], 
+    "versionName": "1.0.16",
+    "versionCode": 16,
+    "permissions": [
+        {
+            "origin": "*"
+        }
+    ],
     "icon": "/Common/img/logo.png",
     "minPlatformVersion": 1095,
     "features": [
@@ -47,7 +51,8 @@
     "config": {
         "data": {
             "umeng_appkey": "667b68fccac2a664de54f5ac"
-        }
+        },
+        "logLevel": "debug"
     },
     "router": {
         "entry": "Page_MainTab",
@@ -84,10 +89,9 @@
                 "component": "index"
             },
             "ad/AdBanner": {
-              "component": "index",
-              "launchMode": "singleTask"
+                "component": "index",
+                "launchMode": "singleTask"
             }
-            
         }
     },
     "display": {

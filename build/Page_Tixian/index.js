@@ -1,4 +1,7 @@
-/******/ (() => { // webpackBootstrap
+(function(){
+    
+    var createPageHandler = function() {
+      return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/dsl-xvm/lib/loaders/script-loader.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/packager/lib/loaders/module-loader.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/babel-loader/lib/index.js?cwd=d:\\quickappWorkspaceAll\\com.haituo.setpplanet&cacheDirectory&plugins[]=d:\\Quick App IDE\\resources\\app\\extensions\\hap-debugger\\node_modules\\@hap-toolkit\\dsl-xvm\\lib\\loaders\\babel-plugin-jsx.js&comments=false&configFile=d:\\Quick App IDE\\resources\\app\\extensions\\hap-debugger\\node_modules\\@hap-toolkit\\packager\\babel.config.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/dsl-xvm/lib/loaders/access-loader.js!../../Quick App IDE/resources/app/extensions/hap-debugger/node_modules/@hap-toolkit/dsl-xvm/lib/loaders/fragment-loader.js?index=0&type=script!./src/Page_Tixian/index.ux?uxType=page":
@@ -2891,4 +2894,12 @@ $app_bootstrap$('@app-component/index',{ packagerVersion: "1.9.14" });
 
 /******/ })()
 ;
+    };
+    if (typeof window === "undefined") {
+      return createPageHandler();
+    }
+    else {
+      window.createPageHandler = createPageHandler
+    }
+  })();
 //# sourceMappingURL=Page_Tixian\index.js.map
