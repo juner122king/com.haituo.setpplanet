@@ -213,11 +213,11 @@ module.exports = {
 
   onInit: function (e) {
     //插屏广告
-    $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId)
+    $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId,this)
 
 
     //处理回传链接
-    $utils.saveHapUri(e)
+    $utils.saveHapUri(this,e)
     //显示banner 广告高度，底部缩进
     $utils.showBannerAd(0)
     //oaid为空,不执行广告点击控制逻辑
@@ -228,6 +228,8 @@ module.exports = {
     this.isShowTclayerOfBL()
     //获取手势返回配置信息
     this.bolckReturn()
+
+    
 
   },
   onReady(options) {

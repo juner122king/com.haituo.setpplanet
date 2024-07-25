@@ -51,7 +51,7 @@
 
 
       bannerAdUnitId: "4095f11c8658440b9075da95705d6313",//banner广告位id
-      nativeAdUnitId: "7efb97d405eb432fa2d4a4f08ef81156",//广告位id
+      nativeAdUnitId: "5ba6ebc4ac8b4a13a52edd4e4ef680e0",//广告位id
       interstitialAdUnitId: "572c41d7e93945ca8e9db8150df89aed",//插屏广告位id
       //保存用户信息对象
       userData: {

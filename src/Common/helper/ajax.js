@@ -118,7 +118,7 @@ const request = options => {
     }
     headers.Authorization = accessToken || '';
 
-    console.log('ajax请求', '  url=' + url, ";method=" + method, ";data= " + data);
+    console.log('ajax请求', '  url=' + url, ";method=" + method, ";data= " + JSON.stringify(data));
     $fetch.fetch({
       // url: 'https://test.ipandata.com' + url,
       url: 'https://api.ihaituo.cn' + url,

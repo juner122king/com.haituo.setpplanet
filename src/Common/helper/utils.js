@@ -48,54 +48,62 @@ const getUserId = async () => {
   let userId = await $device.getUserId()
   return userId.data.userId;
 };
+/**
+ * 转化上传
+ * @param {*} that 所在this 
+ */
+function getConvertUpload(that) {
+  let param = {
+    ...that.$app.$def.dataApp.actiParam
+  }
+  console.log('getConvertUpload() 转化参数param= ', param)
+
+  if (!param.channelValue) {
+    return
+  }
+  for (const key in param) {
+    param[key] = param[key].replace(/\/$/, "");
+  }
+  const convertedParam = convertKeysToCamelCase(param);
+  console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
 
 
-//获取匿名设备标识符，建议只在广告的场景使用
-const getOAID = async () => {
-  let ret = await $device.getAdvertisingId()
-  return ret.data.oaid;
-};
 
-//执行广告转化上传
-const getConvertUpload = async () => {
+  $apis.example.convertUpload({
+    ...convertedParam,
+    type: convertedParam.type || 'jh'
+  }).then((res) => {
+    console.log(res, '转化成功');
 
-  $device.getAdvertisingId({
-    success: function (data) {
-      console.log(`handling success广告唯一标识: ${data.advertisingId}`)
-      const type = 'jh'
-      const deviceNum = data.advertisingId
-      const example = require('./apis/example.js').default;
-
-      const userAdConvertUploadReq = {
-        deviceId: deviceNum,
-        conversionType: 'browse',
-        channelValue: ''
-      }
-      console.log('执行广告转化上传', userAdConvertUploadReq, "type: " + type);
-      example.convertUpload(userAdConvertUploadReq, type).then(data => {
-        console.log('广告转化上传成功 data: ', data);
-
-      }).catch(err => {
-        console.log(err, '失败回调');
-      })
-
-    },
-    fail: function (code) {
-      console.log(`handling fail, code = ${code}`)
-    }
+  }).catch((err) => {
+    console.log(res, '转化失败：' + err);
   })
-
-};
+}
+function toCamelCase(str) {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+function convertKeysToCamelCase(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(v => convertKeysToCamelCase(v));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((result, key) => {
+      const camelCaseKey = toCamelCase(key);
+      result[camelCaseKey] = convertKeysToCamelCase(obj[key]);
+      return result;
+    }, {});
+  }
+  return obj;
+}
 
 /**
 * 保存广告回传参数   router.push(OBJECT)  例：@param {Object} e='hap://app/com.company.app/index?param1=value1'
 */
-const saveHapUri = (e) => {
-  // console.log('saveHapUri() 转化参数e= ', e)
+const saveHapUri = (that, e) => {
+  console.log('saveHapUri() 转化参数e= ', e)
 
-  const { channelValue = '', oaid = '' } = e
-  if (oaid) {
-    getApp().$def.dataApp.actiParam = {
+  const { channelValue = '', backurl = '', type } = e
+  if (channelValue) {
+    that.$app.$def.dataApp.actiParam = {
       ...e
     }
   }
@@ -105,7 +113,7 @@ const saveHapUri = (e) => {
 /**
 * 插屏广告 
 */
-const tablePlaque = (adid) => {
+const tablePlaque = (adid, that) => {
 
   // const storageFlag = await $processData.getStorage("_PRIVAC");
   // console.log('用户授权= ', storageFlag);
@@ -129,7 +137,7 @@ const tablePlaque = (adid) => {
   interstitialAd.onLoad(() => { // 监听广告加载
     console.log('查屏加载成功');
     interstitialAd.show()
-    getConvertUpload()
+    getConvertUpload(that)
   })
   interstitialAd.onError((err) => { // 监听广告出错
     console.info('插屏广告onError event emit', err)
@@ -186,13 +194,13 @@ let bannerAd; const showBannerAd = async () => {
 
   console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
   bannerAd.onLoad(e => {
-    console.info("load bannerAd  onload success e=" + JSON.stringify(e));
+    // console.info("load bannerAd  onload success e=" + JSON.stringify(e));
   });
   bannerAd.onError(e => {
-    console.error("load bannerAd  onError " + JSON.stringify(e));
+    // console.error("load bannerAd  onError " + JSON.stringify(e));
   });
   bannerAd.onClose(e => {
-    console.info("load bannerAd  onClose");
+    // console.info("load bannerAd  onClose");
   });
   bannerAd.show();
 
@@ -252,7 +260,18 @@ const startCountDown = (countDownData, that) => {
   });
 };
 
+//打开拆福袋页面
+const openAd = () => {
+  //友盟事件打点
+  $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
+  var r = 'Page_cfd'
+  // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
+  $router.push({
+    uri: r
+  });
+
+}
 
 export default {
   throttle,
@@ -265,5 +284,6 @@ export default {
   hideBanerAd,
   viewBanner,
   destroyBanner,
-  saveHapUri
+  saveHapUri,
+  openAd
 }
