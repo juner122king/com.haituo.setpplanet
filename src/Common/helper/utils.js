@@ -66,15 +66,17 @@ function getConvertUpload(that) {
   }
   const convertedParam = convertKeysToCamelCase(param);
   console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
+
+
+
   $apis.example.convertUpload({
     ...convertedParam,
-    deviceId: convertedParam.oaid,
     type: convertedParam.type || 'jh'
   }).then((res) => {
-    console.log(res, '转化上传');
+    console.log(res, '转化成功');
 
   }).catch((err) => {
-    console.log(err, '转换失败');
+    console.log(res, '转化失败：' + err);
   })
 }
 function toCamelCase(str) {
@@ -104,11 +106,6 @@ const saveHapUri = (that, e) => {
     that.$app.$def.dataApp.actiParam = {
       ...e
     }
-
-    // $prompt.showToast({
-    //   message: `回传参数:channelValue${channelValue}`,
-    //   gravity: 'center'
-    // });
   }
 }
 
@@ -197,13 +194,13 @@ let bannerAd; const showBannerAd = async () => {
 
   console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
   bannerAd.onLoad(e => {
-    console.info("load bannerAd  onload success e=" + JSON.stringify(e));
+    // console.info("load bannerAd  onload success e=" + JSON.stringify(e));
   });
   bannerAd.onError(e => {
-    console.error("load bannerAd  onError " + JSON.stringify(e));
+    // console.error("load bannerAd  onError " + JSON.stringify(e));
   });
   bannerAd.onClose(e => {
-    console.info("load bannerAd  onClose");
+    // console.info("load bannerAd  onClose");
   });
   bannerAd.show();
 
@@ -269,7 +266,7 @@ const openAd = () => {
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
   var r = 'Page_cfd'
-  // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1815664293615603713&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
+  // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
   });

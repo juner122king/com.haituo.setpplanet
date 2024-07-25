@@ -193,7 +193,7 @@ const request = options => {
       }
     }
     headers.Authorization = accessToken || '';
-    console.log('ajax请求', '  url=' + url, ";method=" + method, ";data= " + data);
+    console.log('ajax请求', '  url=' + url, ";method=" + method, ";data= " + JSON.stringify(data));
     _system.default.fetch({
       // url: 'https://test.ipandata.com' + url,
       url: 'https://api.ihaituo.cn' + url,
@@ -362,11 +362,11 @@ const completeAdRSA = async data => {
 };
 
 //广告转化上传   type:广告渠道类型: jh(鲸鸿), ks(快手), jl(巨量), ,可用值:jh,ks,jl
-const convertUpload = (data, type) => {
-  console.log('data= ', data, `   url= /qa/mini/basic/ad/convert/upload/${type}`);
+const convertUpload = data => {
+  console.log('data= ', data, `url= /qa/mini/basic/ad/convert/upload/${data.type}`);
   return (0, _ajax.default)({
     method: "POST",
-    url: `/qa/mini/basic/ad/convert/upload/${type}`,
+    url: `/qa/mini/basic/ad/convert/upload/${data.type}`,
     data
   });
 };
@@ -760,12 +760,11 @@ function getConvertUpload(that) {
   const convertedParam = convertKeysToCamelCase(param);
   console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam);
   $apis.example.convertUpload(_objectSpread(_objectSpread({}, convertedParam), {}, {
-    deviceId: convertedParam.oaid,
     type: convertedParam.type || 'jh'
   })).then(res => {
-    console.log(res, '转化上传');
+    console.log(res, '转化成功');
   }).catch(err => {
-    console.log(err, '转换失败');
+    console.log(res, '转化失败：' + err);
   });
 }
 function toCamelCase(str) {
@@ -796,11 +795,6 @@ const saveHapUri = (that, e) => {
   } = e;
   if (channelValue) {
     that.$app.$def.dataApp.actiParam = _objectSpread({}, e);
-
-    // $prompt.showToast({
-    //   message: `回传参数:channelValue${channelValue}`,
-    //   gravity: 'center'
-    // });
   }
 };
 
@@ -884,13 +878,13 @@ const showBannerAd = async () => {
   });
   console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
   bannerAd.onLoad(e => {
-    console.info("load bannerAd  onload success e=" + JSON.stringify(e));
+    // console.info("load bannerAd  onload success e=" + JSON.stringify(e));
   });
   bannerAd.onError(e => {
-    console.error("load bannerAd  onError " + JSON.stringify(e));
+    // console.error("load bannerAd  onError " + JSON.stringify(e));
   });
   bannerAd.onClose(e => {
-    console.info("load bannerAd  onClose");
+    // console.info("load bannerAd  onClose");
   });
   bannerAd.show();
 };
@@ -946,7 +940,7 @@ const openAd = () => {
   //友盟事件打点
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
   var r = 'Page_cfd';
-  // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1815664293615603713&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
+  // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
   });
@@ -8310,7 +8304,7 @@ module.exports = webpackEmptyContext;
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"package":"com.haituo.setpplanet","name":"计步星球","versionName":"1.0.14","versionCode":14,"permissions":[{"origin":"*"}],"icon":"/Common/img/logo.png","minPlatformVersion":1095,"features":[{"name":"system.storage"},{"name":"system.fetch"},{"name":"system.network"},{"name":"system.device"},{"name":"system.file"},{"name":"system.sensor"},{"name":"system.cipher"},{"name":"system.prompt"},{"name":"system.webview"},{"name":"service.ad"},{"name":"system.shortcut"},{"name":"system.request"}],"config":{"data":{"umeng_appkey":"667b68fccac2a664de54f5ac"}},"router":{"entry":"Page_MainTab","pages":{"Page_MainTab":{"launchMode":"singleTask","component":"index"},"Page_Tixian":{"component":"index"},"Page_login":{"component":"index"},"Page_about":{"component":"index"},"feedback":{"component":"index"},"logOut":{"component":"index"},"permissions":{"component":"index"},"Page_setPay":{"component":"index"},"Page_cfd":{"component":"index"},"ad/nativeAD":{"component":"index"},"ad/AdBanner":{"component":"index","launchMode":"singleTask"}}},"display":{"pages":{"Page_MainTab":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"enableExitPopupAd":true},"Page_cfd":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"titleBarBackgroundOpacity":0},"Page_Tixian":{"titleBar":true,"menu":true,"titleBarText":"收益"},"Page_login":{"titleBar":true,"menu":false,"titleBarText":"用户登录"}}}}');
+module.exports = JSON.parse('{"package":"com.haituo.setpplanet","name":"计步星球","versionName":"1.0.15","versionCode":15,"permissions":[{"origin":"*"}],"icon":"/Common/img/logo.png","minPlatformVersion":1095,"features":[{"name":"system.storage"},{"name":"system.fetch"},{"name":"system.network"},{"name":"system.device"},{"name":"system.file"},{"name":"system.sensor"},{"name":"system.cipher"},{"name":"system.prompt"},{"name":"system.webview"},{"name":"service.ad"},{"name":"system.shortcut"},{"name":"system.request"}],"config":{"data":{"umeng_appkey":"667b68fccac2a664de54f5ac"}},"router":{"entry":"Page_MainTab","pages":{"Page_MainTab":{"launchMode":"singleTask","component":"index"},"Page_Tixian":{"component":"index"},"Page_login":{"component":"index"},"Page_about":{"component":"index"},"feedback":{"component":"index"},"logOut":{"component":"index"},"permissions":{"component":"index"},"Page_setPay":{"component":"index"},"Page_cfd":{"component":"index"},"ad/nativeAD":{"component":"index"},"ad/AdBanner":{"component":"index","launchMode":"singleTask"}}},"display":{"pages":{"Page_MainTab":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"enableExitPopupAd":true},"Page_cfd":{"titleBar":false,"menu":false,"statusBarImmersive":true,"statusBarBackgroundOpacity":0,"titleBarBackgroundOpacity":0},"Page_Tixian":{"titleBar":true,"menu":true,"titleBarText":"收益"},"Page_login":{"titleBar":true,"menu":false,"titleBarText":"用户登录"}}}}');
 
 /***/ })
 

@@ -229,6 +229,8 @@ module.exports = {
     //获取手势返回配置信息
     this.bolckReturn()
 
+    
+
   },
   onReady(options) {
     this.getAdCount()//原生广告位，获取次数

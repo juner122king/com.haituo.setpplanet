@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.0.14",
-  "versionCode": 14,
+  "versionName": "1.0.15",
+  "versionCode": 15,
   "permissions": [
     {
       "origin": "*"
@@ -125,7 +125,7 @@
   "packageInfo": {
     "originType": "quickapp-ide",
     "toolkit": "1.9.14",
-    "timeStamp": "2024-07-23T08:29:23.790Z",
+    "timeStamp": "2024-07-24T09:04:23.654Z",
     "node": "v16.13.0",
     "platform": "win32",
     "arch": "x64"
