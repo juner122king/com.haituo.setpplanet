@@ -1,68 +1,68 @@
 <script>
-  import './Common/libs/umeng/umenganalysis.es.min';   //友盟sdk 必须添加！！！
+import './Common/libs/umeng/umenganalysis.es.min';   //友盟sdk 必须添加！！！
 
-  module.exports = {
-    onCreate() {
-      console.info('Application onCreate');
-      const hook2global = global.__proto__ || global
-      const $router = require('@system.router')
-      const $utils = require('./Common/helper/utils').default
-      const $storage = require("@system.storage")
-      const $cipher = require("@system.cipher")
-      const $prompt = require("@system.prompt")
-      const $webview = require("@system.webview")
-      const $apis = require('./Common/helper/apis').default
-      const $ad = require("@service.ad")
-      const $app = require("@system.app")
-      const $device = require("@system.device")
+module.exports = {
+  onCreate() {
+    console.info('Application onCreate');
+    const hook2global = global.__proto__ || global
+    const $router = require('@system.router')
+    const $utils = require('./Common/helper/utils').default
+    const $storage = require("@system.storage")
+    const $cipher = require("@system.cipher")
+    const $prompt = require("@system.prompt")
+    const $webview = require("@system.webview")
+    const $apis = require('./Common/helper/apis').default
+    const $ad = require("@service.ad")
+    const $app = require("@system.app")
+    const $device = require("@system.device")
 
-      const $processData = require('./Common/helper/processData').default
+    const $processData = require('./Common/helper/processData').default
 
-      hook2global.$router = $router
-      hook2global.$utils = $utils
-      hook2global.$storage = $storage
-      hook2global.$prompt = $prompt
-      hook2global.$apis = $apis
-      hook2global.$webview = $webview
-      hook2global.$ad = $ad
-      hook2global.$cipher = $cipher
-      hook2global.$app = $app
+    hook2global.$router = $router
+    hook2global.$utils = $utils
+    hook2global.$storage = $storage
+    hook2global.$prompt = $prompt
+    hook2global.$apis = $apis
+    hook2global.$webview = $webview
+    hook2global.$ad = $ad
+    hook2global.$cipher = $cipher
+    hook2global.$app = $app
 
-      hook2global.$device = $device
-      hook2global.$processData = $processData
-      //友盟sdk
-      console.log("[app.ux] onCreate...");
-      $umeng_stat.init(this);   //在onCreate函数中加入该行代码，必须添加！！
+    hook2global.$device = $device
+    hook2global.$processData = $processData
+    //友盟sdk
+    console.log("[app.ux] onCreate...");
+    $umeng_stat.init(this);   //在onCreate函数中加入该行代码，必须添加！！
 
+  },
+  onDestroy() {
+    console.info('Application onDestroy');
+
+
+    //退app插屏广告
+    // $utils.tablePlaque(this.dataApp.interstitialAdUnitId)
+  },
+  dataApp: {
+
+    url1: "http://www.ihaituo.cn/xy/jb/bzzx.html",
+    url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",
+    url3: "http://www.ihaituo.cn/xy/jb/yszc.html",
+
+
+
+    bannerAdUnitId: "4095f11c8658440b9075da95705d6313",//banner广告位id
+    nativeAdUnitId: "5ba6ebc4ac8b4a13a52edd4e4ef680e0",//广告位id
+    interstitialAdUnitId: "572c41d7e93945ca8e9db8150df89aed",//插屏广告位id
+    //保存用户信息对象
+    userData: {
+      loginPhone: '',
+      userId: '',
+      balance: 0,
     },
-    onDestroy() {
-      console.info('Application onDestroy');
 
-
-      //退app插屏广告
-      // $utils.tablePlaque(this.dataApp.interstitialAdUnitId)
-    },
-    dataApp: {
-
-      url1: "http://www.ihaituo.cn/xy/jb/bzzx.html",
-      url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",
-      url3: "http://www.ihaituo.cn/xy/jb/yszc.html",
-
-
-
-      bannerAdUnitId: "4095f11c8658440b9075da95705d6313",//banner广告位id
-      nativeAdUnitId: "5ba6ebc4ac8b4a13a52edd4e4ef680e0",//广告位id
-      interstitialAdUnitId: "572c41d7e93945ca8e9db8150df89aed",//插屏广告位id
-      //保存用户信息对象
-      userData: {
-        loginPhone: '', 
-        userId: '',
-        balance: 0,
-      },
-
-      actiParam: '',
-
-    }
-
+    actiParam: '',
+    transparentLayerHits: 0
   }
+
+}
 </script>

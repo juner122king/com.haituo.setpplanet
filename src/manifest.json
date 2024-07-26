@@ -9,7 +9,8 @@
         }
     ],
     "icon": "/Common/img/logo.png",
-    "minPlatformVersion": 1095,
+    "minPlatformVersion": 1100,
+    "designWidth": 750,
     "features": [
         {
             "name": "system.storage"
@@ -91,6 +92,12 @@
             "ad/AdBanner": {
                 "component": "index",
                 "launchMode": "singleTask"
+            },
+            "pages/advertisingCampaigns": {
+                "component": "index"
+            },
+            "pages/read-ad": {
+                "component": "index"
             }
         }
     },
@@ -119,6 +126,14 @@
                 "titleBar": true,
                 "menu": false,
                 "titleBarText": "用户登录"
+            },
+            "pages/advertisingCampaigns": {
+                "titleBarText": "",
+                "titleBar": false
+            },
+            "pages/read-ad": {
+                "titleBarText": "",
+                "titleBar": false
             }
         }
     }

@@ -2,7 +2,7 @@
  * 您可以将常用的方法、或系统 API，统一封装，暴露全局，以便各页面、组件调用，而无需 require / import.
  */
 import $device from '@system.device'
-
+import ad from '@service.ad'
 // 节流阀
 const throttle = (fn, gapTime = 1500) => {
   let _lastTime = null;
@@ -266,6 +266,7 @@ const openAd = () => {
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
   var r = 'Page_cfd'
+
   // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
@@ -273,6 +274,93 @@ const openAd = () => {
 
 }
 
+
+/**
+ * @param {*} this //必传
+ * @param {*} name //变量名
+ * @param {*} data  // 数据值
+ * @param {*} changeType  //get set 存储消除  前两参数都传默认为set
+ * @returns
+ */
+function changeGlobalParam(that, name, data = '', changeType = 'get') {
+  try {
+    let type = name && data ? 'set' : changeType
+    if (type === 'get') {
+      return name ? that.$app.$def.dataApp[name] : that.$app.$def.dataApp
+    } else if (type === 'set') {
+      that.$app.$def.dataApp[name] = data
+      return that.$app.$def.dataApp[name]
+    }
+  } catch (error) { }
+}
+/**
+ * 判断广告商
+ */
+function judgingAd(context) {
+  let param = {
+    ...context.$app.$def.dataApp.actiParam,
+  }
+  let type = param.type || ''
+  if (type) {
+    return type
+  }
+  if (
+    param.adgroup_id &&
+    param.content_id &&
+    param.campaign_id &&
+    param.callback
+  ) {
+    type = 'jh'
+  } else if (param.btn_name && param.backurl) {
+    type = 'vivo'
+  }
+
+  return type ? type : false
+}
+
+/**
+ * 判断广告主id
+ * @param {*} context
+ */
+
+function analyzeAdvertiserId(context) {
+  const {
+    backurl = '',
+    corp_id = '',
+    callback = '',
+  } = context.$app.$def.dataApp.actiParam
+  if (backurl) {
+    return backurl
+  } else if (callback) {
+    return corp_id ? corp_id : callback
+  }
+}
+
+/**
+ * 获取哪一次上报回传  context  指向
+ */
+function getConversionlicks(context) {
+  const {
+    type = '',
+    corp_id = '',
+    channelValue = '',
+  } = context.$app.$def.dataApp.actiParam
+  let adType = type ? type : judgingAd(context) //有类型直接获取类型 没有则进行判断；
+  let corpId = corp_id ? corp_id : analyzeAdvertiserId(context)
+  
+  $apis.task
+    .getConversionlicks({ type: adType, corpId, channelValue })
+    .then((res) => {
+      console.log(res, '查看点击回传')
+      if (res.data === 0) {
+        $utils.conversionUpload(context)
+      }
+      context.$app.$def.dataApp.conversionlicks = res.data
+    })
+    .catch((err) => {
+      console.log(err, '查看点击回传失败')
+    })
+}
 export default {
   throttle,
   getUserId,
@@ -285,5 +373,6 @@ export default {
   viewBanner,
   destroyBanner,
   saveHapUri,
-  openAd
+  openAd,
+  getConversionlicks,
 }

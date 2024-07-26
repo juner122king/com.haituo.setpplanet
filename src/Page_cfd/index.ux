@@ -10,7 +10,7 @@
         style="position: absolute; left: 20px; margin-left: 10px; width: 28px; height: 34px"
         src="/Common/img/back.png"
       ></image>
-      <text style="font-size: 35px; color: #000000; margin-left: -10px"
+      <text style="font-size: 35px;color: #000000; margin-left:-10px"
         >计步星球</text
       >
     </div>
@@ -207,17 +207,15 @@ module.exports = {
     showDialog2: false,//次数已用完窗口
     receivedCount: 8,//剩余次数
 
-
-
   },
 
   onInit: function (e) {
     //插屏广告
-    $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId,this)
+    $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId, this)
 
 
     //处理回传链接
-    $utils.saveHapUri(this,e)
+    $utils.saveHapUri(this, e)
     //显示banner 广告高度，底部缩进
     $utils.showBannerAd(0)
     //oaid为空,不执行广告点击控制逻辑
@@ -229,7 +227,7 @@ module.exports = {
     //获取手势返回配置信息
     this.bolckReturn()
 
-    
+
 
   },
   onReady(options) {
