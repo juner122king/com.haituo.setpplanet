@@ -1,10 +1,8 @@
-
-<import name="icon" src="apex-ui/components/icon/index"></import>
 <import name="bottom-native" src="./components/bottom-native.ux"></import>
 <import name="reminder-ads" src="./components/reminder-ads.ux"></import>
 <import name="back-to-ads" src="./components/back-to-ads.ux"></import>
- <import name="icon" src="apex-ui/components/icon/index"></import>
- <import name="my-navbar" src="apex-ui/components/navbar/index"></import>
+<import name="icon" src="apex-ui/components/icon/index"></import>
+<import name="my-navbar" src="apex-ui/components/navbar/index"></import>
 <template>
   <div class="advertising-page">
     <my-navbar></my-navbar>
@@ -12,7 +10,7 @@
     <div class="advertising-title">
       <text class="m-heading">正品内容免费读</text>
       <text class="s-heading">广告收益是为了激励作者提供优质内容</text>
-      <div class="thank-you-speech">
+      <div class="thank-you-s-peech">
         <text class="line"></text>
         <text class="txt">感谢你的支持</text>
         <text class="line"></text>
@@ -39,8 +37,8 @@
               <text class="txt" if="{{adList.hasAppMiitInfo}}">
                 {{
                   adList.appInfo.appName +
-                  adList.appInfo.appSize +
-                  adList.appInfo.appVersion
+                    adList.appInfo.appSize +
+                    adList.appInfo.appVersion
                 }}</text
               >
               <text class="txt" if="{{adList.appInfo}}"
@@ -291,6 +289,12 @@ export default {
     console.log('没有点击回调吗');
     $utils.conversionUpload(this)
     this.addClickNum()
+
+    //后台单个埋点 - 事件：广告点击
+    $utils.adCapture(this, '$AdClick', this.adId)
+
+
+
   },
   close() {
     console.log('没有触发这个吗');
@@ -386,5 +390,5 @@ export default {
 </script>
 
 <style lang="less">
-@import './index.less';
+@import "./index.less";
 </style>

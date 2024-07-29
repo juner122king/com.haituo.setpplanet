@@ -1351,7 +1351,7 @@ export default {
 
   },
   protected: {
-    adUnitId: 'a6d7b1e5c1244277acc78dd86793a880',
+    adUnitId: 'edceb5351a9849deb3f7b92eba34ad18',
     customBtn: ''
   },
   routeDetail() {
@@ -1997,6 +1997,10 @@ export default {
     console.log('被点击了')
     this.showTransparency = false;
     $utils.conversionUpload(this)
+
+    //后台单个埋点 - 事件：广告点击
+    $utils.adCapture(this, '$AdClick', this.adUnitId)
+
   },
   close() {
     this.hasAdList = false

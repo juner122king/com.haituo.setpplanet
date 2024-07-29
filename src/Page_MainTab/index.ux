@@ -4,12 +4,12 @@
 <template>
   <div class="container">
     <div if="{{isshow}}" class="full_b" onclick="closeAd">
-      <image style="margin-top: -425px" src="/Common/img/mba.png"></image>
+      <image style="margin-top: -520px" src="/Common/img/mba.png"></image>
       <image
         style="width: 100%; height: 180px"
         src="/Common/img/banner_me.png"
         onclick="openAd"
-      />
+      ></image>
     </div>
     <tabs onchange="changeTabactive">
       <tab-content>
@@ -69,7 +69,7 @@ module.exports = {
 			]
 		},
 		isshow: false, //是否打开用户页面引导层
-		  isOpenstrapLayer: false//后台是否开启活动引导层
+		isOpenstrapLayer: false//后台是否开启活动引导层
 	},
 	changeTabactive: function (e) {
 		for (let i = 0; i < this.datas.list.length; i++) {
@@ -97,8 +97,14 @@ module.exports = {
 		$apis.user.wealentry().then((res) => {
 			console.log('福利入口信息----------------->' + JSON.stringify(res));
 			this.isOpenstrapLayer = res.data.isOpenActivityBootstrapLayer
-		
+
 		})
+
+
+		// //后台单个埋点 - 事件：快应用启动
+		// $utils.adCapture(this,'$AppLaunch','')
+
+
 	},
 	onShow(options) {
 		$umeng_stat.resume(this)

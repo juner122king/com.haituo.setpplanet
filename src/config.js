@@ -5,7 +5,7 @@ const adCodeData = {
     banner: '3aae67431134438f9028c1d513f48098',
     tableScreenAd: '',
     nativeAd: 'e697c56e9c234a249226909c23e83ca7',
-    lotteryPageNativeAd: '7c15f38bb3dc4c2eac7810eb6b76bd38',
+    lotteryPageNativeAd: '7f0323b3e1464f2d8b230e3c19e6be1a',
     fiction1: 'dc3e6dccc81e43c28748ccde57ee199e', //原生小说广告页id
     fiction2: '0e0b5e6f0da646adbc4d8afab817a275', //原生小说广告页id
     fiction3: '808847b949c54e3ba325119e1f58ca1f', //原生小说广告页id

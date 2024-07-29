@@ -173,6 +173,10 @@ export default {
     console.log('没有点击回调吗');
     $utils.conversionUpload(this);
     this.$emit('emitHideTransparency')
+
+  
+    //后台单个埋点 - 事件：广告点击
+    $utils.adCapture(this, '$AdClick', this.adId)
   },
   close() {
     console.log('没有关闭回调吗');

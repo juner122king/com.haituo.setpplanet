@@ -111,17 +111,56 @@ const saveHapUri = (that, e) => {
 
 
 /**
+ * 转化上传
+ * @param {*} that 所在this  小说广告页面的转化方法
+ */
+function conversionUpload(that) {
+  let param = {
+    ...that.$app.$def.dataApp.actiParam,
+  }
+  param.type = judgingAd(that) //转换类型
+  if (Object.keys(param).length <= 0 || !param.type) {
+    //无值的情况直接删除
+    return
+  }
+  console.log('进入了回传上报')
+  let conversionlicks = that.$app.$def.dataApp.conversionlicks //第几次回传上报
+  let clicksOnAdsNow = that.$app.$def.dataApp.clicksOnAdsNow + 1 //现在是第几次任务
+  console.log(conversionlicks, 'conversionlicks')
+  console.log(clicksOnAdsNow, 'clicksOnAdsNow')
+
+  that.$app.$def.dataApp.clicksOnAdsNow = clicksOnAdsNow
+  if (conversionlicks <= 0 || clicksOnAdsNow !== conversionlicks) {
+    console.log('取消转换上传')
+    return
+  }
+
+  if (param.type === 'jh') {
+    for (const key in param) {
+      param[key] = param[key].replace(/\/$/, '')
+    }
+    param = convertKeysToCamelCase(param)
+  }
+  console.log(param, '查看上传的参数')
+  $apis.task
+    .postConvertUpload({
+      ...param,
+      deviceId: param.oaid || '',
+      type: param.type,
+    })
+    .then((res) => {
+      console.log(res, '转换成功')
+    })
+    .catch((err) => {
+      console.log(err, '转换失败')
+    })
+}
+
+
+/**
 * 插屏广告 
 */
 const tablePlaque = (adid, that) => {
-
-  // const storageFlag = await $processData.getStorage("_PRIVAC");
-  // console.log('用户授权= ', storageFlag);
-
-  // if (!storageFlag) {
-  //   console.log('未授权,不加载广告');
-  //   return
-  // } 
 
   let Provider = $ad.getProvider();
 
@@ -145,13 +184,7 @@ const tablePlaque = (adid, that) => {
   interstitialAd.onClose((res) => { // 监听广告关闭
     console.info('插屏广告onClose event emit', res)
   })
-  // interstitialAd.onClick(() => {
-  //   console.log('插屏广告点击了');
-  //   // //转化上传
-  //   // getConvertUpload()
-  // })
-
-};
+}
 
 
 /**
@@ -258,7 +291,7 @@ const startCountDown = (countDownData, that) => {
     }, 1000);
     _this.timer = timer
   });
-};
+}
 
 //打开拆福袋页面
 const openAd = () => {
@@ -266,13 +299,15 @@ const openAd = () => {
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
   var r = 'Page_cfd'
+  r = 'pages/advertisingCampaigns'
 
-  // var r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
+  // r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
   });
 
 }
+
 
 
 /**
@@ -347,7 +382,7 @@ function getConversionlicks(context) {
   } = context.$app.$def.dataApp.actiParam
   let adType = type ? type : judgingAd(context) //有类型直接获取类型 没有则进行判断；
   let corpId = corp_id ? corp_id : analyzeAdvertiserId(context)
-  
+
   $apis.task
     .getConversionlicks({ type: adType, corpId, channelValue })
     .then((res) => {
@@ -361,6 +396,76 @@ function getConversionlicks(context) {
       console.log(err, '查看点击回传失败')
     })
 }
+
+
+//单个广告点击埋点数据
+function adCapture(that, event, adId) {
+
+
+  $apis.user.getUserInfo().then((res) => {
+    console.log('查看用户信息 ', res.data)
+    var infoData = res.data;
+
+    const {
+      type = '',
+      channelValue = '',
+    } = that.$app.$def.dataApp.actiParam
+
+
+    let query = ''//地址参数串,例如hap://app/com.haituo.bookkeeping?channelValue=xcx&type=vivo, 传channelValue=xcx&type=vivo
+    let path = ''//链接路径, $pageview时必填
+
+    let ana = {
+      phone: infoData.phone,//	手机号, 在获取用户信息接口中取phone参数
+      adId: adId,//	广告位id, $AdComplete时必填
+      title: '',//标题,点击位置标识, $Click时必填
+    }
+
+    let prop = {
+      manufacturer: '',//手机品牌
+      model: '',//	型号
+      networkType: '',//网络模式
+      os: 'android',//系统
+      osVersion: '',//系统版本
+      urlQuery: query,
+      urlPath: path,//链接路径, $pageview时必填
+      analysis: ana
+    }
+
+    let trackCaptureMiniDto = {
+      properties: prop,
+      userId: infoData.userId,//用户id, 必填:
+      oaid: '',//设备id:
+      event: event,//	$Visit(访问),$pageview(页面访问),$Click(普通点击),$AdComplete(广告完成),$AdClick(广告点击),$AppLaunch(快应用启动), 必填:
+      appId: 'SC_0001',//	应用id, 必填:
+      pid: type,//平台
+      cid: channelValue,//渠道
+    }
+    console.info(' 单个埋点数据：', trackCaptureMiniDto)
+
+
+    $apis.example.capture(trackCaptureMiniDto).then(response => {
+      console.log(' 单个埋点successful:', response)
+
+    }).catch(error => {
+      console.error(' 埋点failed:', error)
+      $prompt.showToast({
+        message: "埋点失败" + error,
+        gravity: 'center'
+      })
+    })
+  }).catch(error => {
+    $prompt.showToast({
+      message: "埋点失败" + error,
+      gravity: 'center',
+      duration: 5000
+    })
+  })
+
+}
+
+
+
 export default {
   throttle,
   getUserId,
@@ -375,4 +480,6 @@ export default {
   saveHapUri,
   openAd,
   getConversionlicks,
+  conversionUpload,
+  adCapture
 }

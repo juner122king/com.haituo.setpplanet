@@ -611,10 +611,9 @@ module.exports = {
       console.log(' 上传步数successful:', response);
       this.stepsDayApi = response.data;
       this.updateProgress();
-    })
-      .catch(error => {
-        console.error(' 上传步数failed:', error);
-      });
+    }).catch(error => {
+      console.error(' 上传步数failed:', error);
+    });
   },
 
   agree() {

@@ -119,7 +119,7 @@ module.exports = {
       // 取值范围1-3，其他数据则报错
       adParams.adCount = 1
     }
-    $ad.preloadAd({ 
+    $ad.preloadAd({
       ...adParams,
       success: (data) => {
         console.info("success 广告数据:" + JSON.stringify(data))
@@ -144,6 +144,11 @@ module.exports = {
 
     //转化上传
     $utils.getConvertUpload(this)
+
+    //后台单个埋点 - 事件：广告点击
+    $utils.adCapture(this, '$AdClick', this.native.adUnitId)
+
+
 
     //广告或透明层被点击后隐藏透明层
     this.showTclayer = false

@@ -100,7 +100,71 @@ const convertUpload = (data) => {
     });
 }
 
+//获取手势返回配置信息
+const bolckReturn = (type) => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/clickControl/return/info/${type}`
+    });
+}
 
+/**
+ * 获取页面透明层配置信息  
+ *
+ */
+
+const showTclayer = (data, type) => {
+    type
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/clickControl/transparentLayer/info/${type}`,
+        data
+    });
+}
+
+/**
+ * 获取是否自动弹窗  
+ *
+ */
+
+const popUps = () => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/ad/auto/popUps`
+
+    });
+}
+
+/**
+ * 转化点击次数
+ *
+ */
+const clickCount = (data) => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/basic/ad/convert/clickCount/${data.type}`,
+        data
+    });
+}
+
+
+//单个埋点数据
+const capture = (data) => {
+    return request({
+        method: "POST",
+        url: `/qa/track/capture`,
+        data
+    });
+}
+
+//单个埋点数据
+const capturetest = (data) => {
+    return request({
+        method: "PUT",
+        url: `/qa/track/test`,
+        data
+    });
+}
 export default {
     toLogin,
     uploadsteps,
@@ -111,5 +175,11 @@ export default {
     getAdCount,
     completeAd,
     completeAdRSA,
-    convertUpload
+    convertUpload,
+    bolckReturn,
+    showTclayer,
+    popUps,
+    clickCount,
+    capture,
+    capturetest
 };

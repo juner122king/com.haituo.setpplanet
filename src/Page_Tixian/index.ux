@@ -224,8 +224,15 @@ module.exports = {
 
   async onInit() {
     //插屏广告
-    $utils.tablePlaque(this)
+    // $utils.tablePlaque(this)
+
+    //taku插屏广告
+
+
   },
+
+
+
   onShow(options) {
 
     $umeng_stat.resume(this)
