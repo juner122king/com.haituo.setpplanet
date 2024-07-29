@@ -175,6 +175,11 @@
     reportNativeClick() {
       console.info(" 原生广告被点击了");
 
+
+      //后台单个埋点 - 事件：广告点击
+      // $utils.adCapture(this, '$AdClick', this.native.adUnitId)
+
+      $utils.buriedPointReport(this, 'click', this.native.adUnitId)
       //广告被点击时触发主页面方法
       this.$emit('addAdc')
 

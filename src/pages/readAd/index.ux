@@ -1,0 +1,359 @@
+<import name="my-navbar" src="apex-ui/components/navbar/index"></import>
+<import name="back-to-ads" src="../advertisingCampaigns/components/back-to-ads.ux"></import>
+<import name="bottom-native" src="../advertisingCampaigns/components/bottom-native.ux"></import>
+<import name="reminder-ads" src="../advertisingCampaigns/components/reminder-ads.ux"></import>
+<import name="icon" src="../../components/icon/index.ux"></import>
+<template>
+  <div class="ad-page">
+    <my-navbar></my-navbar>
+    <div class="read-box">
+      <div class="container">
+        <swiper class="swiper" indicator="{{false}}" @change="changeSwiper" id="swiper">
+          <div class="swiper-item" for="{{readObj.list}}" @click="clickSwiper">
+            <div class="contnet" if="{{!showAd && langIndex ===$idx}}">
+              <text class="font-title">{{readObj.title}}</text>
+              <text class="font">{{$item}}</text>
+            </div>
+            <div class="ad-page" show="{{showAd && langIndex ===$idx}}">
+              <!-- 广告样式改变 -->
+              <div class="ream-container" if="{{ displayAdType >=5}}">
+                <!-- 头部图片 -->
+                <div class="vertical-content top-big-img">
+                  <div class="ad-image" @click="reportNativeClick()">
+                    <image src="{{adList.imgUrlList? adList.imgUrlList[0]: defaultAd.img }}"></image>
+                  </div>
+                  <div class="close-item" if="{{showTransparency}}" @click="reportNativeClick()">
+                    <icon type="close" size="40" color="#000000" onclick="close"></icon>
+                  </div>
+                  <div class="close-item" else>
+                    <icon type="close" size="40" color="#000000" onclick="close"></icon>
+                  </div>
+                </div>
+                <!-- 底下内容 -->
+                <div class="vertical-content horizontal-content">
+                  <div class="ad-title">
+                    <div>
+                      <div @click="reportNativeClick()">
+                        <text class="ad-title-txt">{{ adList.title || defaultAd.title }}</text>
+                      </div>
+                    </div>
+                    <div type="logo" class=""></div>
+                  </div>
+
+                  <!-- 标题 -->
+                  <div class="ad-s-title">
+                    <div class="ad-s-title-ad" @click="reportNativeClick()">
+                      <text class="ad-s-title-txt">{{ adList.desc || defaultAd.desc }}</text>
+                    </div>
+                  </div>
+
+                  <!-- 星星 -->
+                  <div class="vertical-content star-list" @click="reportNativeClick()">
+                    <icon type="star" size="58" color="#FFCE2D" for="{{5}}"></icon>
+                  </div>
+
+                  <div class="foot-btn vertical-content" @click="reportNativeClick()">
+                    <div type="button" class="click-item">
+                      <text class="" style="color: #ffffff">{{ adList.clickBtnTxt || defaultAd.clickBtnTxt }}</text>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="home-container" else>
+                <div class="agreement">
+                  <div class="agreement-item agreement-item-info" @click="reportNativeClick()">
+                    <text class="txt">{{ adList.title + adList.appCompany}}</text>
+                    <!-- <text class="txt" >{{ adList.appInfo.developer }}</text> -->
+                  </div>
+                  <div class="agreement-item" type="privacy"></div>
+                  <div class="hide-close" if="{{showTransparency}}" @click="reportNativeClick()">
+                    <icon type="close" size="50" color="#FFFFFF" @click="close"></icon>
+                  </div>
+                  <div class="hide-close" else>
+                    <icon type="close" size="50" color="#FFFFFF" @click="close"></icon>
+                  </div>
+                </div>
+                <div class="ad-title" @click="reportNativeClick()">
+                  <text class="ad-title-txt">{{ adList.desc || defaultAd.desc }}</text>
+                </div>
+                <!-- 图片 -->
+                <div class="vertical-content big-img">
+                  <div class="ad-image" @click="reportNativeClick()">
+                    <image src="{{adList.imgUrlList? adList.imgUrlList[0]: defaultAd.img }}"></image>
+                  </div>
+                  <div class="vertical-content logo">
+                    <div class="close-item" if="{{showTransparency}}" @click="reportNativeClick()">
+                      <icon type="close" size="45" color="#FFFFFF" @click="close"></icon>
+                    </div>
+                    <div class="close-item" else>
+                      <icon type="close" size="45" color="#FFFFFF" @click="close"></icon>
+                    </div>
+                    <div type="logo"></div>
+                  </div>
+                </div>
+
+                <div class="icon" if="{{adList.icon}}">
+                  <div type="clikc" class="icon-image">
+                    <image src="{{adList.icon}}"></image>
+                  </div>
+                  <text class="icon-txt">{{ adList.title }}</text>
+                </div>
+
+                <div class="footer" @click="reportNativeClick()">
+                  <div class="click-item" type="button">
+                    <text class="" style="color: #ffffff">{{ adList.clickBtnTxt || defaultAd.clickBtnTxt}}</text>
+                  </div>
+                </div>
+
+                <div class="swipe-left-btn" if="{{showTransparency}}" @click="reportNativeClick()">
+                  <div style="left: 20px">
+                    <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+                  </div>
+                  <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+                  <text>左滑继续阅读</text>
+                </div>
+
+                <div class="swipe-left-btn" @click="close" if="{{!showTransparency}}">
+                  <div style="left: 20px">
+                    <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+                  </div>
+                  <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+                  <text>左滑继续阅读</text>
+                </div>
+              </div>
+            </div>
+          </div>
+        </swiper>
+      </div>
+    </div>
+
+    <!-- 底部仿banne框 -->
+    <bottom-native ad-unitId="{{adId}}" ad-list="{{adList}}" if="{{showBanner}}" show-transparency="{{ showTransparency}}" onemit-hide-transparency="hideTransparency" onemit-close="heideReminder"></bottom-native>
+
+    <!--延迟提示 -->
+    <reminder-ads if="{{showReminder}}" show-transparency="{{ showTransparency}}" onemit-hide-transparency="hideTransparency" onemit-close="heideReminder"></reminder-ads>
+
+    <!-- 返回时弹出框 -->
+    <back-to-ads if="{{showVackTisp}}" show-transparency="{{ showTransparency}}" onemit-hide-transparency="hideTransparency" onemit-close="heideReminder"></back-to-ads>
+  </div>
+</template>
+
+<style lang="less">
+  @import "./index.less";
+  /* pages/novel/novel.css */
+</style>
+
+<script>
+  const device = require("@system.device")
+  let nativeAd;
+  module.exports = {
+    // 页面的数据模型，private段下的变量仅允许当前页面内代码更改其值。'\'
+    private: {
+      title: 'World',
+      chapterContent: '',
+      readObj: {},
+      nowTheChapter: 0,
+      langIndex: 0,
+      clickNum: 0,
+      showAd: false,
+      adList: {},
+      hasAdList: false,
+      showVackTisp: false,
+      showBanner: true,
+      showReminder: false,
+      defaultAd: {
+        desc: '华为广告',
+        title: '华为联盟',
+        icon: '广告',
+        clickBtnTxt: '点击安装',
+        img: "http://cdn.bank-zone.cn/pro/sy/admin/advertising/3639bdbde8e84397a297ad54f89ac4c3.jpg"
+      },
+      textContent: [
+        {
+          title: '第一章：穷屌丝偶遇白富美',
+          list: [
+            "在繁华的都市中，有一个名叫李浩的年轻人。 '\' 他身材普通，长相平凡，是一个典型的“屌丝男”。'\'每天，他都在一家小公司里做着枯燥无味的工作，拿着微薄的薪水，过着平淡无奇的生活。'\'",
+            "然而，李浩的心中却有一个不为人知的梦想——那就是有朝一日能够逆袭，成为一个成功的人，迎娶他心目中的白富美。'\'他知道这个梦想遥不可及，但他从未放弃过。'\'",
+            "有一天，李浩在公司附近的一家咖啡店里偶遇了一个美丽的女孩。'\'她名叫林婉儿，家境优渥，气质高雅，是李浩心目中的白富美。'\'两人虽然只是短暂的交谈了几句，但李浩却被林婉儿深深地吸引了。'\'",
+            "从那以后，李浩开始努力地改变自己。'\'他努力学习各种知识和技能，提升自己的能力。'\'他利用业余时间参加各种社交活动，扩大自己的人脉。'\'他不断地锻炼自己的身体，让自己变得更加健康和有魅力。'\'",
+            "经过一段时间的努力，李浩终于迎来了他的逆袭契机。'\'",
+            "有一天，李浩在参加一个行业聚会时，意外地遇到了一位成功的企业家。'\'这位企业家对李浩的才华和努力表示赞赏，并邀请他加入自己的公司。'\'李浩抓住了这个机会，辞去了原本的工作，加入了新的公司。'\'",
+            "与此同时，李浩也没有忘记自己最初的梦想。'\'他开始尝试接近林婉儿，和她建立了深厚的友谊。'\'他用自己的真诚和才华打动了林婉儿的心，两人逐渐走到了一起。'\'",
+            "在一次浪漫的约会中，李浩鼓起勇气向林婉儿求婚。'\'他向林婉儿承诺，会用自己的努力和才华让她过上幸福的生活。'\'林婉儿被李浩的真诚和才华所感动，答应了他的求婚。'\'",
+            "就这样，一个平凡的屌丝男李浩通过自己的努力和坚持实现了自己的逆袭梦想。'\'他成功地迎娶了自己心目中的白富美林婉儿，两人共同开启了一段幸福美好的新生活。'\'",
+          ]
+        }
+      ],
+      adId: '',
+      provider: '',
+      displayAdType: 0,
+      timer: null,
+      showTransparency: false
+    },
+    onInit: function () {
+      this.initReadPage()
+      this.adId = 'v5h5xsklp2';
+
+    },
+    hideTransparency() {
+      console.log('点击了关闭广告');
+      this.showTransparency = false;
+
+    },
+    addClickNum() {
+      console.log(this.$app.$def.dataApp.transparentLayerHits, '查看你的次数');
+      this.$app.$def.dataApp.transparentLayerHits = this.$app.$def.dataApp.transparentLayerHits + 1
+      this.getTransparentLayerL()
+    },
+
+    latencyShowReminder: function () {
+      this.timer = null;
+      console.log('是否开启了定时器');
+      this.timer = setTimeout(() => {
+        this.showReminder = true;
+        console.log('展示的是什么');
+      }, 3000)
+    },
+    onReady(options) {
+      '// Do something .'
+      this.preloadAd()
+      this.getTransparentLayerL()
+    },
+    getTransparentLayerL: function () {
+      console.log('是否进来了透明层判断');
+      try {
+        const branch = $ad.getProvider();
+        let payam = {
+          brand: branch.toUpperCase()
+        }
+        if (!this.isfristReqCoun) { //如果不是初次进来的说明可以添加选项
+          payam.count = this.$app.$def.dataApp.transparentLayerHits
+          console.log(payam.count, '查看上传的次数');
+        }
+        $apis.task
+          .getTransparentLayer({ ...payam })
+          .then((res) => {
+            console.log(res, '查看返回的透明层参数');
+            // 是否初次请求
+            if (this.isfristReqCoun) {
+              this.isfristReqCoun = false;
+              if (res.data) {
+                this.getTransparentLayerL()
+              }
+              return
+            }
+            this.showTransparency = res.data;
+          })
+          .catch((err) => {
+            console.log(err, '查看返回报错')
+          })
+      } catch (e) {
+        console.log(e, '获取失效');
+      }
+    },
+    async preloadAd() {
+      var that = this;
+      this.provider = $ad.getProvider();
+      console.log('怎么没有进来环境');
+      if (this.provider !== "huawei") {
+        console.info("the device  does not support ad.");
+        return;
+      }
+      if (nativeAd) {
+        nativeAd.destroy()
+      }
+      console.log('是否进来了开启广告');
+      nativeAd = $ad.createNativeAd({ adUnitId: this.adId });
+      nativeAd.onLoad(data => {
+        // console.info("ad data loaded: " + JSON.stringify(data));
+        this.adList = data.adList[0];
+        // console.log(this.adList, '查看获取的广告参数');
+        this.hasAdList = true;
+        this.reportNativeShow()
+
+      });
+      nativeAd.onError(e => {
+        console.log(e, '查看广告怎么不出来');
+      });
+      nativeAd.load();
+    },
+    reportNativeClick() {
+      $utils.buriedPointReport(this, 'click', this.adId)
+      $utils.conversionUpload(this)
+      nativeAd.reportAdClick({
+        adId: this.adList.adId
+      });
+    },
+
+    /**
+     * 展示
+     */
+    reportNativeShow() {
+      if (nativeAd) {
+        nativeAd.reportAdShow({ adId: this.adList.adId });
+      }
+    },
+    // 关闭
+    heideReminder(e) {
+      // this.showReminder = false;
+      console.log(e);
+      const { detail = '' } = e;
+      this.addClickNum()
+      if (!detail) {
+      } else {
+        console.log('这是什么', detail.data);
+        if (detail.data === 'showVackTisp') {
+          this.showVackTisp = false
+        } else if (detail.data === 'showReminder') {
+          this.showReminder = false
+        } else if (detail.data === 'banner') {
+          this.showBanner = false
+        }
+      }
+    },
+    close() {
+      console.log('没有触发这个吗');
+      this.hasAdList = false;
+      this.addClickNum()
+    },
+    onBackPress() {
+      this.showVackTisp = true;
+      console.log('触发了怎么无效了');
+      return true
+    },
+    initReadPage() {
+      console.log('重置小说页面', this.$page.windowHeight);
+      this.readObj = this.textContent[0]
+    },
+    changeSwiper(e) {
+      this.latencyShowReminder()
+      this.langIndex = e.index;
+      console.log(e.index, '查看这个index9999999999999999');
+      this.displayAdType = Math.floor(Math.random() * 11)
+      this.clickNum += 1;
+      if (this.clickNum == 3) {
+        this.showAd = true
+        this.clickNum = 0;
+
+      } else if (this.clickNum == 2) {
+        this.preloadAd()
+        this.showAd = false
+      } else {
+        this.showAd = false
+      }
+      if (e.index <= 3) {
+        this.textContent[0].title = '第一章：穷屌丝偶遇白富美';
+
+      } else {
+        this.textContent[0].title = '第二章：屌丝迎娶白富美';
+      }
+    },
+    clickSwiper(e) {
+      console.log('点击了页面', e.clientX);
+      console.log(this.langIndex);
+      this.langIndex =
+        this.$element('swiper').swipeTo({ index: e.clientX >= 375 ? (this.langIndex < 8 ? this.langIndex + 1 : 0) : (this.langIndex === 0 ? 8 : this.langIndex - 1) })
+    }
+  }
+</script>

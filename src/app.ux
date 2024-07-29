@@ -56,7 +56,7 @@
       this.initAnalytics()
 
 
-   
+
     },
 
 
@@ -163,7 +163,7 @@
       console.info('Application onDestroy');
       this.instance.onDestroy()
 
-  
+
     },
     dataApp: {
 
@@ -186,8 +186,14 @@
         balance: 0,
       },
 
-      actiParam: '',
-
+      actiParam: { // 上报参数
+        channelValue: "",
+        oaid: "",
+        type: ""
+      },
+      transparentLayerHits: 0,
+      conversionlicks: 0,//点击上传次数为0则不做上传处理
+      clicksOnAdsNow: 0,
     }
 
   }

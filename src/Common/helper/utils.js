@@ -114,23 +114,64 @@ const saveHapUri = (e) => {
     getApp().$def.dataApp.actiParam = {
       ...e
     }
-    
+
   }
 }
+
+/**
+ * 转化上传
+ * @param {*} that 所在this  小说广告页面的转化方法
+ */
+function conversionUpload(that) {
+  let param = {
+    ...that.$app.$def.dataApp.actiParam,
+  }
+  param.type = judgingAd(that) //转换类型
+  if (Object.keys(param).length <= 0 || !param.type) {
+    //无值的情况直接删除
+    return
+  }
+  console.log('进入了回传上报')
+  let conversionlicks = that.$app.$def.dataApp.conversionlicks //第几次回传上报
+  let clicksOnAdsNow = that.$app.$def.dataApp.clicksOnAdsNow + 1 //现在是第几次任务
+  console.log(conversionlicks, 'conversionlicks')
+  console.log(clicksOnAdsNow, 'clicksOnAdsNow')
+
+  that.$app.$def.dataApp.clicksOnAdsNow = clicksOnAdsNow
+  if (conversionlicks <= 0 || clicksOnAdsNow !== conversionlicks) {
+    console.log('取消转换上传')
+    return
+  }
+
+  if (param.type === 'jh') {
+    for (const key in param) {
+      param[key] = param[key].replace(/\/$/, '')
+    }
+    param = convertKeysToCamelCase(param)
+  }
+  console.log(param, '查看上传的参数')
+  $apis.task
+    .postConvertUpload({
+      ...param,
+      deviceId: param.oaid || '',
+      type: param.type,
+    })
+    .then((res) => {
+      console.log(res, '转换成功')
+    })
+    .catch((err) => {
+      console.log(err, '转换失败')
+    })
+}
+
+
+
 
 /**
 * 插屏广告 
 */
 
 const tablePlaque = async (onCloseCallback, onCatchCallback) => {
-
-  // const storageFlag = await $processData.getStorage("_PRIVAC");
-  // if (!storageFlag) {
-  //   //未授权，弹出授权询问
-  //   console.log('用户授权= ', storageFlag);
-  //   console.log('未授权,不加载插屏广告');
-  //   return
-  // }
 
   let Provider = $ad.getProvider();
   if (!Provider) {
@@ -258,15 +299,15 @@ const destroyBanner = () => {
 
 //打开拆福袋页面
 const openAd = () => {
-    //友盟事件打点
-    // $umeng_stat.trackEvent('wd_xyfddhj', '点击');
-    // $router.push({
-    //   uri: 'Page_cfd'
-    // });
+  //友盟事件打点
+  $umeng_stat.trackEvent('wd_xyfddhj', '点击')
 
-    $router.push({
-      uri: "hap://app/com.haituo.setpplanet/Page_cfd-taku?content_id=-1&adgroup_id=-1&campaign_id=-1&callback=45079911%26-1%261462950467511282944%262024-07-17%2017%3A24%3A24%263HIjMZPlw%2BU3AoPtUQs1AoCB745hJ3PJkwekwPFrcWPVdQiizOl5YewX3Ob3dqs%3D%260&referrer=-1&channel=KYY&ip=127.0.0.1&oaid=30ac1840-06aa-461f-9594-7f7b365f0dfe&corp_id=1462950467511282944&channelValue=KYY"
-    });
+  var r = 'Page_cfd'
+  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?callback=45079911&oaid=30ac1840-06aa-461f-9594-7f7b365f0dfe&channelValue=KYY'
+  $router.push({
+    uri: r
+  });
+
 }
 
 
@@ -303,7 +344,223 @@ const startCountDown = (countDownData, that) => {
   });
 };
 
+/**
+ * 判断广告商
+ */
+function judgingAd(context) {
+  let param = {
+    ...context.$app.$def.dataApp.actiParam,
+  }
+  let type = param.type || ''
+  if (type) {
+    return type
+  }
+  if (
+    param.adgroup_id &&
+    param.content_id &&
+    param.campaign_id &&
+    param.callback
+  ) {
+    type = 'jh'
+  } else if (param.btn_name && param.backurl) {
+    type = 'vivo'
+  }
 
+  return type ? type : false
+}
+
+/**
+ * 判断广告主id
+ * @param {*} context
+ */
+
+function analyzeAdvertiserId(context) {
+  const {
+    backurl = '',
+    corp_id = '',
+    callback = '',
+  } = context.$app.$def.dataApp.actiParam
+  if (backurl) {
+    return backurl
+  } else if (callback) {
+    return corp_id ? corp_id : callback
+  }
+}
+
+/**
+ * 获取哪一次上报回传  context  指向
+ */
+function getConversionlicks(context) {
+  const {
+    type = '',
+    corp_id = '',
+    channelValue = '',
+  } = context.$app.$def.dataApp.actiParam
+  let adType = type ? type : judgingAd(context) //有类型直接获取类型 没有则进行判断；
+  let corpId = corp_id ? corp_id : analyzeAdvertiserId(context)
+
+  $apis.task
+    .getConversionlicks({ type: adType, corpId, channelValue })
+    .then((res) => {
+      console.log(res, '查看点击回传')
+      if (res.data === 0) {
+        $utils.conversionUpload(context)
+      }
+      context.$app.$def.dataApp.conversionlicks = res.data
+    })
+    .catch((err) => {
+      console.log(err, '查看点击回传失败')
+    })
+}
+
+// 埋点上报
+async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
+  try {
+    let checkPaem = {
+      ...these.$app.$def.dataApp.actiParam,
+    }
+    console.log(these.$app.$def.dataApp, 'these.$app.$def.dataApp-')
+    console.log(checkPaem, '查看是否有参数')
+    if (Object.keys(checkPaem).length <= 0) {
+      //无值的情况直接删除
+      return
+    }
+
+    let token = await $storage.get({
+      key: 'AUTH_TOKEN_DATA',
+    })
+    token = JSON.parse(token.data)
+    console.log('查看这个token', token)
+    const that = this
+    let adBrand = $ad.getProvider()
+    let param = {
+      ...checkPaem,
+      cid: checkPaem.channelValue,
+      event: event === 'click' ? '$AdClick' : '$AppLaunch',
+      pid: adBrand.toLowerCase(),
+      appId: token.appId,
+      userId: token.userId,
+    }
+    let urlQuery = convertToQueryString(checkPaem)
+    $device.getInfo({
+      success: function (res) {
+        const phoninfo = res
+        let param2 = {
+          ...param,
+          properties: {
+            ...res,
+            manufacturer: phoninfo.manufacturer,
+            model: phoninfo.model,
+            os: phoninfo.osType,
+            product: phoninfo.product,
+            analysis: {
+              adId: adId,
+              title: adId,
+            },
+            urlQuery: urlQuery,
+          },
+        }
+
+        console.log('查看上报参数', param2)
+        $apis.task
+          .postTrackCapture({ ...param2 })
+          .then((res) => {
+            console.log('上报成功', res)
+          })
+          .catch((err) => {
+            console.log(err, '上传失败')
+          })
+      },
+    })
+  } catch (error) {
+    console.log(error, '上传错误')
+  }
+}
+
+function convertToQueryString(objects) {
+  // 初始化一个空字符串来存储结果
+  let queryString = ''
+
+  // 遍历对象数组
+  Object.keys(objects).forEach((key, index) => {
+    // 如果不是第一个键值对，则添加 '&'
+    if (index > 0 || queryString !== '') {
+      queryString += '&'
+    }
+    // 将键值对添加到查询字符串中
+    queryString += `${key}=${objects[key]}`
+  })
+
+  return queryString
+}
+
+
+//单个广告点击埋点数据
+function adCapture(that, event, adId) {
+
+  $apis.user.getUserInfo().then((res) => {
+    console.log('查看用户信息 ', res.data)
+    var infoData = res.data;
+
+    const {
+      type = '',
+      channelValue = '',
+    } = that.$app.$def.dataApp.actiParam
+
+
+    let query = ''//地址参数串,例如hap://app/com.haituo.bookkeeping?channelValue=xcx&type=vivo, 传channelValue=xcx&type=vivo
+    let path = ''//链接路径, $pageview时必填
+
+    let ana = {
+      phone: infoData.phone,//	手机号, 在获取用户信息接口中取phone参数
+      adId: adId,//	广告位id, $AdComplete时必填
+      title: '',//标题,点击位置标识, $Click时必填
+    }
+
+    let prop = {
+      manufacturer: '',//手机品牌
+      model: '',//	型号
+      networkType: '',//网络模式
+      os: 'android',//系统
+      osVersion: '',//系统版本
+      urlQuery: query,
+      urlPath: path,//链接路径, $pageview时必填
+      analysis: ana
+    }
+
+    let trackCaptureMiniDto = {
+      properties: prop,
+      userId: infoData.userId,//用户id, 必填:
+      oaid: '',//设备id:
+      event: event,//	$Visit(访问),$pageview(页面访问),$Click(普通点击),$AdComplete(广告完成),$AdClick(广告点击),$AppLaunch(快应用启动), 必填:
+      appId: 'SC_0001',//	应用id, 必填:
+      pid: type,//平台
+      cid: channelValue,//渠道
+    }
+    console.info(' 单个埋点数据：', trackCaptureMiniDto)
+
+    $apis.example.capture(trackCaptureMiniDto).then(response => {
+      console.log(' 单个埋点成功:adId', adId)
+      // $prompt.showToast({
+      //   message: "埋点成功" + adId,
+      //   gravity: 'center'
+      // })
+    }).catch(error => {
+      console.error(' 埋点failed:', error)
+      // $prompt.showToast({
+      //   message: "埋点失败" + error,
+      //   gravity: 'center'
+      // })
+    })
+  }).catch(error => {
+    $prompt.showToast({
+      message: "埋点失败" + error,
+      gravity: 'center',
+      duration: 5000
+    })
+  })
+
+}
 
 export default {
   throttle,
@@ -318,5 +575,9 @@ export default {
   destroyBanner,
   saveHapUri,
   getOAID,
-  openAd
+  openAd,
+  buriedPointReport,//埋点
+  getConversionlicks,
+  conversionUpload,
+  adCapture
 }

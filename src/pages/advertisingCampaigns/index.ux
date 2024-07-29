@@ -1,0 +1,325 @@
+<import name="icon" src="../../components/icon/index.ux"></import>
+<import name="bottom-native" src="./components/bottom-native.ux"></import>
+<import name="reminder-ads" src="./components/reminder-ads.ux"></import>
+<import name="back-to-ads" src="./components/back-to-ads.ux"></import>
+<import name="my-navbar" src="apex-ui/components/navbar/index"></import>
+<template>
+  <div class="advertising-page">
+    <my-navbar></my-navbar>
+    <!-- 头部感谢 -->
+    <div class="advertising-title">
+      <text class="m-heading">正品内容免费读</text>
+      <text class="s-heading">广告收益是为了激励作者提供优质内容</text>
+      <div class="thank-you-speech">
+        <text class="line"></text>
+        <text class="txt">感谢你的支持</text>
+        <text class="line"></text>
+      </div>
+    </div>
+    <!-- 广告组件 -->
+    <div class="ad-compon" if="{{hasAdList}}">
+      <div adId="{{adList.adId}}" class="ad-native" show="{{!!adList.adId}}">
+        <div class="container">
+          <div class="agreement">
+            <div class="agreement-item agreement-item-info" type="click" @click="reportNativeClick()">
+              <text class="txt">{{ adList.title + adList.appCompany}}</text>
+              <!-- <text class="txt" >{{ adList.appInfo.developer }}</text> -->
+            </div>
+            <div class="agreement-item" type="privacy"></div>
+            <div type="click" class="hide-close" if="{{showTransparency}}" @click="reportNativeClick()">
+              <icon type="close" size="50" color="#FFFFFF" @click="close"></icon>
+            </div>
+            <div class="hide-close" else>
+              <icon type="close" size="50" color="#FFFFFF" @click="close"></icon>
+            </div>
+          </div>
+          <div type="click" class="ad-title" @click="reportNativeClick()">
+            <text class="ad-title-txt">{{ adList.desc || defaultAd.desc }}</text>
+          </div>
+          <!-- 图片 -->
+          <div class="vertical-content big-img">
+            <div type="click" class="ad-image" @click="reportNativeClick()">
+              <image src="{{adList.imgUrlList? adList.imgUrlList[0]: defaultAd.img }}"></image>
+            </div>
+            <div class="vertical-content logo">
+              <div type="click" class="close-item" if="{{showTransparency}}" @click="reportNativeClick()">
+                <icon type="close" size="45" color="#FFFFFF" @click="close"></icon>
+              </div>
+              <div class="close-item" else>
+                <icon type="close" size="45" color="#FFFFFF" @click="close"></icon>
+              </div>
+              <div type="logo"></div>
+            </div>
+          </div>
+
+          <div class="icon" if="{{adList.icon}}" @click="reportNativeClick()">
+            <div type="clikc" class="icon-image">
+              <image src="{{adList.icon}}"></image>
+            </div>
+            <text class="icon-txt">{{ adList.title }}</text>
+          </div>
+
+          <div class="footer">
+            <div class="click-item" type="button" @click="reportNativeClick()">
+              <text class="" style="color: #ffffff">{{ adList.clickBtnTxt || defaultAd.clickBtnTxt}}</text>
+            </div>
+          </div>
+
+          <div class="swipe-left-btn" type="click" if="{{showTransparency}}" @click="reportNativeClick('btn')">
+            <div style="left: 20px">
+              <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+            </div>
+            <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+            <text>左滑继续阅读</text>
+          </div>
+
+          <div class="swipe-left-btn" @click="appearSwipe" @swipe="appearSwipe" if="{{!showTransparency}}">
+            <div style="left: 20px">
+              <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+            </div>
+            <icon type="arrow-back" size="45" color="#FFFFFF"></icon>
+            <text>左滑继续阅读</text>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 底部仿banne框 -->
+    <bottom-native ad-unitId="{{adId}}" ad-list="{{adList}}" if="{{showBanner}}" show-transparency="{{ showTransparency}}" onemit-hide-transparency="hideTransparency"></bottom-native>
+
+    <!--延迟提示 -->
+    <reminder-ads if="{{showReminder}}" show-transparency="{{ showTransparency}}" onemit-hide-transparency="hideTransparency" onemit-close="heideReminder"></reminder-ads>
+
+    <!-- 返回时弹出框 -->
+    <back-to-ads if="{{showVackTisp}}" show-transparency="{{ showTransparency}}" onemit-hide-transparency="hideTransparency" onemit-close="heideReminder"></back-to-ads>
+  </div>
+</template>
+
+<script>
+  const { adCodeData } = require('../../config.js').default
+  let nativeAd;
+
+  export default {
+    private: {
+      adList: {},
+      hasAdList: true,
+      defaultAd: {
+        desc: '华为广告',
+        title: '华为联盟',
+        icon: '广告',
+        clickBtnTxt: '点击安装',
+        img: "http://cdn.bank-zone.cn/pro/sy/admin/advertising/3639bdbde8e84397a297ad54f89ac4c3.jpg"
+      },
+      btnTxt: '',
+      adUnitId: '',
+      adObj: {},
+      adId: '',
+      showBanner: true,
+      showReminder: false,
+      showVackTisp: false,
+      showTransparency: false,
+      adTitle: "",
+      timer: null,
+      isfristReqCoun: true,
+      ad: null
+    },
+
+    onInit(e) {
+      const { callback = '', oaid = '', type = '', channelValue = '', corp_id = '' } = e
+      if (Object.keys(e).length > 0) {
+        console.log('进来了');
+        this.$app.$def.dataApp.actiParam = {
+          ...e,
+        }
+        $utils.getConversionlicks(this)
+      }
+      const branch = $ad.getProvider()
+      this.adObj = adCodeData[branch]
+      this.adId = 'v5h5xsklp2';
+
+
+    },
+    onReady() {
+      this.delayedDisplay()
+      this.preloadAd()
+      this.getTransparentLayerL()
+    },
+    onHide() {
+      this.timer = null;
+    },
+    onBackPress() {
+      this.showVackTisp = true;
+      console.log('触发了怎么无效了');
+      return true
+    },
+    /**
+     * 展示
+     */
+    delayedDisplay() {
+      this.timer = null;
+      this.timer = setTimeout(() => {
+        this.showReminder = true;
+        console.log('怎么还没有触发', this);
+      }, 4000)
+    },
+    getAdProvider: function () {
+      this.provider = $ad.getProvider();
+    },
+    async preloadAd() {
+      var that = this;
+      this.getAdProvider();
+      if (this.provider !== "huawei") {
+        console.info("the device  does not support ad.");
+        return;
+      }
+      console.log('是否进来了开启广告');
+      nativeAd = $ad.createNativeAd({ adUnitId: this.adId });
+      nativeAd.onLoad(data => {
+
+        console.info("ad data loaded: " + JSON.stringify(data));
+        this.adList = data.adList[0];
+        // console.log(this.adList, '查看获取的广告参数');
+        this.hasAdList = true;
+        this.reportNativeShow()
+      });
+      nativeAd.onError(e => {
+        this.hasAdList = true;
+      });
+      nativeAd.load();
+    },
+    error(errCode, errMsg) {
+      console.log('没有报错回调吗');
+      this.hasAdList = true;
+      this.appearSwipe()
+    },
+    /**
+     * 点击
+     */
+    reportNativeClick(type) {
+      $utils.buriedPointReport(this, 'click', this.adId)
+      $utils.conversionUpload(this)
+      nativeAd.reportAdClick({
+        adId: this.adList.adId
+      });
+      if (type === 'btn') {
+        this.addClickNum()
+      }
+
+    },
+
+    /**
+     * 展示
+     */
+    reportNativeShow() {
+      if (nativeAd) {
+        nativeAd.reportAdShow({ adId: this.adList.adId });
+      }
+    },
+    adClick() {
+      console.log('查看点击的this');
+      this.showTransparency = false;
+      console.log('没有点击回调吗');
+      $utils.conversionUpload(this)
+
+      //后台单个埋点 - 事件：广告点击
+      // $utils.adCapture(this, '$AdClick', this.adId)
+    },
+    close() {
+      console.log('没有触发这个吗');
+      this.hasAdList = false;
+      this.appearSwipe()
+    },
+    convertAppSize(appSizeBytes) {
+      // 首先将字节转换为KB  
+      let kb = appSizeBytes / 1024;
+
+      // 检查是否超过1MB（即1024KB）  
+      if (kb >= 1024) {
+        // 转换为MB并保留两位小数  
+        let mb = kb / 1024;
+        return mb.toFixed(2) + 'MB';
+      } else {
+        // 保留两位小数并返回KB  
+        return kb.toFixed(2) + 'KB';
+      }
+    },
+    appearSwipe(e) {
+      console.log('点击的是跳转的参数噢');
+      $router.replace({
+        uri: "pages/readAd"
+      })
+    },
+    getTransparentLayerL: function () {
+      try {
+        const branch = $ad.getProvider();
+        let payam = {
+          brand: branch.toUpperCase()
+        }
+        if (!this.isfristReqCoun) { //如果不是初次进来的说明可以添加选项
+          payam.count = this.$app.$def.dataApp.transparentLayerHits
+          console.log(payam.count, '查看获取次数');
+        }
+
+
+        console.log(payam, '查看这个透明层获取的参数');
+        $apis.task
+          .getTransparentLayer({ ...payam })
+          .then((res) => {
+            console.log(res, '查看这个透明层获取');
+            // 是否初次请求
+            if (this.isfristReqCoun) {
+              this.isfristReqCoun = false;
+              if (res.data) {
+                this.getTransparentLayerL()
+              }
+              return
+            }
+            this.showTransparency = res.data;
+            console.log('查看触发透明层');
+          })
+          .catch((err) => {
+            console.log(err, '查看返回报错')
+          })
+      } catch (e) {
+        console.log(e, '获取失效');
+      }
+    },
+    // 关闭透明层
+    hideTransparency() {
+      console.log('点击了关闭广告');
+      this.showTransparency = false;
+      this.addClickNum()
+    },
+    addClickNum() {
+      this.$app.$def.dataApp.transparentLayerHits = this.$app.$def.dataApp.transparentLayerHits + 1
+      this.getTransparentLayerL()
+    },
+    // 关闭
+    heideReminder(e) {
+      // this.showReminder = false;
+      this.addClickNum()
+      console.log(e);
+      const { detail = '' } = e;
+      if (!detail) {
+      } else {
+        console.log('这是什么', detail.data);
+        if (detail.data === 'showVackTisp') {
+          this.showVackTisp = false
+        } else if (detail.data === 'showReminder') {
+          this.showReminder = false
+        }
+      }
+    },
+    /**
+     *关闭倒计时窗口
+     */
+    hideReminder() {
+      console.log('关闭倒计时窗口');
+      this.showReminder = false;
+    }
+
+  }
+</script>
+
+<style lang="less">
+  @import "./index.less";
+</style>

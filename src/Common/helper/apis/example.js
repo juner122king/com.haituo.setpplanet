@@ -148,6 +148,15 @@ const clickCount = (data) => {
     });
 }
 
+//单个埋点数据
+const capture = (data) => {
+    return request({
+        method: "POST",
+        url: `/qa/track/capture`,
+        data
+    });
+}
+
 
 export default {
     toLogin,
@@ -163,5 +172,6 @@ export default {
     bolckReturn,
     showTclayer,
     popUps,
-    clickCount
+    clickCount,
+    capture
 };

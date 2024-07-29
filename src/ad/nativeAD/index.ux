@@ -25,7 +25,7 @@
     height: 850px;
     position: absolute;
     bottom: 100px;
-    background-color: rgba(0, 0, 0, 0.9);
+    /* background-color: rgba(0, 0, 0, 0.9); */
   }
 
   .item-container {
@@ -236,6 +236,10 @@
       nativeAd.reportAdClick({
         adId: this.native.adData.adId
       });
+
+      //后台单个埋点 - 事件：广告点击
+      // $utils.adCapture(this, '$AdClick', this.native.adUnitId)
+      $utils.buriedPointReport(this, 'click', this.native.adUnitId)
 
       //广告被点击时触发主页面方法
       this.$emit('addAdc')
