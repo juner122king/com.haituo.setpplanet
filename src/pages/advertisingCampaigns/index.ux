@@ -291,10 +291,10 @@ export default {
     this.addClickNum()
 
     //后台单个埋点 - 事件：广告点击
-    $utils.adCapture(this, '$AdClick', this.adId)
+    // $utils.adCapture(this, '$AdClick', this.adId)
 
 
-
+    $utils.buriedPointReport(this, 'click', this.adId)
   },
   close() {
     console.log('没有触发这个吗');
@@ -317,7 +317,7 @@ export default {
   },
   appearSwipe() {
     $router.replace({
-      uri: "pages/read-ad"
+      uri: "pages/readAd"
     })
   },
   getTransparentLayerL: function () {

@@ -211,9 +211,6 @@ module.exports = {
   },
 
   onInit: function (e) {
-    //插屏广告
-    // $utils.tablePlaque(this.$app.$def.dataApp.interstitialAdUnitId, this)
-
 
     //处理回传链接
     $utils.saveHapUri(this, e)
@@ -401,7 +398,7 @@ module.exports = {
         this.isOpenAd(isAutoOpen)
       }
       //打开插屏广告
-      $utils.tablePlaque(onCloseCallback, onCatchCallback)
+      $utils.tablePlaque2(onCloseCallback, onCatchCallback)
     } else {
       this.isOpenAd(true)
     }

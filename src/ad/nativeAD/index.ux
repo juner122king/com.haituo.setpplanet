@@ -16,7 +16,7 @@
           class="ad-native"
           show="{{adList.length > 0}}"
           @error="error"
-          @adclick="reportNativeClick"
+          @adclick="reportNativeClick()"
           @adclose="closeAd"
         >
           <div class="ad-content">
@@ -145,11 +145,8 @@ module.exports = {
     //转化上传
     $utils.getConvertUpload(this)
 
-    //后台单个埋点 - 事件：广告点击
-    $utils.adCapture(this, '$AdClick', this.native.adUnitId)
 
-
-
+    $utils.buriedPointReport(this, 'click', this.native.adUnitId)
     //广告或透明层被点击后隐藏透明层
     this.showTclayer = false
 

@@ -6,7 +6,7 @@ import ad from '@service.ad'
 // 节流阀
 const throttle = (fn, gapTime = 1500) => {
   let _lastTime = null;
-  // 返回新的函数
+  // 返回新的函数 
   return function () {
     let _nowTime = +new Date();
     if (_nowTime - _lastTime > gapTime || !_lastTime) {
@@ -161,9 +161,7 @@ function conversionUpload(that) {
 * 插屏广告 
 */
 const tablePlaque = (adid, that) => {
-
   let Provider = $ad.getProvider();
-
   if (!Provider) {
     console.log('没有广告返回');
     return
@@ -185,6 +183,41 @@ const tablePlaque = (adid, that) => {
     console.info('插屏广告onClose event emit', res)
   })
 }
+
+
+const tablePlaque2 = async (onCloseCallback, onCatchCallback) => {
+
+  let Provider = $ad.getProvider();
+  if (!Provider) {
+    console.log('没有广告商');
+    return
+  }
+  let interstitialAd = $ad.createInterstitialAd({
+    adUnitId: getApp().$def.dataApp.interstitialAdUnitId
+  })
+
+  interstitialAd.load().then((res) => {
+    console.log(res, '查屏加载成功');
+    interstitialAd.show().then(
+      () => { console.log('插屏广告show成功') },
+      () => { console.log('插屏广告show失败') }
+    )
+  })
+    // .catch((err) => {
+    //   console.log(err, '插屏加载失败');
+    // })
+    .catch(onCatchCallback)
+
+
+  interstitialAd.onClick(() => {
+    console.log('插屏广告点击了');
+    //转化上传
+    getConvertUpload()
+  })
+
+  interstitialAd.onClose(onCloseCallback)
+
+};
 
 
 /**
@@ -299,8 +332,7 @@ const openAd = () => {
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
   var r = 'Page_cfd'
-  r = 'pages/advertisingCampaigns'
-
+  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?channelValue=KYY&type=vivo'
   // r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
@@ -308,26 +340,6 @@ const openAd = () => {
 
 }
 
-
-
-/**
- * @param {*} this //必传
- * @param {*} name //变量名
- * @param {*} data  // 数据值
- * @param {*} changeType  //get set 存储消除  前两参数都传默认为set
- * @returns
- */
-function changeGlobalParam(that, name, data = '', changeType = 'get') {
-  try {
-    let type = name && data ? 'set' : changeType
-    if (type === 'get') {
-      return name ? that.$app.$def.dataApp[name] : that.$app.$def.dataApp
-    } else if (type === 'set') {
-      that.$app.$def.dataApp[name] = data
-      return that.$app.$def.dataApp[name]
-    }
-  } catch (error) { }
-}
 /**
  * 判断广告商
  */
@@ -401,7 +413,6 @@ function getConversionlicks(context) {
 //单个广告点击埋点数据
 function adCapture(that, event, adId) {
 
-
   $apis.user.getUserInfo().then((res) => {
     console.log('查看用户信息 ', res.data)
     var infoData = res.data;
@@ -443,16 +454,18 @@ function adCapture(that, event, adId) {
     }
     console.info(' 单个埋点数据：', trackCaptureMiniDto)
 
-
     $apis.example.capture(trackCaptureMiniDto).then(response => {
-      console.log(' 单个埋点successful:', response)
-
+      console.log(' 单个埋点成功:adId', adId)
+      // $prompt.showToast({
+      //   message: "埋点成功" + adId,
+      //   gravity: 'center'
+      // })
     }).catch(error => {
       console.error(' 埋点failed:', error)
-      $prompt.showToast({
-        message: "埋点失败" + error,
-        gravity: 'center'
-      })
+      // $prompt.showToast({
+      //   message: "埋点失败" + error,
+      //   gravity: 'center'
+      // })
     })
   }).catch(error => {
     $prompt.showToast({
@@ -465,6 +478,86 @@ function adCapture(that, event, adId) {
 }
 
 
+// 埋点上报
+async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
+  try {
+    let checkPaem = {
+      ...these.$app.$def.dataApp.actiParam,
+    }
+    console.log(these.$app.$def.dataApp, 'these.$app.$def.dataApp-')
+    console.log(checkPaem, '查看是否有参数')
+    if (Object.keys(checkPaem).length <= 0) {
+      //无值的情况直接删除
+      return
+    }
+
+    let token = await $storage.get({
+      key: 'AUTH_TOKEN_DATA',
+    })
+    token = JSON.parse(token.data)
+    console.log('查看这个token', token)
+    const that = this
+    let adBrand = $ad.getProvider()
+    let param = {
+      ...checkPaem,
+      cid: checkPaem.channelValue,
+      event: event === 'click' ? '$AdClick' : '$AppLaunch',
+      pid: adBrand.toLowerCase(),
+      appId: token.appId,
+      userId: token.userId,
+    }
+    let urlQuery = convertToQueryString(checkPaem)
+    $device.getInfo({
+      success: function (res) {
+        const phoninfo = res
+        let param2 = {
+          ...param,
+          properties: {
+            ...res,
+            manufacturer: phoninfo.manufacturer,
+            model: phoninfo.model,
+            os: phoninfo.osType,
+            product: phoninfo.product,
+            analysis: {
+              adId: adId,
+              title: adId,
+            },
+            urlQuery: urlQuery,
+          },
+        }
+
+        console.log('查看上报参数', param2)
+        $apis.task
+          .postTrackCapture({ ...param2 })
+          .then((res) => {
+            console.log('上报成功', res)
+          })
+          .catch((err) => {
+            console.log(err, '上传失败')
+          })
+      },
+    })
+  } catch (error) {
+    console.log(error, '上传错误')
+  }
+}
+
+function convertToQueryString(objects) {
+  // 初始化一个空字符串来存储结果
+  let queryString = ''
+  // 遍历对象数组
+  Object.keys(objects).forEach((key, index) => {
+    // 如果不是第一个键值对，则添加 '&'
+    if (index > 0 || queryString !== '') {
+      queryString += '&'
+    }
+    // 将键值对添加到查询字符串中
+    queryString += `${key}=${objects[key]}`
+  })
+  return queryString
+}
+
+
 
 export default {
   throttle,
@@ -473,6 +566,7 @@ export default {
   startCountDown,
   dataEncryption,
   tablePlaque,
+  tablePlaque2,
   showBannerAd,
   hideBanerAd,
   viewBanner,
@@ -481,5 +575,6 @@ export default {
   openAd,
   getConversionlicks,
   conversionUpload,
-  adCapture
+  adCapture,
+  buriedPointReport,//埋点
 }

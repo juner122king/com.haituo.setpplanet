@@ -1,0 +1,47 @@
+<import name="topon-ad" src="@topon/quick-app-sdk/topOnAd.ux"></import>
+
+<template>
+  <div class="topon-ad-wrapper">
+    <topon-ad
+      id="topon-rv-{{plId}}-{{adUnitId}}"
+      type="rvideo"
+      ad-unit-id="{{adUnitId}}"
+      pl-id="{{plId}}"
+      show-countdown="{{showCountdown}}"
+    >
+    </topon-ad>
+  </div>
+</template>
+
+<script>
+export default {
+  protected: {
+    adUnitId: '',
+    plId: '',
+    showCountdown: true,
+    isInitial: true
+  },
+
+  onInit() {},
+
+  onBackPress() {
+    return true;
+  },
+
+  onShow() {
+    if (this.isInitial) return;
+    this.$child(`topon-rv-${this.plId}-${this.adUnitId}`)?.onContinue();
+  },
+
+  onHide() {
+    this.isInitial = false;
+    this.$child(`topon-rv-${this.plId}-${this.adUnitId}`)?.onPause();
+  }
+}
+</script>
+<style scoped>
+.topon-ad-wrapper {
+  width: 100%;
+  height: 100%;
+}
+</style>

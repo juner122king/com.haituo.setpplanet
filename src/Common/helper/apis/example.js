@@ -157,14 +157,6 @@ const capture = (data) => {
     });
 }
 
-//单个埋点数据
-const capturetest = (data) => {
-    return request({
-        method: "PUT",
-        url: `/qa/track/test`,
-        data
-    });
-}
 export default {
     toLogin,
     uploadsteps,
@@ -180,6 +172,5 @@ export default {
     showTclayer,
     popUps,
     clickCount,
-    capture,
-    capturetest
+    capture
 };

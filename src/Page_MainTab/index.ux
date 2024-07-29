@@ -97,13 +97,7 @@ module.exports = {
 		$apis.user.wealentry().then((res) => {
 			console.log('福利入口信息----------------->' + JSON.stringify(res));
 			this.isOpenstrapLayer = res.data.isOpenActivityBootstrapLayer
-
 		})
-
-
-		// //后台单个埋点 - 事件：快应用启动
-		// $utils.adCapture(this,'$AppLaunch','')
-
 
 	},
 	onShow(options) {

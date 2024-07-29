@@ -1,8 +1,8 @@
 {
     "package": "com.haituo.setpplanet",
     "name": "计步星球",
-    "versionName": "1.0.18",
-    "versionCode": 18,
+    "versionName": "1.1.0",
+    "versionCode": 100,
     "permissions": [
         {
             "origin": "*"
@@ -47,6 +47,18 @@
         },
         {
             "name": "system.request"
+        },
+        {
+            "name": "system.router"
+        },
+        {
+            "name": "system.package"
+        },
+        {
+            "name": "service.account"
+        },
+        {
+            "name": "system.animate"
         }
     ],
     "config": {
@@ -96,7 +108,24 @@
             "pages/advertisingCampaigns": {
                 "component": "index"
             },
-            "pages/read-ad": {
+            "pages/readAd": {
+                "component": "index"
+            }
+            
+            ,
+            "UnionAd/AdPage": {
+                "component": "index"
+            },
+            "UnionAd/AdLanding": {
+                "component": "index"
+            },
+            "UnionAd/AdReward": {
+                "component": "index"
+            },
+            "TopOn/AdLanding": {
+                "component": "index"
+            },
+            "TopOn/AdReward": {
                 "component": "index"
             }
         }
@@ -131,9 +160,52 @@
                 "titleBarText": "",
                 "titleBar": false
             },
-            "pages/read-ad": {
+            "pages/readAd": {
                 "titleBarText": "",
                 "titleBar": false
+            },
+            "UnionAd/AdPage": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menu": false,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "UnionAd/AdReward": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menu": false,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "UnionAd/AdLanding": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menu": false,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "TopOn/AdLanding": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "TopOn/AdReward": {
+              "fullScreen": true,
+              "titleBar": false,
+              "statusBarImmersive": true,
+              "menuBarData": {
+                "menuBar": false
+              }
             }
         }
     }
