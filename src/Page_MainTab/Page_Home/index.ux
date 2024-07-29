@@ -620,7 +620,7 @@ module.exports = {
   agree() {
     //点击同意后关闭隐私组件
     this.isShow = false;
-    this.subscribeStepCounter()
+    // this.subscribeStepCounter()
   },
   cancel() {
     this.isShow = false;
