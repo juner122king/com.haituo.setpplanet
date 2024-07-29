@@ -211,8 +211,6 @@ module.exports = {
 
   pushPageTixian() {
 
-
-
     $router.push({
       uri: 'Page_Tixian'
     });
