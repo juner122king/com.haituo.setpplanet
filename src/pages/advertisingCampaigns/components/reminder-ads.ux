@@ -176,7 +176,6 @@ export default {
 
   
     //后台单个埋点 - 事件：广告点击
-    // $utils.adCapture(this, '$AdClick', this.adId)
 
     $utils.buriedPointReport(this, 'click', this.adId)
   },

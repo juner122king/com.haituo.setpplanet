@@ -170,7 +170,6 @@ export default {
     $utils.buriedPointReport(this, 'click', this.adId)
     
     //后台单个埋点 - 事件：广告点击
-    // $utils.adCapture(this, '$AdClick', this.adId)
   },
   close() {
     console.log('没有关闭回调吗');
