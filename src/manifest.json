@@ -101,10 +101,6 @@
             "ad/nativeAD": {
                 "component": "index"
             },
-            "ad/AdBanner": {
-                "component": "index",
-                "launchMode": "singleTask"
-            },
             "pages/advertisingCampaigns": {
                 "component": "index"
             },

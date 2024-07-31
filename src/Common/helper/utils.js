@@ -18,6 +18,8 @@ const throttle = (fn, gapTime = 1500) => {
 
 const { JSEncrypt } = require('../libs/jsencrypt/lib/index')
 
+const { adCodeData } = require('../../config.js').default
+
 const config = {
   publicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqaj0Y3k54jCyTq47t73ScBX9uBsSScDo7/uZ+PhHYh9eQqHNW1bBjKGV4t3Y8Wokhv783krxhIqzkPf9nHeZ2yWqoQlPa3qOUc7Wf/HpX2+eHGRjF1/RLARJmMcEgQYB3WGbdRedu0FjQSGd+OfSS/W7Heh2ZGlF/aSHj2NYhYE4p7x4jjQIi+ueKZvVJNZpu0vhQaF45jpqQDULPL+MkkQePmupjp/PR4Ra8BVg4DwJuI6K8jL77YWaxeQRbMrEiQ0ZbTKRQ4o8N73iIM97E/h8PbDl5FbuNn0k8urkYnmv56AMdkVEyIOUwNEa8oU9QKz37o5Z2L7+yqx2zmLpVwIDAQAB',
 }
@@ -158,23 +160,23 @@ function conversionUpload(that) {
 
 
 /**
-* 插屏广告 
+* 插屏广告  提现页面插屏，不用回传
 */
-const tablePlaque = (adid, that) => {
-  let Provider = $ad.getProvider();
-  if (!Provider) {
-    console.log('没有广告返回');
+const tablePlaqueTX = (that) => {
+  let branch = $ad.getProvider();
+  if (!branch) {
+    console.log('没有广告商');
     return
   }
+  let adid = adCodeData[branch].interstitialAdUnitId
+  console.info('插屏广告id ', adid)
 
-  console.info('插屏广告= ', adid);
   let interstitialAd = $ad.createInterstitialAd({
     adUnitId: adid
   })
   interstitialAd.onLoad(() => { // 监听广告加载
     console.log('查屏加载成功');
     interstitialAd.show()
-    getConvertUpload(that)
   })
   interstitialAd.onError((err) => { // 监听广告出错
     console.info('插屏广告onError event emit', err)
@@ -185,15 +187,18 @@ const tablePlaque = (adid, that) => {
 }
 
 
-const tablePlaque2 = async (onCloseCallback, onCatchCallback) => {
+const tablePlaque = async (onCloseCallback, onCatchCallback,that) => {
 
-  let Provider = $ad.getProvider();
-  if (!Provider) {
+  let branch = $ad.getProvider();
+  if (!branch) {
     console.log('没有广告商');
     return
   }
+  let adid = adCodeData[branch].interstitialAdUnitId
+  console.info('插屏广告id ', adid)
+
   let interstitialAd = $ad.createInterstitialAd({
-    adUnitId: getApp().$def.dataApp.interstitialAdUnitId
+    adUnitId: adid
   })
 
   interstitialAd.load().then((res) => {
@@ -203,16 +208,14 @@ const tablePlaque2 = async (onCloseCallback, onCatchCallback) => {
       () => { console.log('插屏广告show失败') }
     )
   })
-    // .catch((err) => {
-    //   console.log(err, '插屏加载失败');
-    // })
+  
     .catch(onCatchCallback)
 
 
   interstitialAd.onClick(() => {
     console.log('插屏广告点击了');
     //转化上传
-    getConvertUpload()
+    getConvertUpload(that)
   })
 
   interstitialAd.onClose(onCloseCallback)
@@ -234,13 +237,11 @@ let bannerAd; const showBannerAd = async () => {
   //   return
   // }
 
-  let adid = '4095f11c8658440b9075da95705d6313'
-  let Provider = $ad.getProvider();
-  console.info('广告商:', Provider);
-  // $prompt.showToast({
-  //   message: `${Provider}广告商`,
-  //   gravity: 'center'
-  // });
+
+  let branch = $ad.getProvider();
+  console.info('广告商:', branch);
+
+  let adid = adCodeData[branch].banner;
   console.info("banner广告位=" + adid);
 
 
@@ -496,8 +497,8 @@ export default {
   getConvertUpload,
   startCountDown,
   dataEncryption,
+  tablePlaqueTX,
   tablePlaque,
-  tablePlaque2,
   showBannerAd,
   hideBanerAd,
   viewBanner,

@@ -398,7 +398,7 @@ module.exports = {
         this.isOpenAd(isAutoOpen)
       }
       //打开插屏广告
-      $utils.tablePlaque2(onCloseCallback, onCatchCallback)
+      $utils.tablePlaque(onCloseCallback, onCatchCallback, this)
     } else {
       this.isOpenAd(true)
     }

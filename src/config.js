@@ -2,7 +2,7 @@ const adCodeData = {
   vivo: {
     appid: 111256983,
     stimulateAd: 'd9b577f2a1c04838b27dcbdafde675d6',
-    banner: '3aae67431134438f9028c1d513f48098',
+    banner: '4095f11c8658440b9075da95705d6313',
     tableScreenAd: '',
     nativeAd: 'e697c56e9c234a249226909c23e83ca7',
     lotteryPageNativeAd: '7f0323b3e1464f2d8b230e3c19e6be1a',
@@ -10,6 +10,8 @@ const adCodeData = {
     fiction2: '0e0b5e6f0da646adbc4d8afab817a275', //原生小说广告页id
     fiction3: '808847b949c54e3ba325119e1f58ca1f', //原生小说广告页id
     fiction4: 'edceb5351a9849deb3f7b92eba34ad18', //原生小说广告页id
+
+    interstitialAdUnitId:'572c41d7e93945ca8e9db8150df89aed'//插屏广告位id
   },
   xiaomi: {
     nativeAd: '875427e86385392629207d9e11b0683c', //原生
@@ -22,7 +24,7 @@ const adCodeData = {
     nativeAd: '1636371', //原生
     tableScreen: '1636380',
     stimulateAd: '1636375',
-    banner: '',
+    banner: '1654123',
     lotteryPageNativeAd: '1636371',
   },
   HUAWEI: {
