@@ -215,9 +215,7 @@ module.exports = {
       uri: 'Page_Tixian'
     });
 
-    // $router.push({
-    //   uri: 'ad/AdBanner'
-    // });
+
   },
   pushPageabout() {
     $router.push({

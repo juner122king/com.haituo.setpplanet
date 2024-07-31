@@ -52,6 +52,7 @@
 </template>
 
 <script>
+  const { adCodeData } = require('../../config.js').default
 let nativeAd;
 module.exports = {
 
@@ -88,8 +89,10 @@ module.exports = {
 
   },
   onInit() {
-
-    this.native.adUnitId = this.$app.$def.dataApp.nativeAdUnitId
+    let branch = $ad.getProvider();
+    let adid = adCodeData[branch].nativeAd
+    console.info('原生广告id ', adid)
+    this.native.adUnitId = adid
 
   },
   async onReady(options) {

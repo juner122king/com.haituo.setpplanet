@@ -255,7 +255,7 @@ module.exports = {
       console.log('插屏加载失败');
     }
     //打开插屏广告
-    $utils.tablePlaque('572c41d7e93945ca8e9db8150df89aed', this)
+    $utils.tablePlaqueTX(this)
   },
 
 

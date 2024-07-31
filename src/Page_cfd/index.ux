@@ -173,7 +173,7 @@
 }
 </style>
 <script>
-
+const { adCodeData } = require('../config.js').default
 module.exports = {
   private: {
 
@@ -338,9 +338,12 @@ module.exports = {
   },
   //获取每日次数
   getAdCount() {
+    let branch = $ad.getProvider();
+    let adid = adCodeData[branch].nativeAd
+    console.info('原生广告id ', adid)
 
     $apis.example.getAdCount({
-      adId: this.$app.$def.dataApp.nativeAdUnitId,
+      adId: adid,
       channel: ''
     }).then((res) => {
       // console.log('获取每日次数', res);
@@ -398,7 +401,7 @@ module.exports = {
         this.isOpenAd(isAutoOpen)
       }
       //打开插屏广告
-      $utils.tablePlaque2(onCloseCallback, onCatchCallback)
+      $utils.tablePlaque(onCloseCallback, onCatchCallback, this)
     } else {
       this.isOpenAd(true)
     }

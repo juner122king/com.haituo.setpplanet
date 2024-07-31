@@ -45,23 +45,16 @@ module.exports = {
     } catch (error) {
       console.log('error', error);
     }
-
   },
   onDestroy() {
     console.info('Application onDestroy');
-
-
   },
   dataApp: {
-
     url1: "http://www.ihaituo.cn/xy/jb/bzzx.html",
     url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",
     url3: "http://www.ihaituo.cn/xy/jb/yszc.html",
 
 
-    bannerAdUnitId: "1653985",//banner广告位id
-    nativeAdUnitId: "1653989",//广告位id 幸运拆红包-原生-拆红包弹出层
-    interstitialAdUnitId: "1654001",//插屏广告位id
     //保存用户信息对象
     userData: {
       loginPhone: '',
