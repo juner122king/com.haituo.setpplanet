@@ -15,7 +15,7 @@
         <div class="container">
           <div class="left-img">
             <!-- 图片 -->
-            <ad-clickable-area type="click" class="ad-img">
+            <ad-clickable-area type="click" class="ad-img" if="{{adList.imgUrlList}}">
               <image
                 src="{{adList.imgUrlList? adList.imgUrlList[0]: defaultAd.img }}"
               ></image>

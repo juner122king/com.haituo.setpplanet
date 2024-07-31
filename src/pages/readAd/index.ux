@@ -1538,9 +1538,9 @@ export default {
     // })
 
     this.getTransparentLayerL()
-    this.adinstance = require("@service.ad").createFeedAd({
-      adUnitId: this.adUnitId
-    })
+    // this.adinstance = require("@service.ad").createFeedAd({
+    //   adUnitId: this.adUnitId
+    // })
     this.latencyShowReminder()
     // this.preloadAd()
     // this.initcontent()

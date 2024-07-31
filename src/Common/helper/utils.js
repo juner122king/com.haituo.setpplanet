@@ -187,7 +187,7 @@ const tablePlaqueTX = (that) => {
 }
 
 
-const tablePlaque = async (onCloseCallback, onCatchCallback,that) => {
+const tablePlaque = async (onCloseCallback, onCatchCallback, that) => {
 
   let branch = $ad.getProvider();
   if (!branch) {
@@ -208,7 +208,7 @@ const tablePlaque = async (onCloseCallback, onCatchCallback,that) => {
       () => { console.log('插屏广告show失败') }
     )
   })
-  
+
     .catch(onCatchCallback)
 
 
@@ -245,19 +245,20 @@ let bannerAd; const showBannerAd = async () => {
   console.info("banner广告位=" + adid);
 
 
-  const style = {
-    left: 0,     // banner 广告组件的左上角横坐标
-    top: 1430,    // banner 广告组件的左上角纵坐标
-    width: 1080, // banner 广告组件的宽度
-    Height: 170  // banner 广告组件的高度
-  }
-
+  // const style = {
+  //   left: 0,     // banner 广告组件的左上角横坐标
+  //   top: 1430,    // banner 广告组件的左上角纵坐标
+  //   width: 1080, // banner 广告组件的宽度
+  //   Height: 170  // banner 广告组件的高度
+  // }
 
   bannerAd = $ad.createBannerAd({
     adUnitId: adid,//banner广告位
-    style: style
+    style: {
+      width: 750,
+      left: 20
+    }
   });
-
 
   console.info("annerAd.style=" + JSON.stringify(bannerAd.style));
   bannerAd.onLoad(e => {
@@ -270,6 +271,10 @@ let bannerAd; const showBannerAd = async () => {
     // console.info("load bannerAd  onClose");
   });
   bannerAd.show();
+  
+  bannerAd.onResize((data) => {
+    console.log(data.width + "|" + data.height, 'onResize')
+  })
 
 
 }

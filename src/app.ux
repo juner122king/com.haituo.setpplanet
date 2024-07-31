@@ -45,6 +45,18 @@ module.exports = {
     } catch (error) {
       console.log('error', error);
     }
+
+
+
+    // $device.getDeviceId({
+    //   success: function (data) {
+    //     console.log(`handling success: ${data.deviceId}`)
+    //   },
+    //   fail: function (data, code) {
+    //     console.log(`handling fail, code = ${code}`)
+    //   }
+    // })
+
   },
   onDestroy() {
     console.info('Application onDestroy');

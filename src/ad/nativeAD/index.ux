@@ -9,24 +9,32 @@
       src="/Common/img/ad/bt_cpd.png"
       onclick="completeAdRSA"
     ></image>
-    <div class="container">
+    <div class="container" if="{{ native.isShow }}">
       <block for="{{adList}}">
         <ad
           adId="{{$item.adId}}"
+          adunitid="{{ adunitid }}"
           class="ad-native"
           show="{{adList.length > 0}}"
-          @error="error"
-          @adclick="reportNativeClick()"
-          @adclose="closeAd"
+          onload="adLoad(evt)"
+          onerror="error"
+          onadclick="reportNativeClick()"
+          onadshow="adShow"
+          type="native"
         >
           <div class="ad-content">
-            <block if="{{$item.creativeType===4}}">
+            <block if="{{$item.creativeType===13}}">
               <ad-clickable-area
                 type="video"
                 class="ad-video"
               ></ad-clickable-area>
             </block>
-            <block else>
+            <block if="{{$item.creativeType===3 && $item.materialType===100}}">
+              <ad-clickable-area type="click" class="btn">
+                <text class="title">{{ $item.clickBtnTxt }} </text>
+              </ad-clickable-area>
+            </block>
+            <block else >
               <ad-clickable-area type="click" if="{{$item.imgUrlList}}">
                 <image class="ad-image" src="{{$item.imgUrlList[0]}}"></image>
               </ad-clickable-area>
@@ -34,10 +42,11 @@
 
             <div class="ad-footer" if="{{$item.title}}">
               <ad-clickable-area type="click">
-                <text class="tag">{{ defaultAd.icon }}</text>
-                <text class="title">{{ $item.title || defaultAd.title }}</text>
+                <image class="ad-icon" src="{{ $item.icon }}"></image>
+                <text class="title">{{ $item.title }} 广告</text>
               </ad-clickable-area>
             </div>
+            <div class="ad-close" onclick="closeAd"><text>关闭</text></div>
           </div>
         </ad>
       </block>
@@ -52,7 +61,7 @@
 </template>
 
 <script>
-  const { adCodeData } = require('../../config.js').default
+const { adCodeData } = require('../../config.js').default
 let nativeAd;
 module.exports = {
 
@@ -68,15 +77,15 @@ module.exports = {
     provider: "",
     hasAdList: false,
     adList: [],
-    defaultAd: {
-      desc: 'vivo流量联盟，提供最优质的商业化解决方案。流量联盟广告联盟。',
-      title: 'vivo流量联盟',
-      icon: '广告',
-      clickBtnTxt: '立即打开'
+    adData: { // 此处广告的初始值需严格按照文档来
+      imgUrlList: [],
+      title: '',
+      desc: '',
+      clickBtnTxt: ''
     },
+    adunitid: '',
     native: {
-      adUnitId: "",
-      isShow: false,
+      isShow: true,
       adData: {},
       isShowImg: true,
       isShowVideo: true,
@@ -92,8 +101,7 @@ module.exports = {
     let branch = $ad.getProvider();
     let adid = adCodeData[branch].nativeAd
     console.info('原生广告id ', adid)
-    this.native.adUnitId = adid
-
+    this.adUnitId = adid
   },
   async onReady(options) {
     console.info("native ad onReady");
@@ -113,43 +121,40 @@ module.exports = {
   },
 
   showNativeAd2() {
-    let adParams = {
-      adUnitId: this.native.adUnitId, // 原生自渲染2.0广告广告位id
-      type: 'native',          // 原生自渲染2.0广告类型 
-    }
-    if (this.canIUseAdCount === true) {
-      // 预期返回的广告素材条数，非必填，不填时默认值为1
-      // 取值范围1-3，其他数据则报错
-      adParams.adCount = 1
-    }
     $ad.preloadAd({
-      ...adParams,
+      adUnitId: this.adUnitId,//原生信息流2.0广告位标识
+      adCount: 1,//预期返回的数据条数：取值范围1-3，其他数据则报错,此为必填字段
+      type: 'native',//所属广告位类型
       success: (data) => {
-        console.info("success 广告数据:" + JSON.stringify(data))
-
-        this.adList = data.adList  // 一次成功返回有 1-3 个数据，参照对应的 adCount 数（小概率情况下小于 adCount 数）
+        console.log(data, '预加载成功')//1112以下版本或adCount不传参，会返回‘success’,1112+版本会返回广告数据
+        //存储预加载数据
+        this.adList = data.adList//一次成功返回有1-3个数据，参照对应的adCount数（小概率情况下小于 adCount 数）
         this.native.isShow = true;
-
       },
-      fail: (data, code) => {
-        console.info("fail 广告数据:" + JSON.stringify(data))
-        if (code === 205) {
-          this.adList = data.adList // 错误码205时，表示缓存已满导致加载失败，此时从缓存返回最多3个广告数据
-          this.native.isShow = true;
-        }
-
+      fail: (err, code) => {
+        console.log(err, code, '预加载失败')
       }
     })
   },
+  adLoad(evt) {
+    if (evt && evt.adData) {
+      const adData = JSON.parse(evt.adData)
+      this.adData = adData
+      console.log('adLoad', adData, '信息流广告加载成功');
+      this.native.isShow = true;
+    }
+  },
+  adShow(evt) {
+    console.log('adShow: ', evt)
+  },
+  reportNativeClick(evt) {
 
-  reportNativeClick() {
+    console.log('adClick: ', evt)
     console.info(" 原生广告被点击了");
 
     //转化上传
     $utils.getConvertUpload(this)
-
-
-    $utils.buriedPointReport(this, 'click', this.native.adUnitId)
+    $utils.buriedPointReport(this, 'click', this.adUnitId)
     //广告或透明层被点击后隐藏透明层
     this.showTclayer = false
 
@@ -199,7 +204,7 @@ module.exports = {
 
 
     var adType = 'NATIVE'
-    var adId = this.native.adUnitId
+    var adId = this.adUnitId
     var channel = this.$app.$def.dataApp.channel
     var countMax = this.$app.$def.dataApp.countMax
     var brand = this.$app.$def.dataApp.brand
@@ -291,6 +296,21 @@ module.exports = {
   margin-bottom: 30px;
   width: 48px;
   height: 48px;
+}
+
+.ad-close {
+  width: 50px;
+  height: 30px;
+  background-color: gray;
+  opacity: 0.5;
+  position: absolute;
+  margin-left: 700px;
+  margin-right: 20px;
+  text {
+    font-size: 20px;
+    padding: 5px;
+    color: #ffffff;
+  }
 }
 .alert {
   font-size: 40px;
