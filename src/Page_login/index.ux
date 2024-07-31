@@ -82,6 +82,11 @@
           console.log('handling fail, code = ' + code);
         }
       })
+
+
+
+
+
     },
     checkedRadio: function (e) {
       this.consentChecked = e.checked
@@ -147,13 +152,20 @@
         return
       }
 
+
+      const actiParam = getApp().$def.dataApp.actiParam
+
+      console.log('登录请求参数123', actiParam);
+
       const param = {
         loginType: 'PHONE',
         code: this.authCode,
         appId: "SC_0001",
         loginAccount: this.phone,
         deviceNum: this.deviceNum,
-        phone: this.phone
+        phone: this.phone,
+        pid: 'HUAWEI',
+        cid: actiParam.channelValue
       }
 
       console.log('登录请求参数', param);

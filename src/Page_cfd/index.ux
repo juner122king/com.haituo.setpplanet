@@ -168,7 +168,7 @@
       userAdclickCount: 0,//当前跳转用户点击广告总次数
     },
 
-    onInit: function (e) {
+    onInit (e) {
 
 
       //处理回传
@@ -274,8 +274,7 @@
         console.log('callback为空,不执行后台设置的 转化点击次数')
         return
       }
-
-
+      
       const param = getApp().$def.dataApp.actiParam
       console.log('转化点击次数 参数param= ', param)
       $apis.example.clickCount({

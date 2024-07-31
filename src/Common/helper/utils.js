@@ -107,15 +107,24 @@ function convertKeysToCamelCase(obj) {
 * 保存广告回传参数   router.push(OBJECT)  例：@param {Object} e='hap://app/com.company.app/index?param1=value1'
 */
 const saveHapUri = (e) => {
+
+  // //处理华为平台的跳转链接最一个字符为/的问题
+  if (e.channelValue) {
+    let channelValue = e.channelValue;
+    if (channelValue.charAt(channelValue.length - 1) === '/') {
+      // 去掉最后一个字符
+      e.channelValue = channelValue.slice(0, -1);
+    }
+  }
   console.log('saveHapUri() 转化参数e= ', e)
 
-  const { channelValue = '', callback = '' } = e
-  if (callback) {
-    getApp().$def.dataApp.actiParam = {
-      ...e
-    }
+  const { callback = '', oaid = '', type = '', channelValue = '', corp_id = '' } = e
 
+  getApp().$def.dataApp.actiParam = {
+    ...e
   }
+
+
 }
 
 /**
@@ -304,6 +313,7 @@ const openAd = () => {
 
   var r = 'Page_cfd'
   // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?callback=45079911&oaid=30ac1840-06aa-461f-9594-7f7b365f0dfe&channelValue=KYY'
+  r = 'hap://app/com.haituo.setpplanet/Page_cfd?channelValue=jzxgj11/'
   $router.push({
     uri: r
   });
@@ -426,12 +436,22 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
       return
     }
 
+    // //处理华为平台的跳转链接最一个字符为/的问题
+    // if (checkPaem.channelValue) {
+    //   let channelValue = checkPaem.channelValue;
+    //   if (channelValue.charAt(channelValue.length - 1) === '/') {
+    //     // 去掉最后一个字符
+    //     checkPaem.channelValue = channelValue.slice(0, -1);
+    //   }
+    // }
+
+
+
     let token = await $storage.get({
       key: 'AUTH_TOKEN_DATA',
     })
     token = JSON.parse(token.data)
     console.log('查看这个token', token)
-    const that = this
     let adBrand = $ad.getProvider()
     let param = {
       ...checkPaem,
@@ -495,72 +515,6 @@ function convertToQueryString(objects) {
 }
 
 
-//单个广告点击埋点数据
-function adCapture(that, event, adId) {
-
-  $apis.user.getUserInfo().then((res) => {
-    console.log('查看用户信息 ', res.data)
-    var infoData = res.data;
-
-    const {
-      type = '',
-      channelValue = '',
-    } = that.$app.$def.dataApp.actiParam
-
-
-    let query = ''//地址参数串,例如hap://app/com.haituo.bookkeeping?channelValue=xcx&type=vivo, 传channelValue=xcx&type=vivo
-    let path = ''//链接路径, $pageview时必填
-
-    let ana = {
-      phone: infoData.phone,//	手机号, 在获取用户信息接口中取phone参数
-      adId: adId,//	广告位id, $AdComplete时必填
-      title: '',//标题,点击位置标识, $Click时必填
-    }
-
-    let prop = {
-      manufacturer: '',//手机品牌
-      model: '',//	型号
-      networkType: '',//网络模式
-      os: 'android',//系统
-      osVersion: '',//系统版本
-      urlQuery: query,
-      urlPath: path,//链接路径, $pageview时必填
-      analysis: ana
-    }
-
-    let trackCaptureMiniDto = {
-      properties: prop,
-      userId: infoData.userId,//用户id, 必填:
-      oaid: '',//设备id:
-      event: event,//	$Visit(访问),$pageview(页面访问),$Click(普通点击),$AdComplete(广告完成),$AdClick(广告点击),$AppLaunch(快应用启动), 必填:
-      appId: 'SC_0001',//	应用id, 必填:
-      pid: type,//平台
-      cid: channelValue,//渠道
-    }
-    console.info(' 单个埋点数据：', trackCaptureMiniDto)
-
-    $apis.example.capture(trackCaptureMiniDto).then(response => {
-      console.log(' 单个埋点成功:adId', adId)
-      // $prompt.showToast({
-      //   message: "埋点成功" + adId,
-      //   gravity: 'center'
-      // })
-    }).catch(error => {
-      console.error(' 埋点failed:', error)
-      // $prompt.showToast({
-      //   message: "埋点失败" + error,
-      //   gravity: 'center'
-      // })
-    })
-  }).catch(error => {
-    $prompt.showToast({
-      message: "埋点失败" + error,
-      gravity: 'center',
-      duration: 5000
-    })
-  })
-
-}
 
 export default {
   throttle,
@@ -579,5 +533,4 @@ export default {
   buriedPointReport,//埋点
   getConversionlicks,
   conversionUpload,
-  adCapture
 }

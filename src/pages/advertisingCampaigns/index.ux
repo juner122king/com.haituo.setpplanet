@@ -124,9 +124,19 @@
     },
 
     onInit(e) {
+      console.log('进来了1', e)
+      // //处理华为平台的跳转链接最一个字符为/的问题
+      if (e.channelValue) {
+        let channelValue = e.channelValue;
+        if (channelValue.charAt(channelValue.length - 1) === '/') {
+          // 去掉最后一个字符
+          e.channelValue = channelValue.slice(0, -1);
+        }
+      }
+
       const { callback = '', oaid = '', type = '', channelValue = '', corp_id = '' } = e
       if (Object.keys(e).length > 0) {
-        console.log('进来了');
+        console.log('进来了', e);
         this.$app.$def.dataApp.actiParam = {
           ...e,
         }
@@ -221,7 +231,6 @@
       $utils.conversionUpload(this)
 
       //后台单个埋点 - 事件：广告点击
-      // $utils.adCapture(this, '$AdClick', this.adId)
     },
     close() {
       console.log('没有触发这个吗');
