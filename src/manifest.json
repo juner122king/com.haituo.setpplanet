@@ -1,11 +1,16 @@
 {
     "package": "com.haituo.setpplanet",
     "name": "计步星球",
-    "versionName": "1.0.18",
-    "versionCode": 18,
-    "permissions": [{ "origin": "*" }], 
+    "versionName": "1.1.1",
+    "versionCode": 101,
+    "permissions": [
+        {
+            "origin": "*"
+        }
+    ],
     "icon": "/Common/img/logo.png",
-    "minPlatformVersion": 1095,
+    "minPlatformVersion": 1100,
+    "designWidth": 750,
     "features": [
         {
             "name": "system.storage"
@@ -22,12 +27,9 @@
         {
             "name": "system.file"
         },
-        
         {
             "name": "system.sensor"
-        }
-        
-        ,
+        },
         {
             "name": "system.cipher"
         },
@@ -45,12 +47,25 @@
         },
         {
             "name": "system.request"
+        },
+        {
+            "name": "system.router"
+        },
+        {
+            "name": "system.package"
+        },
+        {
+            "name": "service.account"
+        },
+        {
+            "name": "system.animate"
         }
     ],
     "config": {
         "data": {
             "umeng_appkey": "667b68fccac2a664de54f5ac"
-        }
+        },
+        "logLevel": "debug"
     },
     "router": {
         "entry": "Page_MainTab",
@@ -87,10 +102,30 @@
                 "component": "index"
             },
             "ad/AdBanner": {
-              "component": "index",
-              "launchMode": "singleTask"
+                "component": "index",
+                "launchMode": "singleTask"
+            },
+            "pages/advertisingCampaigns": {
+                "component": "index"
+            },
+            "pages/readAd": {
+                "component": "index"
+            },
+            "UnionAd/AdPage": {
+                "component": "index"
+            },
+            "UnionAd/AdLanding": {
+                "component": "index"
+            },
+            "UnionAd/AdReward": {
+                "component": "index"
+            },
+            "TopOn/AdLanding": {
+                "component": "index"
+            },
+            "TopOn/AdReward": {
+                "component": "index"
             }
-            
         }
     },
     "display": {
@@ -118,6 +153,57 @@
                 "titleBar": true,
                 "menu": false,
                 "titleBarText": "用户登录"
+            },
+            "pages/advertisingCampaigns": {
+                "titleBarText": "",
+                "titleBar": false
+            },
+            "pages/readAd": {
+                "titleBarText": "",
+                "titleBar": false
+            },
+            "UnionAd/AdPage": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menu": false,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "UnionAd/AdReward": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menu": false,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "UnionAd/AdLanding": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menu": false,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "TopOn/AdLanding": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menuBarData": {
+                    "menuBar": false
+                }
+            },
+            "TopOn/AdReward": {
+                "fullScreen": true,
+                "titleBar": false,
+                "statusBarImmersive": true,
+                "menuBarData": {
+                    "menuBar": false
+                }
             }
         }
     }

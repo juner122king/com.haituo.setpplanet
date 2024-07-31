@@ -3,6 +3,14 @@
 <import name="pageuser" src="./Page_User/index"></import>
 <template>
   <div class="container">
+    <div if="{{isshow}}" class="full_b" onclick="closeAd">
+      <image style="margin-top: -520px" src="/Common/img/mba.png"></image>
+      <image
+        style="width: 100%; height: 180px"
+        src="/Common/img/banner_me.png"
+        onclick="openAd"
+      ></image>
+    </div>
     <tabs onchange="changeTabactive">
       <tab-content>
         <block for="datas.list">
@@ -59,7 +67,9 @@ module.exports = {
 				title: '我的'
 			}
 			]
-		}
+		},
+		isshow: false, //是否打开用户页面引导层
+		isOpenstrapLayer: false//后台是否开启活动引导层
 	},
 	changeTabactive: function (e) {
 		for (let i = 0; i < this.datas.list.length; i++) {
@@ -75,11 +85,20 @@ module.exports = {
 				} else {
 					$utils.viewBanner()
 				}
+				//用户页面提示层
+
+				if (this.isOpenstrapLayer) {
+					this.isshow = e.index === 2 ? true : false
+				}
 			}
 		}
 	},
 	onInit() {
-		// this.$page.setExitPopupAdEnable(true)
+		$apis.user.wealentry().then((res) => {
+			console.log('福利入口信息----------------->' + JSON.stringify(res));
+			this.isOpenstrapLayer = res.data.isOpenActivityBootstrapLayer
+		})
+
 	},
 	onShow(options) {
 		$umeng_stat.resume(this)
@@ -104,10 +123,32 @@ module.exports = {
 		//需要隐藏时就销毁banner
 		$utils.destroyBanner();
 	}
+	,
+	openAd() {
+
+		this.closeAd()
+		$utils.openAd()
+	},
+	closeAd() {
+		this.isshow = false
+	}
 };
 </script>
 
 <style>
+.full_b {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+}
 .container {
   background-color: #f5f5f5;
 }

@@ -43,7 +43,7 @@ const putForeverLogout = (data) => {
 }
 
 //用户退出手机登录
-const phomeLogout = () => {
+const phoneLogout = () => {
     return request({
         method: "GET",
         url: `/qa/mini/basic/user/phone/logout`,
@@ -86,7 +86,13 @@ const postSendCode = (data) => {
         url: `/qa/mini/basic/user/sendCode/${data.phone}`,
     });
 }
-
+//获取福利入口信息
+const wealentry = () => {
+    return request({
+        method: "GET",
+        url: `/qa/mini/user/weal/entry`,
+    });
+}
 
 let user = {
     getUserInfo,
@@ -98,7 +104,8 @@ let user = {
     putForeverLogout,
     putAlipayAccount,
     postSendCode,
-    phomeLogout
+    phoneLogout,
+    wealentry
 }
 
 export default user

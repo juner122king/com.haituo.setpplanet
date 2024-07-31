@@ -211,8 +211,6 @@ module.exports = {
 
   pushPageTixian() {
 
-
-
     $router.push({
       uri: 'Page_Tixian'
     });
@@ -252,18 +250,13 @@ module.exports = {
         message: "退出成功！",
         gravity: "center"
       })
+      this.$app.exit()
     }).catch((err) => {
       console.log(err);
     })
   },
   openAd() {
-    //友盟事件打点
-    $umeng_stat.trackEvent('wd_xyfddhj', '点击');
-
-
-    $router.push({
-      uri: 'Page_cfd'
-    });
+    $utils.openAd()
   },
   addDesktop: function () {
     console.log('添加桌面');
