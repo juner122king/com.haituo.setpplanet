@@ -24,6 +24,11 @@ const adCodeData = {
     stimulateAd: '1636375',
     banner: '',
     lotteryPageNativeAd: '1636371',
+
+    fiction1: '1653991', //原生小说广告页id
+    fiction2: '1653992', //原生小说广告页id
+    fiction3: '1653993', //原生小说广告页id
+    fiction4: '1653994', //原生小说广告页id
   },
   HUAWEI: {
     banner: 'w4brvyloy0',
