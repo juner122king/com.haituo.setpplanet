@@ -1351,7 +1351,7 @@ export default {
 
   },
   protected: {
-    adUnitId: 'edceb5351a9849deb3f7b92eba34ad18',
+    adUnitId: '',
     customBtn: ''
   },
   routeDetail() {
