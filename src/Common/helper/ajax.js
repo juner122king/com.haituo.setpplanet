@@ -3,6 +3,7 @@ import $storage from '@system.storage'
 import $device from '@system.device'
 import $prompt from '@system.prompt'
 import $router from '@system.router'
+const config = require('../../config').default
 const getUserId = async () => {
   let userId = await $device.getUserId()
   return userId.data.userId;
@@ -118,10 +119,9 @@ const request = options => {
     }
     headers.Authorization = accessToken || '';
 
-    console.log('ajax请求', '  url=' + url, ";method=" + method, ";data= " + JSON.stringify(data));
     $fetch.fetch({
       // url: 'https://test.ipandata.com' + url,
-      url: 'https://api.ihaituo.cn' + url,
+      url: config.BASEHOST + url,
       method,
       data,
       header: {

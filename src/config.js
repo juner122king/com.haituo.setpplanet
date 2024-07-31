@@ -12,10 +12,10 @@ const adCodeData = {
     fiction4: 'edceb5351a9849deb3f7b92eba34ad18', //原生小说广告页id
   },
   xiaomi: {
-    nativeAd: '3ebda492da8090a8e28b3544df52da61', //原生
+    nativeAd: '875427e86385392629207d9e11b0683c', //原生
     tableScreen: 'l4ai02av3y',
     stimulateAd: '182b9c7d8701f5c50a0d5f1cb9fcf2b0',
-    banner: 'f25c41f2e050f7bd045186ba095b6c8c',
+    banner: '926810d38a08e91d2e42033a97803676',
     lotteryPageNativeAd: '3ebda492da8090a8e28b3544df52da61',
   },
   OPPO: {
@@ -27,10 +27,11 @@ const adCodeData = {
   },
   HUAWEI: {
     banner: 'w4brvyloy0',
-    nativeAd: 'y82ss9y9f7', //原生
-    tableScreen: 'l4ai02av3y',
-    stimulateAd: 'o0rbevcepx',
-    lotteryPageNativeAd: 'b9flx2el39',
+    nativeAd: 'v5h5xsklp2', //原生
+    nativeAdTK: 's2ytxth2mq', //原生TAKU
+    tableScreen: '',
+    stimulateAd: '',
+    lotteryPageNativeAd: '',
   },
 }
 const publicKey = `MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqaj0Y3k54jCyTq47t73S
