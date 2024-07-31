@@ -1253,6 +1253,7 @@
 <import name="reminder-ads" src="../advertisingCampaigns/components/reminder-ads.ux"></import>
  
 <script>
+const { adCodeData } = require('../../config.js').default
 let $animation = null
 import router from '@system.router'
 import ad from '@service.ad'
@@ -1351,7 +1352,7 @@ export default {
 
   },
   protected: {
-    adUnitId: 'edceb5351a9849deb3f7b92eba34ad18',
+    adUnitId: '',
     customBtn: ''
   },
   routeDetail() {
@@ -1508,10 +1509,14 @@ export default {
       this.mTextState = $animation.playState
     }
   },
-  // onInit() {
 
-  // },
   onInit(e) {
+
+    const branch = $ad.getProvider()
+    this.adObj = adCodeData[branch]
+    this.adUnitId = adCodeData[branch].fiction4;
+    console.log('reaAd广告位fiction4', this.adUnitId);
+
     const { callback = '', oaid = '', type = '', channelValue = '', corp_id = '' } = e
     if (Object.keys(e).length > 0) {
       console.log('进来了');
@@ -1997,7 +2002,7 @@ export default {
     console.log('被点击了')
     this.showTransparency = false;
     $utils.conversionUpload(this)
-    
+
     //后台单个埋点 - 事件：广告点击
     $utils.buriedPointReport(this, 'click', this.adUnitId)
   },
