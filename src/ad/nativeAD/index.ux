@@ -89,11 +89,9 @@ module.exports = {
     let adid = adCodeData[branch].nativeAd
     console.info('原生广告id ', adid)
     this.adUnitId = adid
-  },
-  async onReady(options) {
+
     this.adPreloaded()
   },
-
   adPreloaded() {
     $ad.preloadAd({
       adUnitId: this.adUnitId,//原生信息流2.0广告位标识
@@ -115,7 +113,9 @@ module.exports = {
       const adData = JSON.parse(evt.adData)
       this.adData = adData
       console.log('adLoad', adData, '信息流广告加载成功');
-      this.isShow = true;
+      this.isShow = true
+    }else{
+       this.isShow = false
     }
   },
   adShow(evt) {
@@ -263,7 +263,7 @@ module.exports = {
   background-color: gray;
   opacity: 0.5;
   position: absolute;
-  margin-left: 700px;
+  right: 0;
   margin-right: 20px;
   text {
     font-size: 20px;
