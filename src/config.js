@@ -19,7 +19,7 @@ const adCodeData = {
     lotteryPageNativeAd: '3ebda492da8090a8e28b3544df52da61',
   },
   OPPO: {
-    nativeAd: '1653989', //原生
+    nativeAd: '1655290', //原生
     tableScreen: '1636380',
     banner: '1654123',
     interstitialAdUnitId: '1654001',//插屏广告位id

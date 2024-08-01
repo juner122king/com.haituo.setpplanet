@@ -9,15 +9,14 @@
       src="/Common/img/ad/bt_cpd.png"
       onclick="completeAdRSA"
     ></image>
-    <div class="container" if="{{ native.isShow }}">
+    <div class="container" if="{{ isShow }}">
       <block for="{{adList}}">
         <ad
           adId="{{$item.adId}}"
           adunitid="{{ adunitid }}"
           class="ad-native"
-          show="{{adList.length > 0}}"
           onload="adLoad(evt)"
-          onerror="error"
+          onerror="adError(err,evt)"
           onadclick="reportNativeClick()"
           onadshow="adShow"
           type="native"
@@ -34,7 +33,7 @@
                 <text class="title">{{ $item.clickBtnTxt }} </text>
               </ad-clickable-area>
             </block>
-            <block else >
+            <block else>
               <ad-clickable-area type="click" if="{{$item.imgUrlList}}">
                 <image class="ad-image" src="{{$item.imgUrlList[0]}}"></image>
               </ad-clickable-area>
@@ -73,8 +72,6 @@ module.exports = {
     },
   },
   data: {
-    componentName: "ad",
-    provider: "",
     hasAdList: false,
     adList: [],
     adData: { // 此处广告的初始值需严格按照文档来
@@ -84,17 +81,7 @@ module.exports = {
       clickBtnTxt: ''
     },
     adunitid: '',
-    native: {
-      isShow: true,
-      adData: {},
-      isShowImg: true,
-      isShowVideo: true,
-      isShowData: true,
-      errStr: "",
-      btnTxt: "",
-      adImgSrc: "",
-      adVideoSrc: ""
-    }
+    isShow: true
 
   },
   onInit() {
@@ -104,23 +91,10 @@ module.exports = {
     this.adUnitId = adid
   },
   async onReady(options) {
-    console.info("native ad onReady");
-
-    this.showNativeAd2();
-
-
-  },
-  onShow(options) {
-    if (this.native.isShow) {
-      this.reportNativeShow();
-    }
-  },
-  getAdProvider: function () {
-    this.provider = $ad.getProvider();
-
+    this.adPreloaded()
   },
 
-  showNativeAd2() {
+  adPreloaded() {
     $ad.preloadAd({
       adUnitId: this.adUnitId,//原生信息流2.0广告位标识
       adCount: 1,//预期返回的数据条数：取值范围1-3，其他数据则报错,此为必填字段
@@ -129,7 +103,7 @@ module.exports = {
         console.log(data, '预加载成功')//1112以下版本或adCount不传参，会返回‘success’,1112+版本会返回广告数据
         //存储预加载数据
         this.adList = data.adList//一次成功返回有1-3个数据，参照对应的adCount数（小概率情况下小于 adCount 数）
-        this.native.isShow = true;
+        this.isShow = true;
       },
       fail: (err, code) => {
         console.log(err, code, '预加载失败')
@@ -141,7 +115,7 @@ module.exports = {
       const adData = JSON.parse(evt.adData)
       this.adData = adData
       console.log('adLoad', adData, '信息流广告加载成功');
-      this.native.isShow = true;
+      this.isShow = true;
     }
   },
   adShow(evt) {
@@ -159,30 +133,15 @@ module.exports = {
     this.showTclayer = false
 
   },
-  listenNativeAdDownloadStatus(downloadstatus) {
-    if (downloadstatus === "INSTALLED") {
-      this.native.btnTxt = "OPEN";
+  adError(err, evt) {
+    if (err) {
+      console.log('adError 信息流广告加载出错：', err)
+    } else if (evt) {
+      console.log('adError 信息流广告展示失败：', evt.errCode, evt.errMsg)
     }
-  },
-  removeAdListen: function () {
-    if (nativeAd) {
-      nativeAd.offDownloadProgress();
-      nativeAd.offError(() => {
-        console.log("nativeAd offError");
-      });
-      nativeAd.offLoad(() => {
-        console.log("nativeAd offLoad");
-      });
-      nativeAd.offStatusChanged();
-    }
-  },
-  onDestroy() {
-    // if (nativeAd) {
-    //   nativeAd.destroy();
-    // }
   },
   closeAd: function () {
-    this.native.isShow = false;
+    this.isShow = false;
   },
 
   completeAdRSA() {
@@ -191,7 +150,7 @@ module.exports = {
     $umeng_stat.trackEvent('xyfddhj_chai', '点击');
     //先判断广告没有没加载出来，没有就直接返回不执行接口
 
-    if (!this.native.isShow) {
+    if (!this.isShow) {
       console.log('广告展示不成功,拆红包不成功');
       $prompt.showToast({
         message: '拆红包失败！请重试',
