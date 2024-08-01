@@ -114,8 +114,8 @@ module.exports = {
       this.adData = adData
       console.log('adLoad', adData, '信息流广告加载成功');
       this.isShow = true
-    }else{
-       this.isShow = false
+    } else {
+      this.isShow = false
     }
   },
   adShow(evt) {

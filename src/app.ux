@@ -46,17 +46,6 @@ module.exports = {
       console.log('error', error);
     }
 
-
-
-    // $device.getDeviceId({
-    //   success: function (data) {
-    //     console.log(`handling success: ${data.deviceId}`)
-    //   },
-    //   fail: function (data, code) {
-    //     console.log(`handling fail, code = ${code}`)
-    //   }
-    // })
-
   },
   onDestroy() {
     console.info('Application onDestroy');
@@ -66,7 +55,7 @@ module.exports = {
     url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",
     url3: "http://www.ihaituo.cn/xy/jb/yszc.html",
 
-
+    
     //保存用户信息对象
     userData: {
       loginPhone: '',

@@ -49,38 +49,53 @@ const dataEncryption = (data, action = "encrypt") => {
 const getUserId = async () => {
   let userId = await $device.getUserId()
   return userId.data.userId;
-};
+}
+
+
 /**
  * 转化上传
  * @param {*} that 所在this 
  */
-function getConvertUpload(that) {
+async function getConvertUpload(that) {
   let param = {
     ...that.$app.$def.dataApp.actiParam
   }
   console.log('getConvertUpload() 转化参数param= ', param)
 
+
+  let res = await $device.getOAID()
+  let oaid = res.data.oaid
+  console.info("OAID:  " + oaid)
+
+
+
   if (!param.channelValue) {
     return
   }
-  for (const key in param) {
-    param[key] = param[key].replace(/\/$/, "");
+
+
+  if (param.type === 'jh') {
+    for (const key in param) {
+      param[key] = param[key].replace(/\/$/, '')
+    }
+    param = convertKeysToCamelCase(param)
   }
-  const convertedParam = convertKeysToCamelCase(param);
-  console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
-
-
-
-  $apis.example.convertUpload({
-    ...convertedParam,
-    type: convertedParam.type || 'jh'
-  }).then((res) => {
-    console.log(res, '转化成功');
-
-  }).catch((err) => {
-    console.log(res, '转化失败：' + err);
-  })
+  console.log(param, '查看上传的参数')
+  $apis.task
+    .postConvertUpload({
+      ...param,
+      deviceId: param.oaid || '',
+      type: param.type,
+      oaid: oaid
+    })
+    .then((res) => {
+      console.log(res, '转换成功')
+    })
+    .catch((err) => {
+      console.log(err, '转换失败')
+    })
 }
+
 function toCamelCase(str) {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
@@ -109,6 +124,7 @@ const saveHapUri = (that, e) => {
       ...e
     }
   }
+
 }
 
 
@@ -116,7 +132,7 @@ const saveHapUri = (that, e) => {
  * 转化上传
  * @param {*} that 所在this  小说广告页面的转化方法
  */
-function conversionUpload(that) {
+async function conversionUpload(that) {
   let param = {
     ...that.$app.$def.dataApp.actiParam,
   }
@@ -137,6 +153,7 @@ function conversionUpload(that) {
     return
   }
 
+
   if (param.type === 'jh') {
     for (const key in param) {
       param[key] = param[key].replace(/\/$/, '')
@@ -144,11 +161,19 @@ function conversionUpload(that) {
     param = convertKeysToCamelCase(param)
   }
   console.log(param, '查看上传的参数')
+
+
+  let res = await $device.getOAID()
+  let oaid = res.data.oaid
+  console.info("OAID:  " + oaid)
+
+
   $apis.task
     .postConvertUpload({
       ...param,
       deviceId: param.oaid || '',
       type: param.type,
+      oaid: oaid
     })
     .then((res) => {
       console.log(res, '转换成功')
@@ -271,7 +296,7 @@ let bannerAd; const showBannerAd = async () => {
     // console.info("load bannerAd  onClose");
   });
   bannerAd.show();
-  
+
   bannerAd.onResize((data) => {
     console.log(data.width + "|" + data.height, 'onResize')
   })
@@ -493,7 +518,6 @@ function convertToQueryString(objects) {
   })
   return queryString
 }
-
 
 
 export default {

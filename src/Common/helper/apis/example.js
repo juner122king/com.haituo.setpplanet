@@ -135,18 +135,6 @@ const popUps = () => {
     });
 }
 
-/**
- * 转化点击次数
- *
- */
-const clickCount = (data) => {
-    return request({
-        method: "GET",
-        url: `/qa/mini/basic/ad/convert/clickCount/${data.type}`,
-        data
-    });
-}
-
 
 //单个埋点数据
 const capture = (data) => {
@@ -171,6 +159,5 @@ export default {
     bolckReturn,
     showTclayer,
     popUps,
-    clickCount,
     capture
 };
