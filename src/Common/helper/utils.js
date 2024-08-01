@@ -68,9 +68,6 @@ function getConvertUpload() {
   }
   const convertedParam = convertKeysToCamelCase(param);
 
-  if (!convertedParam.callback) {
-    return
-  }
   console.log('getConvertUpload() 格式化转化参数convertedParam= ', convertedParam)
   $apis.example.convertUpload({
     ...convertedParam,
@@ -312,8 +309,9 @@ const openAd = () => {
   $umeng_stat.trackEvent('wd_xyfddhj', '点击')
 
   var r = 'Page_cfd'
-  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?callback=45079911&oaid=30ac1840-06aa-461f-9594-7f7b365f0dfe&channelValue=KYY'
-  r = 'hap://app/com.haituo.setpplanet/Page_cfd?channelValue=jzxgj11/'
+  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?oaid=123454&callback=123456ede&channelValue=KYY/'
+  // r = 'hap://app/com.haituo.setpplanet/Page_cfd?channelValue=jzxgj11/'
+  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?channelValue=jbxq1&type=jl&idfa=__IDFA__&oaid=&imei=&clickId=B.5aQ9qpr1ozxelD6Qt8xBNoJoywKLJZ1e3etuobtwxKpZCuVVLqxovLw2mX3BXBwx6ceJXHKKPJhrMw1kD92ueBSO8pgjZYn27W702ha807GC&aid=1737597858327629'
   $router.push({
     uri: r
   });

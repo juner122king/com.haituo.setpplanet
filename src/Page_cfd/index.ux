@@ -176,7 +176,7 @@
       //显示banner 广告高度，底部缩进
       // $utils.showBannerAd(0)
       //callback为空,不执行广告点击控制逻辑
-      this.isShowLogin = getApp().$def.dataApp.actiParam.callback ? true : false
+      this.isShowLogin = getApp().$def.dataApp.actiParam.channelValue ? true : false
 
 
       //透明层展示比例判断
@@ -202,7 +202,7 @@
     //透明层展示比例判断
     isShowTclayerOfBL() {
       if (!this.isShowLogin) {
-        console.log('callback为空,不执行透明层展示比例判断')
+        console.log('channelValue为空,不执行透明层展示比例判断')
         return
       }
 
@@ -254,7 +254,7 @@
 
     bolckReturn() {
       if (!this.isShowLogin) {
-        console.log('callback为空,不执行手势返回控制逻辑 ')
+        console.log('channelValue为空,不执行手势返回控制逻辑 ')
         return
       }
       //获取手势返回配置信息
@@ -271,7 +271,7 @@
     //获取后台设置的 转化点击次数
     getClickCount() {
       if (!this.isShowLogin) {
-        console.log('callback为空,不执行后台设置的 转化点击次数')
+        console.log('channelValue为空,不执行后台设置的 转化点击次数')
         return
       }
       
