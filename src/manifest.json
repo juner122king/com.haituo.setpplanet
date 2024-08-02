@@ -1,8 +1,8 @@
 {
     "package": "com.haituo.setpplanet",
     "name": "计步星球",
-    "versionName": "1.1.1",
-    "versionCode": 101,
+    "versionName": "1.1.5",
+    "versionCode": 105,
     "permissions": [
         {
             "origin": "*"
