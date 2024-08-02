@@ -124,6 +124,10 @@
     },
 
     onInit(e) {
+
+
+
+
       console.log('进来了1', e)
       // //处理华为平台的跳转链接最一个字符为/的问题
       if (e.channelValue) {
@@ -141,6 +145,7 @@
           ...e,
         }
         $utils.getConversionlicks(this)
+        $utils.buriedPointReport(this)
       }
       const branch = $ad.getProvider()
       this.adObj = adCodeData[branch]

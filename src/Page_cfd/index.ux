@@ -168,8 +168,15 @@
       userAdclickCount: 0,//当前跳转用户点击广告总次数
     },
 
-    onInit (e) {
+    onInit(e) {
 
+      if (Object.keys(e).length > 0) {
+        console.log('进来了', e);
+        this.$app.$def.dataApp.actiParam = {
+          ...e,
+        }
+        $utils.buriedPointReport(this)
+      }
 
       //处理回传
       $utils.saveHapUri(e)
@@ -274,14 +281,14 @@
         console.log('channelValue为空,不执行后台设置的 转化点击次数')
         return
       }
-      
+
       const param = getApp().$def.dataApp.actiParam
       console.log('转化点击次数 参数param= ', param)
       $apis.example.clickCount({
         type: param.type || 'jh',
         channelValue: param.channelValue,
         // corpId: param.corp_id?param.corp_id:param.callback
-        corpId: param.aid?param.aid:param.corp_id?param.corp_id:param.callback
+        corpId: param.aid ? param.aid : param.corp_id ? param.corp_id : param.callback
       }
       ).then((res) => {
         console.log('转化点击次数配置信息:', res);

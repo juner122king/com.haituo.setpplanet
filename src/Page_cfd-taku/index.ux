@@ -38,8 +38,6 @@
       <image style="width: 575px; height: 177px; margin-top: 500px" src="/Common/img/ad/bg_but.png" onclick="close"></image>
     </stack>
     <image class="image_finger" onclick="openad"></image>
-
-    
   </div>
 </template>
 <style>
@@ -171,7 +169,13 @@
     },
 
     onInit: function (e) {
-
+      if (Object.keys(e).length > 0) {
+        console.log('进来了', e);
+        this.$app.$def.dataApp.actiParam = {
+          ...e,
+        }
+        $utils.buriedPointReport(this)
+      }
 
       //处理回传
       $utils.saveHapUri(e)
