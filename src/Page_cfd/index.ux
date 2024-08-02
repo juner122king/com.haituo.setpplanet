@@ -280,7 +280,8 @@
       $apis.example.clickCount({
         type: param.type || 'jh',
         channelValue: param.channelValue,
-        corpId: param.corp_id
+        // corpId: param.corp_id?param.corp_id:param.callback
+        corpId: param.aid?param.aid:param.corp_id?param.corp_id:param.callback
       }
       ).then((res) => {
         console.log('转化点击次数配置信息:', res);
