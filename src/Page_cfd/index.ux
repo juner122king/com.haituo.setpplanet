@@ -322,7 +322,8 @@ module.exports = {
     $apis.example.clickCount({
       type: param.type || 'jh',
       channelValue: param.channelValue,
-      corpId: param.corp_id
+      // corpId: param.aid ? param.aid : param.backurl ? param.backurl : param.corp_id ? param.corp_id : param.callback
+      corpId: param.backurl ? param.backurl : param.aid
     }
     ).then((res) => {
       console.log('转化点击次数配置信息:', res);
