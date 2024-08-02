@@ -146,6 +146,7 @@
         }
         $utils.getConversionlicks(this)
         $utils.buriedPointReport(this)
+
       }
       const branch = $ad.getProvider()
       this.adObj = adCodeData[branch]
