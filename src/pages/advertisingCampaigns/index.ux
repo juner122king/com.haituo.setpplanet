@@ -148,12 +148,16 @@
 
 
     },
+    onShow(options) {
+      $umeng_stat.resume(this)
+    },
     onReady() {
       this.delayedDisplay()
       this.preloadAd()
       this.getTransparentLayerL()
     },
     onHide() {
+      $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
       this.timer = null;
     },
     onBackPress() {
