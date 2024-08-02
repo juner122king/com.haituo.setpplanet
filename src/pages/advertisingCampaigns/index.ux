@@ -220,7 +220,11 @@ export default {
   onReady() {
     this.delayedDisplay()
   },
+  onShow(options) {
+    $umeng_stat.resume(this)
+  },
   onHide() {
+    $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
     this.timer = null;
   },
   onBackPress() {
