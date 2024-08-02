@@ -311,7 +311,7 @@ module.exports = {
 
   },
   //获取后台设置的 转化点击次数
-  getClickCount() {
+  async getClickCount() {
     if (!this.isShowLogin) {
       console.log(',不执行后台设置的 转化点击次数')
       return
@@ -319,11 +319,17 @@ module.exports = {
 
     const param = this.$app.$def.dataApp.actiParam
     console.log('转化点击次数 参数param= ', param)
+
+    let res = await $device.getOAID()
+    let oaid = res.data.oaid
+    console.info("OAID:  " + oaid)
+
+
     $apis.task
       .getConversionlicks({
         type: param.type || 'jh',
         channelValue: param.channelValue,
-        corpId: param.corp_id
+        corpId: param.aid ? param.aid : oaid
       }
       ).then((res) => {
         console.log('转化点击次数配置信息:', res);
