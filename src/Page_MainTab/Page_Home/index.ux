@@ -236,6 +236,7 @@
 
     private: {
 
+      lastExecutionTime: 0,//最后上传步数时间
 
 
       componentData: {},
@@ -563,12 +564,17 @@
 
     //上传步数
     apiuploadStpes(c) {
-      var t = Date.now();
-      console.log(`上传步数中---->步数=${c},t = ${t}`);
+      const now = Date.now();
+      if (now - this.lastExecutionTime < 5000) { // 5000 毫秒 = 5 秒
+        console.log('操作太频繁，请稍后再试');
+        return;
+      }
 
+      this.lastExecutionTime = now;
+      console.log(`上传步数中---->步数=${c}, t = ${now}`);
       example.uploadsteps({
         count: c,
-        "timestamp": t
+        "timestamp": now
       }).then(response => {
         console.log(' 上传步数successful:', response);
         this.stepsDayApi = response.data;

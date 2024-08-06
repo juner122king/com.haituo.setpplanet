@@ -1,0 +1,158 @@
+<template>
+  <div>
+    <div class="test-page">
+      <div class="title">
+        <text>测试调试页</text>
+      </div>
+
+      <input
+        type="text"
+        class="inptTxt"
+        value="{{jumpPath}}"
+        @change="changeText"
+        placeholder="输入跳转地址"
+        @enterkeyclick="jump"
+      />
+      <input type="button" class="btn" value="确定跳转" @click="jump" />
+
+      <div style="margin-top: 50px">
+        <switch
+          checked="{{isChecked}}"
+          class="switch"
+          @change="changeSwitch"
+        ></switch>
+        <text>是否将以上地址设置为后台唤起地址</text>
+      </div>
+
+      <div style="margin-top: 50px">
+        <switch
+          checked="{{isDisplay}}"
+          class="switch"
+          @change="changeDisplay"
+        ></switch>
+        <text>是否关闭后台唤起</text>
+      </div>
+    </div>
+  </div>
+</template>
+    
+<script>
+export default {
+  private: {
+    type: '',
+    isChecked: false,
+    jumpPath: 'setting/aboutUs',
+    isDisplay: false
+  },
+  onInit(e) {
+    const { type = '' } = e;
+    this.type = type;
+
+  },
+  changeDisplay(e) {
+    let isChecked = e.checked;
+    this.isDisplay = isChecked
+    console.log('查看数据', this.isDisplay);
+  },
+  changeText(e) {
+    this.jumpPath = e.value
+  },
+  changeSwitch(e) {
+    let isChecked = e.checked;
+    console.log(isChecked);
+    this.isChecked = isChecked
+    console.log('查看数据', this.isChecked);
+  },
+  jump() {
+    console.log(this.jumpPath, '查看跳转地址');
+    $router.push({
+      uri: this.jumpPath
+    })
+  },
+  onHide() {
+    console.log(this.isDisplay, this.isChecked, '查看跳转前参数');
+    if (this.isDisplay) {
+      return
+    }
+    if (this.isChecked) {
+      setTimeout(() => {
+        this.jump()
+      }, 2000)
+      return
+    }
+
+    console.log('怎么还是走到了这里');
+    if (this.type === 'page') {
+      setTimeout(() => {
+        $router.push({
+          uri: "setting/aboutUs"
+        })
+      }, 2000)
+    } else if (this.type === 'zfb') {
+      setTimeout(() => {
+        $router.push({
+          uri: "alipays://platformapi/startapp?appId=2021004128621067&page=pages/home/index/index&query="
+        })
+      }, 2000)
+
+
+    } else if (this.type === 'app') {
+      setTimeout(() => {
+        $router.push({
+          uri: "hap://app/com.haituo.setpplanet/Page_cfd"
+        })
+      }, 2000)
+    } else {
+      setTimeout(() => {
+        console.log('是否成功');
+        $image.editImage({
+          uri: '/Common/logo.png',
+          success: function (data) {
+            console.log(`handling success: ${data.uri}`)
+          },
+          cancel: function () {
+            console.log('handling cancel')
+          },
+          fail: function (data, code) {
+            console.log(`handling fail, code = ${code}`)
+          }
+        })
+      }, 2000)
+    }
+  },
+}
+</script>
+
+
+<style lang="less">
+.test-page {
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  padding: 0 30px;
+  .title {
+    text {
+      font-weight: 500;
+      font-size: 45px;
+      color: #000000;
+    }
+  }
+
+  .inptTxt {
+    width: 100%;
+    height: 80px;
+    background-color: #f5f5f5;
+    border-radius: 15px;
+    padding-left: 15px;
+  }
+
+  .btn {
+    width: 100%;
+    height: 80px;
+    background-color: #fcf;
+    border-radius: 15px;
+    margin-top: 30px;
+  }
+}
+</style>
