@@ -26,6 +26,7 @@
         onadclick="adClick"
         onadclose="close"
         type="native"
+        onadshow="adShow"
         closeBtnPosition="left-top"
       >
         <div class="container">
@@ -209,7 +210,6 @@ export default {
       this.$app.$def.dataApp.actiParam = {
         ...e,
       }
-      $utils.getConversionlicks(this)
       $utils.buriedPointReport(this)
     }
     const branch = $ad.getProvider()
@@ -250,6 +250,7 @@ export default {
         adUnitId: this.adId, // 原生信息流广告广告位id
         type: 'native', // 原生信息流广告
         adCount: 1,
+        ecpm: true,
         success: (data) => {
           console.log(data, '返回广告成功');
 
@@ -288,15 +289,31 @@ export default {
     console.log('没有报错回调吗');
     this.appearSwipe()
   },
+  adShow(evt) {
+    console.log('小说广告show: ', evt)
+
+    this.conversionUp('0')
+  },
+
   adClick() {
     console.log('查看点击的this');
     this.showTransparency = false;
-    console.log('没有点击回调吗');
-    $utils.conversionUpload(this)
-    this.addClickNum()
+    this.conversionUp('1')
 
+    this.addClickNum()
     //后台单个埋点 - 事件：广告点击
     $utils.buriedPointReport(this, 'click', this.adId)
+  },
+
+  conversionUp(clickCount) {
+    let ecpmParam = {  //竞价相关参数
+      ecpm: this.adList.ecpm,
+      adType: 'NATIVE',
+      adPositionId: this.adId,
+      clickCount: clickCount
+    }
+    console.log('竞价相关参数', ecpmParam);
+    $utils.conversionUpload(this, ecpmParam)
   },
   close() {
     console.log('没有触发这个吗');

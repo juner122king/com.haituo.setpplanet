@@ -97,6 +97,7 @@ module.exports = {
       adUnitId: this.adUnitId,//原生信息流2.0广告位标识
       adCount: 1,//预期返回的数据条数：取值范围1-3，其他数据则报错,此为必填字段
       type: 'native',//所属广告位类型
+      ecpm: true,
       success: (data) => {
         console.log(data, '预加载成功')//1112以下版本或adCount不传参，会返回‘success’,1112+版本会返回广告数据
         //存储预加载数据
@@ -120,18 +121,29 @@ module.exports = {
   },
   adShow(evt) {
     console.log('adShow: ', evt)
+
+    this.conversionUp('0')
   },
   reportNativeClick(evt) {
 
     console.log('adClick: ', evt)
-    console.info(" 原生广告被点击了");
 
-    //转化上传
-    $utils.getConvertUpload(this)
+    this.conversionUp('1')
     $utils.buriedPointReport(this, 'click', this.adUnitId)
     //广告或透明层被点击后隐藏透明层
     this.showTclayer = false
 
+  },
+
+  conversionUp(clickCount) {
+    let ecpmParam = {  //竞价相关参数
+      ecpm: this.adData.ecpm,
+      adType: 'NATIVE',
+      adPositionId: this.adUnitId,
+      clickCount: clickCount
+    }
+    console.log('竞价相关参数', ecpmParam);
+    $utils.conversionUpload(this, ecpmParam)
   },
   adError(err, evt) {
     if (err) {

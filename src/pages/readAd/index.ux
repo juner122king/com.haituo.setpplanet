@@ -21,6 +21,7 @@
         onerror="error"
         onadclick="adClick"
         onadclose="close"
+        onadshow="adShow"
             >
 
         <div class="container" if="{{ displayAdType >=5}}">
@@ -1348,8 +1349,8 @@ export default {
     fontsizeclick: false,
     showTransparency: false,
     timer: null,
-    isfristReqCoun: true
-
+    isfristReqCoun: true,
+    ecpm: ''
   },
   protected: {
     adUnitId: '',
@@ -1523,7 +1524,6 @@ export default {
       this.$app.$def.dataApp.actiParam = {
         ...e,
       }
-      $utils.getConversionlicks(this)
     }
     this.clicktag = 'yellow'
     // this.$page.setTitleBar({ text: 'Swiper' })
@@ -1533,16 +1533,13 @@ export default {
       // this.readerpaddingtop = 10
       this.delayShow = true
     }, 1000 * 3)
-    // prompt.showToast({
-    //   message: `adUnitId:${this.adUnitId}`
-    // })
+
 
     this.getTransparentLayerL()
     this.adinstance = require("@service.ad").createFeedAd({
       adUnitId: this.adUnitId
     })
     this.latencyShowReminder()
-    // this.preloadAd()
     // this.initcontent()
     this.backgroundcolor = '#F8F8FA'
   },
@@ -1965,7 +1962,8 @@ export default {
   preloadAd() {
     ad.preloadAd({
       adUnitId: this.adUnitId, // 原生信息流广告广告位id 
-      type: 'native', // 原生信息流广告 
+      type: 'native', // 原生信息流广告 ,
+      ecpm: true,
       success: (data) => {
         this.adList = data.adList[0]
         this.lastAdId = this.adList.adId
@@ -1977,9 +1975,7 @@ export default {
         console.log(' adList : ' + JSON.stringify(this.adList))
         console.log(' cmc_tag preloadAd lastAdId : ' + this.lastAdId)
         this.hasAdList = true
-        // prompt.showToast({
-        //   message: `success`
-        // })
+
       }, fail: (data, code) => {
         console.log(data, code)
         if (code === 205) {
@@ -1998,14 +1994,29 @@ export default {
     // })
     console.log(`error : errCode = ${errCode}, errMsg = ${errMsg}`)
   },
+  adShow(evt) {
+    console.log('小说广告show: ', evt)
+    this.conversionUp('0')
+  },
   adClick() {
     console.log('被点击了')
     this.showTransparency = false;
-    $utils.conversionUpload(this)
-
+    this.conversionUp('1')
     //后台单个埋点 - 事件：广告点击
     $utils.buriedPointReport(this, 'click', this.adUnitId)
   },
+
+  conversionUp(clickCount) {
+    let ecpmParam = {  //竞价相关参数
+      ecpm: this.adList.ecpm,
+      adType: 'NATIVE',
+      adPositionId: this.adUnitId,
+      clickCount: clickCount
+    }
+    console.log('竞价相关参数', ecpmParam);
+    $utils.conversionUpload(this, ecpmParam)
+  },
+
   close() {
     this.hasAdList = false
     // prompt.showToast({

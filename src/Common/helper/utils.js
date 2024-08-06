@@ -60,7 +60,7 @@ async function getConvertUpload(that) {
   let param = {
     ...that.$app.$def.dataApp.actiParam
   }
-  console.log('getConvertUpload() 转化参数param= ', param)
+  console.log(' 转化参数param= ', param)
 
 
   let res = await $device.getOAID()
@@ -122,15 +122,14 @@ const saveHapUri = (that, e) => {
       ...e
     }
   }
-
 }
-
 
 /**
  * 转化上传
  * @param {*} that 所在this  小说广告页面的转化方法
  */
-async function conversionUpload(that) {
+async function conversionUpload(that, ecpmParam) {
+
   let param = {
     ...that.$app.$def.dataApp.actiParam,
   }
@@ -140,18 +139,6 @@ async function conversionUpload(that) {
     return
   }
   console.log('进入了回传上报')
-  // let conversionlicks = that.$app.$def.dataApp.conversionlicks //第几次回传上报
-  // let clicksOnAdsNow = that.$app.$def.dataApp.clicksOnAdsNow + 1 //现在是第几次任务
-  // console.log(conversionlicks, 'conversionlicks')
-  // console.log(clicksOnAdsNow, 'clicksOnAdsNow')
-
-  // that.$app.$def.dataApp.clicksOnAdsNow = clicksOnAdsNow
-  // if (conversionlicks <= 0 || clicksOnAdsNow !== conversionlicks) {
-  //   console.log('取消转换上传')
-  //   return
-  // }
-
-
   if (param.type === 'jh') {
     for (const key in param) {
       param[key] = param[key].replace(/\/$/, '')
@@ -165,10 +152,14 @@ async function conversionUpload(that) {
   let oaid = res.data.oaid
   console.info("OAID:  " + oaid)
 
-
+  console.log('竞价相关参数传到了？', ecpmParam);
   $apis.task
     .postConvertUpload({
       ...param,
+      ecpm: ecpmParam.ecpm,
+      adType: ecpmParam.adType,
+      adPositionId: ecpmParam.adPositionId,
+      clickCount: ecpmParam.clickCount,
       deviceId: param.oaid || '',
       type: param.type,
       oaid: oaid
@@ -223,22 +214,48 @@ const tablePlaque = async (onCloseCallback, onCatchCallback, that) => {
   let interstitialAd = $ad.createInterstitialAd({
     adUnitId: adid
   })
-
+  var e
   interstitialAd.load().then((res) => {
-    console.log(res, '查屏加载成功');
+    console.log(res, '查屏加载成功')
+
+    e = interstitialAd.getECPM()
+    console.log(`getECPM: 插屏广告获取实时竞价结果成功!ecpm=${e.ecpm}`)
+
     interstitialAd.show().then(
-      () => { console.log('插屏广告show成功') },
+      () => {
+        console.log('插屏广告show成功')
+
+        let ecpmParam = {  //竞价相关参数
+          ecpm: e.ecpm,
+          adType: 'INSERT_SCREEN',
+          adPositionId: adid,
+          clickCount: '0'
+        }
+        console.log('竞价相关参数', ecpmParam)
+
+        conversionUpload(that, ecpmParam)
+      },
       () => { console.log('插屏广告show失败') }
     )
   })
-
     .catch(onCatchCallback)
 
 
   interstitialAd.onClick(() => {
     console.log('插屏广告点击了');
     //转化上传
-    getConvertUpload(that)
+    // getConvertUpload(that)
+
+    let ecpmParam = {  //竞价相关参数
+      ecpm: e.ecpm,
+      adType: 'INSERT_SCREEN',
+      adPositionId: adid,
+      clickCount: '1'
+    }
+    console.log('竞价相关参数', ecpmParam)
+
+    conversionUpload(that, ecpmParam)
+
   })
 
   interstitialAd.onClose(onCloseCallback)
@@ -251,30 +268,11 @@ const tablePlaque = async (onCloseCallback, onCatchCallback, that) => {
 */
 
 let bannerAd; const showBannerAd = async () => {
-
-  // const storageFlag = await $processData.getStorage("_PRIVAC");
-  // if (!storageFlag) {
-  //   //未授权，弹出授权询问
-  //   console.log('用户授权= ', storageFlag);
-  //   console.log('未授权,不加载banner广告');
-  //   return
-  // }
-
-
   let branch = $ad.getProvider();
   console.info('广告商:', branch);
 
   let adid = adCodeData[branch].banner;
   console.info("banner广告位=" + adid);
-
-
-  // const style = {
-  //   left: 0,     // banner 广告组件的左上角横坐标
-  //   top: 1430,    // banner 广告组件的左上角纵坐标
-  //   width: 1080, // banner 广告组件的宽度
-  //   Height: 170  // banner 广告组件的高度
-  // }
-
   bannerAd = $ad.createBannerAd({
     adUnitId: adid,//banner广告位
     style: {
@@ -361,8 +359,8 @@ const openAd = () => {
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
   var r = 'Page_cfd'
-  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?channelValue=KYY&type=vivo'
-  // r = 'hap://app/com.haituo.setpplanet/Page_cfd?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
+  r = 'hap://app/com.haituo.setpplanet/Page_cfd?adId=-1&ownerId=1000399194&androidid=-1&oaid=446D5DF91C5944EC968490C4245DD09F1b622455b6283a6dcd5e3c610c461137&ts=-1&type=oppo&channelValue=jbxq1'
+  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
   });
@@ -429,7 +427,7 @@ function getConversionlicks(context) {
     .then((res) => {
       console.log(res, '查看点击回传')
       if (res.data === 0) {
-        $utils.conversionUpload(context)
+        // $utils.conversionUpload(context)
       }
       context.$app.$def.dataApp.conversionlicks = res.data
     })
@@ -490,15 +488,15 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
         $apis.task
           .postTrackCapture({ ...param2 })
           .then((res) => {
-            console.log('上报成功', res)
+            console.log('埋点上报成功', res)
           })
           .catch((err) => {
-            console.log(err, '上传失败')
+            console.log(err, '埋点上传失败')
           })
       },
     })
   } catch (error) {
-    console.log(error, '上传错误')
+    console.log(error, '埋点上传错误')
   }
 }
 
