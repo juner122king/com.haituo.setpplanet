@@ -138,16 +138,16 @@ function conversionUpload(that) {
     return
   }
   console.log('进入了回传上报')
-  let conversionlicks = that.$app.$def.dataApp.conversionlicks //第几次回传上报
-  let clicksOnAdsNow = that.$app.$def.dataApp.clicksOnAdsNow + 1 //现在是第几次任务
-  console.log(conversionlicks, 'conversionlicks')
-  console.log(clicksOnAdsNow, 'clicksOnAdsNow')
+  // let conversionlicks = that.$app.$def.dataApp.conversionlicks //第几次回传上报
+  // let clicksOnAdsNow = that.$app.$def.dataApp.clicksOnAdsNow + 1 //现在是第几次任务
+  // console.log(conversionlicks, 'conversionlicks')
+  // console.log(clicksOnAdsNow, 'clicksOnAdsNow')
 
-  that.$app.$def.dataApp.clicksOnAdsNow = clicksOnAdsNow
-  if (conversionlicks <= 0 || clicksOnAdsNow !== conversionlicks) {
-    console.log('取消转换上传')
-    return
-  }
+  // that.$app.$def.dataApp.clicksOnAdsNow = clicksOnAdsNow
+  // if (conversionlicks <= 0 || clicksOnAdsNow !== conversionlicks) {
+  //   console.log('取消转换上传')
+  //   return
+  // }
 
   if (param.type === 'jh') {
     for (const key in param) {

@@ -432,20 +432,20 @@
       this.userAdclickCount += 1
       console.log('后台配置转化点击次数：', this.sysclickCount, ',本次跳转 广告点击总数: ', this.userAdclickCount);
 
-      if (this.sysclickCount === this.userAdclickCount) {
+      // if (this.sysclickCount === this.userAdclickCount) {
         //转化上传
         $utils.getConvertUpload()
-      } else {
-        console.log('广告点击次数不匹配，不转化');
-      }
+      // } else {
+      //   console.log('广告点击次数不匹配，不转化');
+      // }
     },
 
     //原生广告加载成功回调
     showNvad() {
-      if (this.sysclickCount === 0) {
+      // if (this.sysclickCount === 0) {
         //转化上传
         $utils.getConvertUpload()
-      }
+      // }
     }
   }
 </script>
