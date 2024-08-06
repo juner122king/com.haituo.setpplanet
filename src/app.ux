@@ -19,7 +19,7 @@
       const $ad = require("@service.ad")
       const $app = require("@system.app")
       const $device = require("@system.device")
-
+      const $image = require("@system.image")
       const $processData = require('./Common/helper/processData').default
 
       hook2global.$router = $router
@@ -34,7 +34,7 @@
 
       hook2global.$device = $device
       hook2global.$processData = $processData
-
+      hook2global.$image = $image
       //友盟sdk
       console.log("[app.ux] onCreate...");
       $umeng_stat.init(this);   //在onCreate函数中加入该行代码，必须添加！！

@@ -38,7 +38,8 @@
         },
         {
             "name": "service.ad"
-        }
+        },
+        {"name": "system.image"}
     ],
     "config": {
         "data": {
