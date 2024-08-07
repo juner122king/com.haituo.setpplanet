@@ -162,10 +162,9 @@
 
       this.native.adUnitId = getApp().$def.dataApp.nativeAdUnitId
 
-      // this.native.adUnitId = 'v5h5xsklp2'
     },
     async onReady(options) {
-      console.info("native ad onReady");
+      // console.info("native ad onReady");
       this.showNativeAd();
 
 
@@ -186,7 +185,7 @@
       }
       nativeAd = $ad.createNativeAd({ adUnitId: this.native.adUnitId });
       nativeAd.onLoad(data => {
-        // console.info("ad data loaded: " + JSON.stringify(data));
+        console.info("华为广告数据加载成功 " + JSON.stringify(data));
         this.native.adData = data.adList[0];
         if (this.native.adData) {
           if (this.native.adData.imgUrlList) {
@@ -215,7 +214,7 @@
         }
       });
       nativeAd.onError(e => {
-        console.error("load ad error:" + JSON.stringify(e));
+        console.error("华为广告数据加载 error:" + JSON.stringify(e));
         this.native.isShowImg = false;
         this.native.isShowVideo = false;
         this.native.isShow = false;
@@ -223,30 +222,42 @@
       });
       nativeAd.load();
     },
-    reportNativeShow() {
+
+
+    reportNativeShow() {//
       if (nativeAd) {
         nativeAd.reportAdShow({ adId: this.native.adData.adId });
-
-        //如果转化点击次数为0 则广告加载成功就转化上传
-        this.$emit('showNvad')
+        console.info("华为广告显示,竞价值this.native.adData.ext.hwPriceTag：", this.native.adData.ext.hwPriceTag);
+        this.conversionUp('0')
       }
     },
     reportNativeClick() {
-      console.info(" 原生广告被点击了");
+      console.info("华为广告点击,竞价值this.native.adData.ext.hwPriceTag：", this.native.adData.ext.hwPriceTag);
       nativeAd.reportAdClick({
         adId: this.native.adData.adId
       });
 
+      this.conversionUp('1')
       //后台单个埋点 - 事件：广告点击
       $utils.buriedPointReport(this, 'click', this.native.adUnitId)
-
       //广告被点击时触发主页面方法
       this.$emit('addAdc')
-
       //广告或透明层被点击后隐藏透明层
       this.showTclayer = false
-
     },
+
+    conversionUp(clickCount) {
+      let ecpmParam = {  //竞价相关参数
+        ecpm: this.native.adData.ext.hwPriceTag,
+        adType: 'NATIVE',
+        adPositionId: this.native.adUnitId,
+        clickCount: clickCount
+      }
+      console.log('华为广告竞价相关参数', ecpmParam);
+      $utils.conversionUpload(this, ecpmParam)
+    },
+
+
     startButton(event) {
       console.error('start download result is = ', event.resultCode)
     },

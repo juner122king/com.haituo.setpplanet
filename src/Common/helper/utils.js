@@ -125,30 +125,20 @@ const saveHapUri = (e) => {
 }
 
 /**
- * 转化上传
+ * 转化上报
  * @param {*} that 所在this  小说广告页面的转化方法
  */
-function conversionUpload(that) {
+function conversionUpload(that, ecpmParam) {
   let param = {
     ...that.$app.$def.dataApp.actiParam,
   }
   param.type = judgingAd(that) //转换类型
   if (Object.keys(param).length <= 0 || !param.type) {
-    //无值的情况直接删除
+    //无值的情况不回传上报
+    console.log('无值的情况不回传上报')
     return
   }
   console.log('进入了回传上报')
-  // let conversionlicks = that.$app.$def.dataApp.conversionlicks //第几次回传上报
-  // let clicksOnAdsNow = that.$app.$def.dataApp.clicksOnAdsNow + 1 //现在是第几次任务
-  // console.log(conversionlicks, 'conversionlicks')
-  // console.log(clicksOnAdsNow, 'clicksOnAdsNow')
-
-  // that.$app.$def.dataApp.clicksOnAdsNow = clicksOnAdsNow
-  // if (conversionlicks <= 0 || clicksOnAdsNow !== conversionlicks) {
-  //   console.log('取消转换上传')
-  //   return
-  // }
-
   if (param.type === 'jh') {
     for (const key in param) {
       param[key] = param[key].replace(/\/$/, '')
@@ -156,17 +146,23 @@ function conversionUpload(that) {
     param = convertKeysToCamelCase(param)
   }
   console.log(param, '查看上传的参数')
+
+  console.log('竞价相关参数传到了？', ecpmParam);
   $apis.task
     .postConvertUpload({
       ...param,
+      ecpm: ecpmParam.ecpm,
+      adType: ecpmParam.adType,
+      adPositionId: ecpmParam.adPositionId,
+      clickCount: ecpmParam.clickCount,
       deviceId: param.oaid || '',
       type: param.type,
     })
     .then((res) => {
-      console.log(res, '转换成功')
+      console.log(res, '回传上报成功')
     })
     .catch((err) => {
-      console.log(err, '转换失败')
+      console.log(err, '回传上报失败')
     })
 }
 
@@ -189,7 +185,7 @@ const tablePlaque = async (onCloseCallback, onCatchCallback) => {
   })
 
   interstitialAd.load().then((res) => {
-    console.log(res, '查屏加载成功');
+    console.log(res, '华为广告查屏加载成功');
     interstitialAd.show().then(
       () => { console.log('插屏广告show成功') },
       () => { console.log('插屏广告show失败') }
@@ -204,7 +200,7 @@ const tablePlaque = async (onCloseCallback, onCatchCallback) => {
   interstitialAd.onClick(() => {
     console.log('插屏广告点击了');
     //转化上传
-    getConvertUpload()
+    // getConvertUpload()
   })
 
   interstitialAd.onClose(onCloseCallback)
@@ -218,14 +214,6 @@ const tablePlaque = async (onCloseCallback, onCatchCallback) => {
 
 let bannerAd; const showBannerAd = async (margin_bot) => {
 
-
-  // const storageFlag = await $processData.getStorage("_PRIVAC");
-  // if (!storageFlag) {
-  //   //未授权，弹出授权询问
-  //   console.log('用户授权= ', storageFlag);
-  //   console.log('未授权,不加载banner广告');
-  //   return
-  // }
 
   let Provider = $ad.getProvider();
   if (!Provider) {
@@ -412,7 +400,7 @@ function getConversionlicks(context) {
     .then((res) => {
       console.log(res, '查看点击回传')
       if (res.data === 0) {
-        $utils.conversionUpload(context)
+        // $utils.conversionUpload(context)
       }
       context.$app.$def.dataApp.conversionlicks = res.data
     })
@@ -434,22 +422,11 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
       return
     }
 
-    // //处理华为平台的跳转链接最一个字符为/的问题
-    // if (checkPaem.channelValue) {
-    //   let channelValue = checkPaem.channelValue;
-    //   if (channelValue.charAt(channelValue.length - 1) === '/') {
-    //     // 去掉最后一个字符
-    //     checkPaem.channelValue = channelValue.slice(0, -1);
-    //   }
-    // }
-
-
-
     let token = await $storage.get({
       key: 'AUTH_TOKEN_DATA',
     })
     token = JSON.parse(token.data)
-    console.log('查看这个token', token)
+    // console.log('查看这个token', token)
     let adBrand = $ad.getProvider()
     let param = {
       ...checkPaem,
@@ -479,14 +456,14 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
           },
         }
 
-        console.log('查看上报参数', param2)
+        console.log('查看埋点上报参数', param2)
         $apis.task
           .postTrackCapture({ ...param2 })
           .then((res) => {
-            console.log('上报成功', res)
+            console.log('埋点上报成功', res)
           })
           .catch((err) => {
-            console.log(err, '上传失败')
+            console.log(err, '埋点上传失败')
           })
       },
     })

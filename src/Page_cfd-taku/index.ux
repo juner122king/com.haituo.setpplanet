@@ -213,7 +213,7 @@
       }
 
       $apis.example.showTclayer().then((res) => {
-        console.log('页面透明比例判断:', res);
+        // console.log('页面透明比例判断:', res);
         this.isShowTclayerLogin = res.data
         if (this.isShowTclayerLogin) {//当前需要执行透明点击层规则
           this.onpeShowTclayerLogin()
@@ -308,7 +308,7 @@
     getAdCount() {
 
       $apis.example.getAdCount({
-        adId: getApp().$def.dataApp.nativeAdUnitId,
+        adId: getApp().$def.dataApp.nativeAdUnitId_taku,
         channel: ''
       }).then((res) => {
         // console.log('获取每日次数', res);
@@ -437,7 +437,7 @@
 
       // if (this.sysclickCount === this.userAdclickCount) {
         //转化上传
-        $utils.getConvertUpload()
+        // $utils.getConvertUpload()
       // } else {
       //   console.log('广告点击次数不匹配，不转化');
       // }
@@ -447,7 +447,7 @@
     showNvad() {
       // if (this.sysclickCount === 0) {
         //转化上传
-        $utils.getConvertUpload()
+        // $utils.getConvertUpload()
       // }
     }
   }

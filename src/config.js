@@ -2,6 +2,7 @@ const adCodeData = {
   appid: 111256983,
   nativeAd: 'v5h5xsklp2', //原生
   tableScreen: 'a7nvl7fm00',
+  nativeAd_taku: 's2ytxth2mq',
   stimulateAd: 'o0rbevcepx',//testx9dtjwj8hp 测试编码 
   lotteryPageNativeAd: 's2ytxth2mq',
 }

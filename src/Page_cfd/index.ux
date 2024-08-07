@@ -196,7 +196,7 @@
 
 
       //获取后台设置的 转化点击次数
-      this.getClickCount()
+      // this.getClickCount()
     },
     onReady(options) {
       this.getAdCount()//原生广告位，获取次数
@@ -214,7 +214,7 @@
       }
 
       $apis.example.showTclayer().then((res) => {
-        console.log('页面透明比例判断:', res);
+        // console.log('页面透明比例判断:', res);
         this.isShowTclayerLogin = res.data
         if (this.isShowTclayerLogin) {//当前需要执行透明点击层规则
           this.onpeShowTclayerLogin()
@@ -434,7 +434,7 @@
 
       // if (this.sysclickCount === this.userAdclickCount) {
         //转化上传
-        $utils.getConvertUpload()
+        // $utils.getConvertUpload()
       // } else {
       //   console.log('广告点击次数不匹配，不转化');
       // }
@@ -444,7 +444,7 @@
     showNvad() {
       // if (this.sysclickCount === 0) {
         //转化上传
-        $utils.getConvertUpload()
+        // $utils.getConvertUpload()
       // }
     }
   }

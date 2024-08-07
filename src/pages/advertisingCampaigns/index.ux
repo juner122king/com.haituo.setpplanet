@@ -144,7 +144,7 @@
         this.$app.$def.dataApp.actiParam = {
           ...e,
         }
-        $utils.getConversionlicks(this)
+        // $utils.getConversionlicks(this)
         $utils.buriedPointReport(this)
 
       }
@@ -215,11 +215,11 @@
      * 点击
      */
     reportNativeClick(type) {
+      console.info("华为广告-小说4点击,竞价值：", this.adList.ext.hwPriceTag);
       $utils.buriedPointReport(this, 'click', this.adId)
-      $utils.conversionUpload(this)
-      nativeAd.reportAdClick({
-        adId: this.adList.adId
-      });
+      this.conversionUp('1')
+
+      nativeAd.reportAdClick({ adId: this.adList.adId })
       if (type === 'btn') {
         this.addClickNum()
       }
@@ -231,8 +231,21 @@
      */
     reportNativeShow() {
       if (nativeAd) {
+        console.info("华为广告-小说4显示,竞价值：", this.adList.ext.hwPriceTag);
+        this.conversionUp('0')
+
         nativeAd.reportAdShow({ adId: this.adList.adId });
       }
+    },
+    conversionUp(clickCount) {
+      let ecpmParam = {  //竞价相关参数
+        ecpm: this.adList.ext.hwPriceTag,
+        adType: 'NATIVE',
+        adPositionId: this.adId,
+        clickCount: clickCount
+      }
+      console.log('华为广告-小说4竞价相关参数', ecpmParam);
+      $utils.conversionUpload(this, ecpmParam)
     },
     adClick() {
       console.log('查看点击的this');

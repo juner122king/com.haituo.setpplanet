@@ -95,7 +95,7 @@
         nativeAd.onLoad(data => {
           // console.info("ad data loaded: " + JSON.stringify(data));
           this.adList = data.adList[0];
-          // console.log(this.adList, '查看获取的广告参数');
+          console.log(this.adList, '查看获取的广告参数');
           this.hasAdList = true;
           this.reportNativeShow()
         });
@@ -113,20 +113,32 @@
  * 点击
  */
     reportNativeClick() {
+      console.info("华为广告-小说1点击,竞价值：", this.adList.ext.hwPriceTag);
       $utils.buriedPointReport(this, 'click', this.adId)
-      $utils.conversionUpload(this)
-      nativeAd.reportAdClick({
-        adId: this.adList.adId
-      });
-    },
+      this.conversionUp('1')
 
+      nativeAd.reportAdClick({ adId: this.adList.adId })
+    },
     /**
      * 展示
      */
     reportNativeShow() {
       if (nativeAd) {
-        nativeAd.reportAdShow({ adId: this.adList.adId });
+        console.info("华为广告-小说1显示,竞价值：", this.adList.ext.hwPriceTag);
+        this.conversionUp('0')
+
+        nativeAd.reportAdShow({ adId: this.adList.adId })
       }
+    },
+    conversionUp(clickCount) {
+      let ecpmParam = {  //竞价相关参数
+        ecpm: this.adList.ext.hwPriceTag,
+        adType: 'NATIVE',
+        adPositionId: this.adId,
+        clickCount: clickCount
+      }
+      console.log('华为广告-小说竞1价相关参数', ecpmParam);
+      $utils.conversionUpload(this, ecpmParam)
     },
     error(errCode, errMsg) {
       this.$emit('emitClose', {
