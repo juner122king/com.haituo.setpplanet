@@ -174,6 +174,9 @@
       onemit-hide-transparency="hideTransparency"
       onemit-close="heideReminder"
     ></back-to-ads>
+
+    <!-- 看视频得红包悬浮件-->
+    <div if="isShowMoviered" class="moviered" onclick="onMovieredClick"></div>
   </div>
 </template>
 
@@ -200,8 +203,27 @@ export default {
     showTransparency: true,
     adTitle: "",
     timer: null,
-    isfristReqCoun: true
+    isfristReqCoun: true,
+    isShowMoviered: false,//是否显示页面跳转悬浮组件
   },
+  onMovieredClick() {
+    $router.push({
+      uri: 'Page_cfd'
+    })
+  },
+  //获取小说页面是否开启跳转红包页面悬浮组件
+  getIsShowMovieredClick() {
+    $apis.task
+      .getUserwealEntry()
+      .then((res) => {
+        console.log(res, '获取福利入口信息')
+        this.isShowMoviered = res.data.isOpenNovelRedPacket
+      })
+      .catch((err) => {
+        console.log(err, '获取福利入口信息')
+      })
+  },
+
   onInit(e) {
     const { callback = '', oaid = '', type = '', channelValue = '', corp_id = '' } = e
     if (Object.keys(e).length > 0) {
@@ -217,6 +239,7 @@ export default {
     this.adId = adCodeData[branch].fiction1;
     this.preloadAd()
     this.getTransparentLayerL()
+    this.getIsShowMovieredClick()
   },
   onReady() {
     this.delayedDisplay()

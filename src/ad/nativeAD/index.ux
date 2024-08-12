@@ -126,10 +126,8 @@ module.exports = {
       ...adParams,
       success: (data) => {
         console.info("success 广告数据:" + JSON.stringify(data))
-
         this.adList = data.adList  // 一次成功返回有 1-3 个数据，参照对应的 adCount 数（小概率情况下小于 adCount 数）
         this.native.isShow = true;
-
       },
       fail: (data, code) => {
         console.info("fail 广告数据:" + JSON.stringify(data))
@@ -141,7 +139,6 @@ module.exports = {
       }
     })
   },
-
   reportNativeClick() {
     console.info(" 原生广告被点击了");
 

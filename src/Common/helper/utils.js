@@ -252,7 +252,10 @@ let bannerAd; const showBannerAd = async () => {
 
   bannerAd = $ad.createBannerAd({
     adUnitId: adid,//banner广告位
-    style: style
+    style: {
+      width: 750,
+      top: 1540
+    }
   });
 
 

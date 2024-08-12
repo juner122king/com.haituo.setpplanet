@@ -131,8 +131,7 @@ const popUps = () => {
     return request({
         method: "GET",
         url: `/qa/mini/basic/ad/auto/popUps`
-
-    });
+    })
 }
 
 /**
@@ -156,6 +155,7 @@ const capture = (data) => {
         data
     });
 }
+
 
 export default {
     toLogin,

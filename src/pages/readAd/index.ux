@@ -1828,7 +1828,7 @@ export default {
       this.realchaptercontent = this.chapterContent
     }
     this.$element('readerdiv').setContent({
-      title: '',
+      title: '美食探索',
       content: this.realchaptercontent,
       success(data) {
         console.log(' chapterend setContent  success data ： ' + JSON.stringify(data))
