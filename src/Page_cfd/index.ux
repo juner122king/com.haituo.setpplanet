@@ -37,7 +37,6 @@
     </stack>
     <image class="image_finger" onclick="openad"></image>
 
-    <!-- <nativebanner-ad class="nbad" onadd-adc="addAdc" onshow-nvad="showNvad"></nativebanner-ad> -->
   </div>
 </template>
 <style>
@@ -430,7 +429,7 @@
     },
     addAdc() {
       this.userAdclickCount += 1
-      console.log('后台配置转化点击次数：', this.sysclickCount, ',本次跳转 广告点击总数: ', this.userAdclickCount);
+      // console.log('后台配置转化点击次数：', this.sysclickCount, ',本次跳转 广告点击总数: ', this.userAdclickCount);
 
       // if (this.sysclickCount === this.userAdclickCount) {
         //转化上传

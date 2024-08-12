@@ -178,7 +178,6 @@
       this.timer = null;
       this.timer = setTimeout(() => {
         this.showReminder = true;
-        console.log('怎么还没有触发', this);
       }, 4000)
     },
     getAdProvider: function () {

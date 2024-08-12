@@ -294,7 +294,6 @@
       this.apigetStpes()// Step2
     },
     onReady() {
-      console.log("onReady()")
       this.updateBMITzl();
     },
     //弹出隐私询问，不能自动执行，需要用户点击功能时才执行，目前需求是点击‘今日’，‘周’，‘月’与设置今日目标时
@@ -307,7 +306,7 @@
       // 订阅步数计数器
       sensor.subscribeStepCounter({
         callback: (ret) => {
-          console.log(`设备步数更新了！------>设备总步数=${ret.steps}`)
+          // console.log(`设备步数更新了！------>设备总步数=${ret.steps}`)
           //保存权限
           $processData.setStorage("_PRIVAC", true);
           this.isShow = false;
@@ -317,7 +316,7 @@
 
         },
         fail: (data, code) => {
-          console.log(`步数计数器订阅失败, code = ${code}`);
+          // console.log(`步数计数器订阅失败, code = ${code}`);
           this.isShow = false;
         }
       });
@@ -331,11 +330,11 @@
         key: this.goalDayKey,
         default: 10000,
         success: function (ret) {
-          console.info('storage.get(): ', JSON.stringify(ret))
+          // console.info('storage.get(): ', JSON.stringify(ret))
           that.goal_day = ret
         },
         fail: function (erromsg, errocode) {
-          console.info('get fail --- ' + errocode + ':' + erromsg)
+          // console.info('get fail --- ' + errocode + ':' + erromsg)
         }
       })
     },
@@ -346,10 +345,10 @@
         key: this.goalDayKey,//
         value: data,
         success: function (ret) {
-          console.info('storage.set(): ', JSON.stringify(ret))
+          // console.info('storage.set(): ', JSON.stringify(ret))
         },
         fail: function (erromsg, errocode) {
-          console.info('set fail --- ' + errocode + ':' + erromsg)
+          // console.info('set fail --- ' + errocode + ':' + erromsg)
         }
       })
     },
@@ -360,7 +359,7 @@
       storage.get({
         key: this.userDetailsKey,
         success: function (ret) {
-          console.log('用户设定详情获取成功:', ret);
+          // console.log('用户设定详情获取成功:', ret);
           if (ret && ret.trim()) {
             const userDetails = JSON.parse(ret)
             // 更新各个属性
@@ -369,14 +368,14 @@
             that.sex = userDetails.sex !== undefined ? userDetails.sex : that.sex; // 保持为数字类型
             that.age = Number(userDetails.age) || that.age; // 确保转换为数字类型
 
-            console.log('更新后的用户详情:', that.body_weight, that.body_height, that.sex, that.age);
+            // console.log('更新后的用户详情:', that.body_weight, that.body_height, that.sex, that.age);
 
             that.updateBMITzl();
           }
 
         },
         fail: function (erromsg, errocode) {
-          console.info('get fail --- ' + errocode + ':' + erromsg)
+          // console.info('get fail --- ' + errocode + ':' + erromsg)
         }
       })
     },
@@ -393,10 +392,10 @@
         key: this.userDetailsKey,
         value: userDetails,
         success: function (ret) {
-          console.log('用户详情保存成功:', ret);
+          // console.log('用户详情保存成功:', ret);
         },
         fail: function (erromsg, errocode) {
-          console.error('用户详情保存失败:', erromsg, errocode);
+          // console.error('用户详情保存失败:', erromsg, errocode);
         }
       })
     },
@@ -405,7 +404,7 @@
     //更新步数进度
     updateProgress() {
       var that = this;
-      console.log(`更新步数进度！今日云步数=${that.stepsDayApi}`)
+      // console.log(`更新步数进度！今日云步数=${that.stepsDayApi}`)
 
       // 对应页面的显示步数
       const service_step = [that.stepsDayApi, that.stepsWeekApi, that.stepsMoonApi];
@@ -424,7 +423,7 @@
       this.steps_view = currentsStep;
       this.segmentsText = that.segmentsTexts[that.currentPage]
 
-      console.log(`目前${that.segmentsText}进度 = ${Math.min(stepRatio * 100, 100).toFixed(1)}%`);
+      // console.log(`目前${that.segmentsText}进度 = ${Math.min(stepRatio * 100, 100).toFixed(1)}%`)
 
       this.updateMileageAndCalories()//更新卡路里，里程
     },
@@ -466,7 +465,7 @@
 
     //打开基本情况窗口
     openBasicInformationDialog() {
-      console.log(`打开基本情况窗口`);
+      // console.log(`打开基本情况窗口`)
       this.open2 = true
       this.obj = {
         title: '填写基本情况',
@@ -481,7 +480,7 @@
 
       this.getTreatyStorage()
 
-      console.log(`打开设定目标步数窗口`);
+      // console.log(`打开设定目标步数窗口`)
 
       this.open1 = true
       this.obj = {
@@ -495,7 +494,7 @@
     enterSteps(evt) {
       this.open1 = false
       const goal_stpe = evt.detail.event.value
-      console.log(`设定了目标步数：${goal_stpe}`);
+      // console.log(`设定了目标步数：${goal_stpe}`)
       this.goal_day = goal_stpe;
       this.setGoalDaySteps(goal_stpe);
       this.updateProgress();
@@ -510,7 +509,7 @@
       const cm = evt.detail.event.cm
       const age = evt.detail.event.age
       const sex = evt.detail.event.sex
-      console.log(`设定了体重：${kg},身高：${cm},年龄：${age},sex:${sex}`);
+      // console.log(`设定了体重：${kg},身高：${cm},年龄：${age},sex:${sex}`);
 
       this.body_weight = kg;
       this.body_height = cm;
@@ -523,7 +522,7 @@
     },
 
     close() {
-      console.log(`关闭了窗口：`);
+      // console.log(`关闭了窗口：`);
       this.open1 = false
       this.open2 = false
     },
@@ -533,7 +532,7 @@
 
       if (this.currentPage !== -1) { this.getTreatyStorage() }//未点击时不询问
 
-      console.log(e.index)
+      // console.log(e.index)
       this.currentPage = e.index;
 
       this.apigetStpes()
@@ -550,14 +549,14 @@
       example.getsteps({
         type: t
       }).then(response => {
-        console.log(`获取《${t}》云步数成功！ ------>云步数=${response.data}`);
+        // console.log(`获取《${t}》云步数成功！ ------>云步数=${response.data}`);
 
         // 根据当前页面保存步数
         that[apiKeys[that.currentPage]] = response.data;
         this.updateProgress();
       })
         .catch(error => {
-          console.error(' 获取${t}步数失败:', error);
+          // console.error(' 获取${t}步数失败:', error);
         });
     },
 
@@ -566,22 +565,22 @@
     apiuploadStpes(c) {
       const now = Date.now();
       if (now - this.lastExecutionTime < 5000) { // 5000 毫秒 = 5 秒
-        console.log('操作太频繁，请稍后再试');
+        // console.log('操作太频繁，请稍后再试');
         return;
       }
 
       this.lastExecutionTime = now;
-      console.log(`上传步数中---->步数=${c}, t = ${now}`);
+      // console.log(`上传步数中---->步数=${c}, t = ${now}`)
       example.uploadsteps({
         count: c,
         "timestamp": now
       }).then(response => {
-        console.log(' 上传步数successful:', response);
+        // console.log(' 上传步数successful:', response)
         this.stepsDayApi = response.data;
         this.updateProgress();
       })
         .catch(error => {
-          console.error(' 上传步数failed:', error);
+          // console.error(' 上传步数failed:', error)
         });
     },
   }

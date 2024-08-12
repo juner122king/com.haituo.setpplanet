@@ -75,10 +75,10 @@
     get30dayRecord() {
       example.getstepslist().then(response => {
         if (response && response.data) {
-          console.log('获取最近30天记录-成功！:', response);
+          // console.log('获取最近30天记录-成功！:', response);
           this.list30dayData = this.formatData(response.data);
         } else {
-          console.log('获取最近30天记录-失败，响应为空或没有数据！');
+          // console.log('获取最近30天记录-失败，响应为空或没有数据！');
         }
       })
         .catch(error => {

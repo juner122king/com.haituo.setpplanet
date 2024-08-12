@@ -147,11 +147,16 @@ function conversionUpload(that, ecpmParam) {
   }
   console.log(param, '查看上传的参数')
 
-  console.log('竞价相关参数传到了？', ecpmParam);
+
+  console.log('竞价相关参数传到了？', ecpmParam)
+
+  let ectpm = ecpmParam.ecpm * 100
+  console.log('ectpm:', ectpm)
+
   $apis.task
     .postConvertUpload({
       ...param,
-      ecpm: ecpmParam.ecpm,
+      ecpm: ectpm,
       adType: ecpmParam.adType,
       adPositionId: ecpmParam.adPositionId,
       clickCount: ecpmParam.clickCount,

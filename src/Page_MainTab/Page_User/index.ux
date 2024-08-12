@@ -132,8 +132,6 @@
 
 
       $apis.user.entrance().then((res) => {
-        console.log('是否开启广告页入口------->' + JSON.stringify(res));
-
         this.isentrance = res.data
 
       })
