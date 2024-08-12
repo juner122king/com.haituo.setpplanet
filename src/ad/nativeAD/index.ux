@@ -103,12 +103,38 @@ module.exports = {
         //存储预加载数据
         this.adList = data.adList//一次成功返回有1-3个数据，参照对应的adCount数（小概率情况下小于 adCount 数）
         this.isShow = true;
+
       },
       fail: (err, code) => {
         console.log(err, code, '预加载失败')
       }
     })
   },
+  //通知竞价失败接口
+  notifyRankLoss(adid, winPrice, code, channel) {
+    console.log(`开始通知竞价失败接口:${adid, winPrice, code, channel}`)
+    const data = $ad.notifyRankLoss({
+      winPrice: winPrice,
+      code: code, //可传 1,2,3,4
+      channel: channel //可传mob,other,其他自定义值
+    })
+    console.log(`通知竞价失败接口正常返回:${JSON.stringify(data)}`)
+  },
+  //通知竞价成功接口和设置实际结算价接口
+  notifyRankWin(adid, ecpm) {
+    console.log(`开始通知竞价成功接口与开始实际结算价接口:${adid, ecpm}`)
+    const data1 = $ad.notifyRankWin({
+      adid: adid,
+      lossPrice: ecpm //
+    })
+    const data2 = $ad.setBidECPM({
+      adid: adid,
+      ecpm: ecpm
+    })
+    console.log(`通知竞价成功接口正常返回:${JSON.stringify(data1)}`)
+    console.log(`设置实际结算价接口正常返回:${JSON.stringify(data2)}`)
+  },
+
   adLoad(evt) {
     if (evt && evt.adData) {
       const adData = JSON.parse(evt.adData)
