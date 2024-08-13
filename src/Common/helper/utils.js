@@ -153,6 +153,10 @@ function conversionUpload(that, ecpmParam) {
   let ectpm = ecpmParam.ecpm * 100
   console.log('ectpm:', ectpm)
 
+  let adBrand = $ad.getProvider()
+
+  console.log('adBrand:', adBrand)
+  console.log('adBrand toLowerCase:', adBrand.toLowerCase())
   $apis.task
     .postConvertUpload({
       ...param,
@@ -162,6 +166,7 @@ function conversionUpload(that, ecpmParam) {
       clickCount: ecpmParam.clickCount,
       deviceId: param.oaid || '',
       type: param.type,
+      pid: adBrand.toLowerCase()
     })
     .then((res) => {
       console.log(res, '回传上报成功')
