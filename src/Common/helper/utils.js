@@ -51,49 +51,6 @@ const getUserId = async () => {
   return userId.data.userId;
 }
 
-
-/**
- * 转化上传
- * @param {*} that 所在this 
- */
-async function getConvertUpload(that) {
-  let param = {
-    ...that.$app.$def.dataApp.actiParam
-  }
-  console.log(' 转化参数param= ', param)
-
-
-  let res = await $device.getOAID()
-  let oaid = res.data.oaid
-  console.info("OAID:  " + oaid)
-
-  if (!param.channelValue) {
-    return
-  }
-
-
-  if (param.type === 'jh') {
-    for (const key in param) {
-      param[key] = param[key].replace(/\/$/, '')
-    }
-    param = convertKeysToCamelCase(param)
-  }
-  console.log(param, '查看上传的参数')
-  $apis.task
-    .postConvertUpload({
-      ...param,
-      deviceId: param.oaid || '',
-      type: param.type,
-      oaid: oaid
-    })
-    .then((res) => {
-      console.log(res, '转换成功')
-    })
-    .catch((err) => {
-      console.log(err, '转换失败')
-    })
-}
-
 function toCamelCase(str) {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
@@ -244,9 +201,7 @@ const tablePlaque = async (onCloseCallback, onCatchCallback, that) => {
 
 
   interstitialAd.onClick(() => {
-    console.log('插屏广告点击了');
-    //转化上传
-    // getConvertUpload(that)
+    console.log('插屏广告点击了')
 
     let ecpmParam = {  //竞价相关参数
       ecpm: e.ecpm,
@@ -362,7 +317,7 @@ const openAd = () => {
 
   var r = 'Page_cfd'
   // r = 'hap://app/com.haituo.setpplanet/Page_cfd?adId=-1&ownerId=1000399194&androidid=-1&oaid=446D5DF91C5944EC968490C4245DD09F1b622455b6283a6dcd5e3c610c461137&ts=-1&type=oppo&channelValue=jbxq1'
-  r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
+  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
   });
@@ -521,7 +476,6 @@ function convertToQueryString(objects) {
 export default {
   throttle,
   getUserId,
-  getConvertUpload,
   startCountDown,
   dataEncryption,
   tablePlaqueTX,
