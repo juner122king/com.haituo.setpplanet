@@ -49,35 +49,8 @@ const dataEncryption = (data, action = "encrypt") => {
 const getUserId = async () => {
   let userId = await $device.getUserId()
   return userId.data.userId;
-};
-/**
- * 转化上传
- * @param {*} that 所在this 
- */
-function getConvertUpload(that) {
-  let param = {
-    ...that.$app.$def.dataApp.actiParam
-  }
-  console.log(' 转化参数param= ', param)
-
-  if (!param.channelValue) {
-    return
-  }
-  for (const key in param) {
-    param[key] = param[key].replace(/\/$/, "");
-  }
-  const convertedParam = convertKeysToCamelCase(param);
-
-  $apis.example.convertUpload({
-    ...convertedParam,
-    type: convertedParam.type || 'jh'
-  }).then((res) => {
-    console.log(res, '转化成功');
-
-  }).catch((err) => {
-    console.log(res, '转化失败：' + err);
-  })
 }
+
 function toCamelCase(str) {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
@@ -123,16 +96,6 @@ function conversionUpload(that) {
     return
   }
   console.log('进入了回传上报')
-  // let conversionlicks = that.$app.$def.dataApp.conversionlicks //第几次回传上报
-  // let clicksOnAdsNow = that.$app.$def.dataApp.clicksOnAdsNow + 1 //现在是第几次任务
-  // console.log(conversionlicks, 'conversionlicks')
-  // console.log(clicksOnAdsNow, 'clicksOnAdsNow')
-
-  // that.$app.$def.dataApp.clicksOnAdsNow = clicksOnAdsNow
-  // if (conversionlicks <= 0 || clicksOnAdsNow !== conversionlicks) {
-  //   console.log('取消转换上传')
-  //   return
-  // }
 
   if (param.type === 'jh') {
     for (const key in param) {
@@ -141,11 +104,14 @@ function conversionUpload(that) {
     param = convertKeysToCamelCase(param)
   }
   console.log(param, '查看上传的参数')
+
+  let adBrand = $ad.getProvider()
   $apis.task
     .postConvertUpload({
       ...param,
       deviceId: param.oaid || '',
       type: param.type,
+      pid: adBrand.toLowerCase()
     })
     .then((res) => {
       console.log(res, '转换成功')
@@ -212,7 +178,7 @@ const tablePlaque = async (onCloseCallback, onCatchCallback,that) => {
   interstitialAd.onClick(() => {
     console.log('插屏广告点击了');
     //转化上传
-    getConvertUpload(that)
+    conversionUpload(that)
   })
 
   interstitialAd.onClose(onCloseCallback)
@@ -462,15 +428,15 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
         $apis.task
           .postTrackCapture({ ...param2 })
           .then((res) => {
-            console.log('上报成功', res)
+            console.log('埋点上报成功', res)
           })
           .catch((err) => {
-            console.log(err, '上传失败')
+            console.log(err, '埋点上传失败')
           })
       },
     })
   } catch (error) {
-    console.log(error, '上传错误')
+    console.log(error, '埋点上传错误')
   }
 }
 
@@ -494,7 +460,6 @@ function convertToQueryString(objects) {
 export default {
   throttle,
   getUserId,
-  getConvertUpload,
   startCountDown,
   dataEncryption,
   tablePlaqueTX,

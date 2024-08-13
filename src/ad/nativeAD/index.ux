@@ -143,7 +143,7 @@ module.exports = {
     console.info(" 原生广告被点击了");
 
     //转化上传
-    $utils.getConvertUpload(this)
+    $utils.conversionUpload(this)
 
 
     $utils.buriedPointReport(this, 'click', this.native.adUnitId)
