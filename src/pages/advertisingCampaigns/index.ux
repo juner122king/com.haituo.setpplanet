@@ -91,6 +91,10 @@
 
     <!-- 返回时弹出框 -->
     <back-to-ads if="{{showVackTisp}}" show-transparency="{{ showTransparency}}" onemit-hide-transparency="hideTransparency" onemit-close="heideReminder"></back-to-ads>
+
+    
+    <!-- 看视频得红包悬浮件-->
+    <div if="isShowMoviered" class="moviered" onclick="onMovieredClick"></div>
   </div>
 </template>
 
@@ -120,13 +124,27 @@
       adTitle: "",
       timer: null,
       isfristReqCoun: true,
-      ad: null
+      ad: null,
+      isShowMoviered: false,//是否显示页面跳转悬浮组件
     },
-
+  onMovieredClick() {
+    $router.push({
+      uri: 'Page_cfd'
+    })
+  },
+  //获取小说页面是否开启跳转红包页面悬浮组件
+  getIsShowMovieredClick() {
+    $apis.task
+      .getUserwealEntry()
+      .then((res) => {
+        console.log(res, '获取福利入口信息')
+        this.isShowMoviered = res.data.isOpenNovelRedPacket
+      })
+      .catch((err) => {
+        console.log(err, '获取福利入口信息')
+      })
+  },
     onInit(e) {
-
-
-
 
       console.log('进来了1', e)
       // //处理华为平台的跳转链接最一个字符为/的问题
@@ -151,7 +169,7 @@
       const branch = $ad.getProvider()
       this.adObj = adCodeData[branch]
       this.adId = 'v5h5xsklp2';
-
+      this.getIsShowMovieredClick()
 
     },
     onShow(options) {
