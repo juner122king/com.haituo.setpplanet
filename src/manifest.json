@@ -1,15 +1,15 @@
 {
     "package": "com.haituo.setpplanet",
     "name": "计步星球",
-    "versionName": "1.1.12",
-    "versionCode": 112,
+    "versionName": "1.1.13",
+    "versionCode": 113,
     "permissions": [
         {
             "origin": "*"
         }
     ],
     "icon": "/Common/img/logo.png",
-    "minPlatformVersion": 1100,
+    "minPlatformVersion": 1200,
     "designWidth": 750,
     "features": [
         {
@@ -101,6 +101,9 @@
             "ad/nativeAD": {
                 "component": "index"
             },
+            "pages/luckyBagOpen": {
+                "component": "index"
+              },
             "pages/advertisingCampaigns": {
                 "component": "index"
             },
@@ -150,6 +153,13 @@
                 "menu": false,
                 "titleBarText": "用户登录"
             },
+            "pages/luckyBagOpen": {
+                "titleBar": false,
+                "menu": false,
+                "statusBarImmersive": true,
+                "statusBarBackgroundOpacity": 0,
+                "titleBarBackgroundOpacity": 0
+              },
             "pages/advertisingCampaigns": {
                 "titleBarText": "",
                 "titleBar": false
