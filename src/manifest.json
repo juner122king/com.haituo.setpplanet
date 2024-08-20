@@ -9,7 +9,7 @@
         }
     ],
     "icon": "/Common/img/logo.png",
-    "minPlatformVersion": 1119,
+    "minPlatformVersion": 1100,
     "designWidth": 750,
     "features": [
         {

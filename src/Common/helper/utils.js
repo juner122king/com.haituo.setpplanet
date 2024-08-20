@@ -85,50 +85,93 @@ const saveHapUri = (that, e) => {
  * 转化上传
  * @param {*} that 所在this  小说广告页面的转化方法
  */
-async function conversionUpload(that, ecpmParam) {
+async function conversionUpload(that, ecpmParam, splashData = {}) {
 
-  let param = {
-    ...that.$app.$def.dataApp.actiParam,
-  }
-  param.type = judgingAd(that) //转换类型
-  if (Object.keys(param).length <= 0 || !param.type) {
-    //无值的情况直接删除
-    return
-  }
-  console.log('进入了回传上报')
-  if (param.type === 'jh') {
-    for (const key in param) {
-      param[key] = param[key].replace(/\/$/, '')
+  try {
+
+    let param = {}
+    if (ecpmParam.adType !== 'OPEN_SCREEN') {
+      param = {
+        ...that.$app.$def.dataApp.actiParam,
+      }
+      param.type = judgingAd(that) //转换类型
+    } else {
+      param = {
+        ...splashData,
+      }
     }
-    param = convertKeysToCamelCase(param)
+
+    console.log(param, '查看回传上报参数')
+    if (Object.keys(param).length <= 0 || !param.type) {
+      //无值的情况直接删除
+      return
+    }
+    console.log('进入了回传上报')
+    if (param.type === 'jh') {
+      for (const key in param) {
+        param[key] = param[key].replace(/\/$/, '')
+      }
+      param = convertKeysToCamelCase(param)
+    }
+    console.log(param, '查看上传的参数')
+
+
+    let res = await $device.getOAID()
+    let oaid = res.data.oaid
+    console.info("OAID:  " + oaid)
+    console.log('竞价相关参数传到了？', ecpmParam);
+
+    const branch = $ad.getProvider().toLowerCase()
+    const deviceInfo = await $device.getInfo({})
+    const phoninfo = deviceInfo.data
+    let manufacturer = phoninfo.manufacturer.toLowerCase()
+
+    if (manufacturer === 'oppo' || branch === 'oppo') {
+      //机型广告唯一值相同都替换
+      if (ecpmParam.adType !== 'OPEN_SCREEN') {
+        let oaid = that.$app.$def.dataApp.myOaid
+
+        try {
+          console.log('进来了oppo')
+          let oaidData = ''
+          if (!oaid) {
+            oaidData = await $device.getOAID()
+            that.$app.$def.dataApp.myOaid = oaidData.data.oaid
+          } else {
+            console.log('有oaid就不用在触发了')
+          }
+          param.oaid = oaid || oaidData.data.oaid
+        } catch (error) {
+          console.log(error, '')
+        }
+        console.log(param.oaid, '查看oaid')
+      } else {
+        let oaidData = await $device.getOAID()
+        param.oaid = oaidData.data.oaid
+      }
+    }
+
+    $apis.task
+      .postConvertUpload({
+        ...param,
+        ecpm: ecpmParam.ecpm,
+        adType: ecpmParam.adType,
+        adPositionId: ecpmParam.adPositionId,
+        clickCount: ecpmParam.clickCount,
+        pid: manufacturer || branch,
+        deviceId: param.oaid || '',
+        type: param.type,
+        oaid: oaid
+      })
+      .then((res) => {
+        console.log(res, '转换成功')
+      })
+      .catch((err) => {
+        console.log(err, '转换失败')
+      })
+  } catch (error) {
+    console.log('转换失败', error)
   }
-  console.log(param, '查看上传的参数')
-
-
-  let res = await $device.getOAID()
-  let oaid = res.data.oaid
-  console.info("OAID:  " + oaid)
-  console.log('竞价相关参数传到了？', ecpmParam);
-
-  let adBrand = $ad.getProvider()
-  $apis.task
-    .postConvertUpload({
-      ...param,
-      ecpm: ecpmParam.ecpm,
-      adType: ecpmParam.adType,
-      adPositionId: ecpmParam.adPositionId,
-      clickCount: ecpmParam.clickCount,
-      pid: adBrand.toLowerCase(),
-      deviceId: param.oaid || '',
-      type: param.type,
-      oaid: oaid
-    })
-    .then((res) => {
-      console.log(res, '转换成功')
-    })
-    .catch((err) => {
-      console.log(err, '转换失败')
-    })
 }
 
 
@@ -317,7 +360,7 @@ const openAd = () => {
 
   var r = 'Page_cfd'
   // r = 'hap://app/com.haituo.setpplanet/Page_cfd?adId=-1&ownerId=1000399194&androidid=-1&oaid=446D5DF91C5944EC968490C4245DD09F1b622455b6283a6dcd5e3c610c461137&ts=-1&type=oppo&channelValue=jbxq1'
-  // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
+  r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({
     uri: r
   });
@@ -394,12 +437,32 @@ function getConversionlicks(context) {
 }
 
 // 埋点上报
-async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
+async function buriedPointReport(these, event = 'AppLaunch', adId = '', splashData = {}) {
   try {
     let checkPaem = {
-      ...these.$app.$def.dataApp.actiParam,
+      channelValue: '',
+      oaid: '',
+      type: '',
+      ...splashData,
     }
-    console.log(these.$app.$def.dataApp, 'these.$app.$def.dataApp-')
+
+    if (event !== 'Splash') {
+      //不是开屏正常逻辑
+      const isEnabled = these.$app.$def.dataApp.isEnabled
+      if (event === 'AppLaunch' && isEnabled) {
+        console.log('取消启动上报', isEnabled)
+        return
+      } else {
+        console.log('成功启动上报')
+        these.$app.$def.dataApp.isEnabled = true
+      }
+      checkPaem = {
+        channelValue: '',
+        ...these.$app.$def.dataApp.actiParam,
+      }
+    }
+
+
     console.log(checkPaem, '查看是否有参数')
     if (Object.keys(checkPaem).length <= 0) {
       //无值的情况直接删除
@@ -413,22 +476,26 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
     console.log('查看这个token', token)
     const that = this
     let adBrand = $ad.getProvider()
-    let param = {
-      ...checkPaem,
-      cid: checkPaem.channelValue,
-      event: event === 'click' ? '$AdClick' : '$AppLaunch',
-      pid: adBrand.toLowerCase(),
-      appId: token.appId,
-      userId: token.userId,
-    }
     let urlQuery = convertToQueryString(checkPaem)
     $device.getInfo({
-      success: function (res) {
-        const phoninfo = res
-        let param2 = {
-          ...param,
+      success: function (ret) {
+        let phoninfo = ret
+        let manufacturer = phoninfo.manufacturer.toLowerCase()
+        let param = {
+          ...checkPaem,
+          ...splashData,
+          event:
+            event === 'click'
+              ? '$AdClick'
+              : event === 'Splash'
+                ? '$AdClick'
+                : '$AppLaunch',
+          cid: checkPaem.channelValue,
+          pid: manufacturer || adBrand,
+          appId: token.appId || 'SC_0001',
+          userId: token.userId,
           properties: {
-            ...res,
+            ...phoninfo,
             manufacturer: phoninfo.manufacturer,
             model: phoninfo.model,
             os: phoninfo.osType,
@@ -441,9 +508,9 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '') {
           },
         }
 
-        console.log('查看上报参数', param2)
+        console.log('查看上报参数', param)
         $apis.task
-          .postTrackCapture({ ...param2 })
+          .postTrackCapture({ ...param })
           .then((res) => {
             console.log('埋点上报成功', res)
           })

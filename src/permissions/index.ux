@@ -24,7 +24,6 @@
     },
     goPremissiions: function () {
 
-
       $router.push({
         uri: "hap://settings/permissions"
       })

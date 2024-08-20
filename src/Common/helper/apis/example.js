@@ -64,14 +64,6 @@ const getAdCount = (data) => {
     });
 }
 
-//广告完成
-const completeAd = (data) => {
-    return request({
-        method: "POST",
-        url: `/qa/mini/basic/ad/complete`,
-        data
-    });
-}
 
 //广告完成-加密
 const completeAdRSA = async (data) => {
@@ -153,7 +145,6 @@ export default {
     withdraw,
     record,
     getAdCount,
-    completeAd,
     completeAdRSA,
     convertUpload,
     bolckReturn,

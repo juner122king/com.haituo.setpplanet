@@ -232,7 +232,7 @@ export default {
       this.$app.$def.dataApp.actiParam = {
         ...e,
       }
-      $utils.buriedPointReport(this)
+      $utils.buriedPointReport(this,'AppLaunch','','')
     }
     const branch = $ad.getProvider()
     this.adObj = adCodeData[branch]
