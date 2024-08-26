@@ -44,10 +44,8 @@
         }
     ],
     "config": {
-        "data": {
-            "umeng_appkey": "667b68fccac2a664de54f5ac"
-        }
-    },
+        "disableDynamicCode":true
+    },  
     "router": {
         "entry": "Page_MainTab",
         "pages": {

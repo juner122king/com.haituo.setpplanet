@@ -1,5 +1,4 @@
 <script>
-  import './Common/libs/umeng/umenganalysis.es.min';   //友盟sdk 必须添加！！！
   import TOPON_AD_SDK from '@topon/quick-app-sdk-hw/app.js'
 
   import agconnect from '@hw-agconnect/api';
@@ -35,11 +34,7 @@
       hook2global.$device = $device
       hook2global.$processData = $processData
       hook2global.$image = $image
-      //友盟sdk
-      console.log("[app.ux] onCreate...");
-      $umeng_stat.init(this);   //在onCreate函数中加入该行代码，必须添加！！
-
-
+ 
 
       try {
         const instance = new TOPON_AD_SDK({

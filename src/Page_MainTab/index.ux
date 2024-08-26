@@ -163,7 +163,7 @@
 		},
 		async onShow(options) {
 
-			$umeng_stat.resume(this)
+			
 			console.log('主页 onShow()----------------->');
 			this.getUser();
 
@@ -180,7 +180,7 @@
 			})
 		},
 		onHide() {
-			$umeng_stat.pause(this);//在onHide方法的第一行加入此代码
+			
 			//需要隐藏时就销毁banner
 			// $utils.destroyBanner();
 		},

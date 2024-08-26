@@ -142,12 +142,12 @@
       $utils.tablePlaque()
     },
     onShow(options) {
-      $umeng_stat.resume(this)
+      
       this.getUser();
     },
 
     onHide() {
-      $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
+      
     },
 
     getUser() {

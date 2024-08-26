@@ -303,8 +303,7 @@ const destroyBanner = () => {
 
 //打开拆福袋页面
 const openAd = () => {
-  //友盟事件打点
-  $umeng_stat.trackEvent('wd_xyfddhj', '点击')
+
 
   var r = 'Page_cfd'
   // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?oaid=123454&callback=123456ede&channelValue=KYY/'

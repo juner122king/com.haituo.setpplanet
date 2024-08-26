@@ -201,7 +201,7 @@
       this.getAdCount()//原生广告位，获取次数
     },
     async onShow(options) {
-      $umeng_stat.resume(this)
+    
     },
 
 
@@ -300,7 +300,7 @@
     },
 
     onHide() {
-      $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
+   
     },
     //获取每日次数
     getAdCount() {
@@ -345,7 +345,7 @@
       // $utils.hideBanerAd()
 
       //友盟事件打点
-      $umeng_stat.trackEvent('xyfddhj_cfd', '点击');
+   
 
     },
     /**@param isAutoOpen 是否自动开启拆福袋窗口
