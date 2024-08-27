@@ -358,7 +358,7 @@ const openAd = () => {
   //友盟事件打点
   $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
-  var r = 'Page_cfd'
+  var r = 'pages/luckyBagOpen'
   // r = 'hap://app/com.haituo.setpplanet/pages/luckyBagOpen?adId=-1&ownerId=1000399194&androidid=-1&oaid=446D5DF91C5944EC968490C4245DD09F1b622455b6283a6dcd5e3c610c461137&ts=-1&type=oppo&channelValue=jbxq1'
   // r = 'hap://app/com.haituo.setpplanet/pages/advertisingCampaigns?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=vivo'
   $router.push({

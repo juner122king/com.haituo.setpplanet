@@ -217,7 +217,7 @@ module.exports = {
       this.$app.$def.dataApp.actiParam = {
         ...e,
       }
-      $utils.buriedPointReport(this)
+       $utils.buriedPointReport(this, 'AppLaunch', '', '')
     }
 
     //处理回传链接

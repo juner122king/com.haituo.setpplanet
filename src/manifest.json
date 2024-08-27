@@ -95,9 +95,6 @@
             "Page_setPay": {
                 "component": "index"
             },
-            "Page_cfd": {
-                "component": "index"
-            },
             "ad/nativeAD": {
                 "component": "index"
             },
@@ -135,13 +132,6 @@
                 "statusBarImmersive": true,
                 "statusBarBackgroundOpacity": 0,
                 "enableExitPopupAd": true
-            },
-            "Page_cfd": {
-                "titleBar": false,
-                "menu": false,
-                "statusBarImmersive": true,
-                "statusBarBackgroundOpacity": 0,
-                "titleBarBackgroundOpacity": 0
             },
             "Page_Tixian": {
                 "titleBar": true,
