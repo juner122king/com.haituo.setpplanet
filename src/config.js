@@ -18,6 +18,16 @@ const adCodeData = {
     banner: '926810d38a08e91d2e42033a97803676',
     lotteryPageNativeAd: '3ebda492da8090a8e28b3544df52da61',
   },
+  oppo: {
+    nativeAd: '1655290', //原生
+    tableScreen: '1636380',
+    banner: '1654123',
+    interstitialAdUnitId: '1654001',//插屏广告位id
+    fiction1: '1653991', //原生小说广告页id
+    fiction2: '1653992', //原生小说广告页id
+    fiction3: '1653993', //原生小说广告页id
+    fiction4: '1653994', //原生小说广告页id
+  },
   OPPO: {
     nativeAd: '1655290', //原生
     tableScreen: '1636380',

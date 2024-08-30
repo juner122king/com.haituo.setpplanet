@@ -101,14 +101,12 @@ module.exports = {
 
 	},
 	onShow(options) {
-		$umeng_stat.resume(this)
 		console.log('主页 onShow()----------------->');
 		this.getUser();
 		// //显示banner 广告高度，底部缩进
 		// $utils.showBannerAd()
 	},
 	onHide() {
-		$umeng_stat.pause(this);//在onHide方法的第一行加入此代码
 	},
 
 	getUser() {

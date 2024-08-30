@@ -1,0 +1,245 @@
+<template>
+  <div class="wrapper">
+    <div class="{{showRedPack?'coner':'conerno'}}">
+      <!-- <div class="coner"> -->
+      <div if="{{showBgIndex === 1}}" class="bg">
+        <image class="bg11"></image>
+        <image class="bgb"></image>
+      </div>
+      <image if="{{showBgIndex === 2}}" class="bg2"></image>
+      <image if="{{showBgIndex === 3}}" class="bg3"></image>
+    </div>
+    <image class="image_finger"></image>
+    <ad
+      adId="{{adList.adId}}"
+      class="box"
+      show="{!!adList.adId}}"
+      onerror="error"
+      onadclick="adClick"
+      onadclose="close"
+      type="native"
+      closeBtnPosition="left-top"
+    >
+    </ad>
+  </div>
+</template>
+
+<script>
+const { adCodeData } = require('../../config.js').default
+export default {
+  private: {
+    title: '欢迎体验快应用开发',
+    branch: "",
+    adObj: "",
+    adId: '',
+    adList: "",
+    hasAdList: true,
+    showBgIndex: 1, // 默认显示第一张图片
+    showRedPack: false, // 控制红包显示
+    visitCount: 0 // 访问计数器
+  },
+
+  onInit: function (e) {
+    if (Object.keys(e).length > 0) {
+      console.log('进来了', e);
+      this.$app.$def.dataApp.actiParam = {
+        ...e,
+      }
+      $utils.buriedPointReport(this, 'AppLaunch', '', '')
+    }
+    //处理回传链接
+    $utils.saveHapUri(this, e)
+
+    this.visitCount = 0 // 访问计数器
+    const branch = $ad.getProvider().toLowerCase()
+    this.branch = branch;
+    this.adObj = adCodeData[branch]
+  },
+  onShow() {
+    // 生成一个1到3的随机数
+    this.showBgIndex = Math.floor(Math.random() * 3) + 1
+
+    // 如果计数大于1，表示是从其他页面返回，显示红包
+    if (this.visitCount > 0) {
+      this.showRedPack = true
+    }
+    if (this.adObj) {
+      let ids = ['fiction1', 'fiction2', 'fiction3', 'nativeAd']
+      let key = ids[Math.floor(Math.random() * 4)]
+      this.adId = this.adObj[key]
+      this.preloadAd()
+    }
+  },
+
+
+
+  preloadAd() {
+    try {
+      const that = this;
+      console.log(this.adId, '查看广告id编码');
+      require('@service.ad').preloadAd({
+        adUnitId: this.adId, // 原生信息流广告广告位id
+        type: 'native', // 原生信息流广告
+        adCount: 1,
+        ecpm: true,
+        success: (data) => {
+          console.log(data, '查看能返回多少广告');
+          this.adList = data.adList[0]
+          console.log(this.adList, '返回广告成功');
+          this.hasAdList = true;
+          if (this.debug) {
+            prompt.showToast({
+              message: `ad load success`
+            })
+          }
+        },
+        fail: (data, code) => {
+          console.log(data, code, '返回广告失败1');
+          this.hasAdList = true;
+          if (code === 205) {
+            this.hasAdList = true;
+            this.adList = data.adList[0]
+          } else {
+            if (this.debug) {
+              prompt.showToast({
+                message: `ad load fail!data= ${JSON.stringify(data)},code= ${code}`
+              })
+            }
+          }
+        }
+      })
+    } catch (e) {
+      console.log(e, e.message);
+    }
+  },
+  adClick() {
+    this.showRedPack = false;
+    // 每次显示页面时，增加一次计数
+    this.visitCount++;
+
+    let ecpmParam = {  //竞价相关参数
+      ecpm: this.adList.ecpm,
+      adType: 'NATIVE',
+      adPositionId: this.adId,
+      clickCount: '1'
+    }
+    console.log('竞价相关参数', ecpmParam);
+    $utils.conversionUpload(this, ecpmParam)
+    $utils.buriedPointReport(this, 'click', this.adId)
+  },
+}
+</script>
+
+<style>
+.wrapper {
+  width: 100%;
+  height: 100%;
+  background-image: url(/Common/img/ad/bg_chb.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+.box {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+
+  /* background-color: #fcf; */
+}
+.image_finger {
+  position: absolute;
+  top: 950px;
+  left: 400px;
+  width: 150px;
+  height: 150px;
+  /* background-color: #00ffff; */
+  background-image: url(/Common/img/ad/icon_sz.png);
+  animation-name: float;
+  animation-duration: 1500ms;
+  animation-iteration-count: infinite;
+  background-position: center;
+  background-size: 100%;
+}
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-60px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(-60px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.coner {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+.conerno {
+  width: 0;
+  height: 0;
+  position: fixed;
+}
+
+.bg {
+  position: absolute;
+  width: 563px;
+  height: 759px;
+  justify-content: center;
+  top: 200px;
+}
+.bg11 {
+  width: 100%;
+  height: 100%;
+  background-image: url(/Common/img/ad/bg1.png);
+  background-position: center;
+  background-size: cover;
+}
+.bgb {
+  width: 352px;
+  height: 101px;
+  position: absolute;
+  bottom: 0;
+  background-image: url(/Common/img/ad/bgb.png);
+  background-position: center;
+  background-size: cover;
+}
+.bg2 {
+  position: absolute;
+  width: 563px;
+  height: 759px;
+  /* background-color: #00ffff; */
+  background-image: url(/Common/img/ad/bg2.png);
+  background-position: center;
+  background-size: cover;
+  top: 300px;
+}
+.bg3 {
+  position: absolute;
+  width: 563px;
+  height: 759px;
+  /* background-color: #00ffff; */
+  background-image: url(/Common/img/ad/bg3.png);
+  background-position: center;
+  background-size: cover;
+  top: 400px;
+}
+</style>

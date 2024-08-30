@@ -1,5 +1,4 @@
 <script>
-import './Common/libs/umeng/umenganalysis.es.min';   //友盟sdk 必须添加！！！
 import TOPON_AD_SDK from '@topon/quick-app-sdk/app.js'//https://help.takuad.com/docs/HJu6VU# taku广告
 module.exports = {
   onCreate() {
@@ -30,8 +29,6 @@ module.exports = {
     hook2global.$device = $device
     hook2global.$processData = $processData
 
-    //友盟sdk
-    $umeng_stat.init(this);   //在onCreate函数中加入该行代码，必须添加！！
     try {
       const instance = new TOPON_AD_SDK({
         app: this,
@@ -110,16 +107,6 @@ module.exports = {
     }
   },
 
-  onShow() {
-    this.instance.onShow()
-
-  },
-  onHide() {
-    this.instance.onHide()
-  },
-  onDestroy() {
-    this.instance.onDestroy()
-  },
   dataApp: {
     url1: "http://www.ihaituo.cn/xy/jb/bzzx.html",
     url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",

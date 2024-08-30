@@ -355,8 +355,6 @@ const startCountDown = (countDownData, that) => {
 
 //打开拆福袋页面
 const openAd = () => {
-  //友盟事件打点
-  $umeng_stat.trackEvent('wd_xyfddhj', '点击');
 
   var r = 'pages/luckyBagOpen'
   // r = 'hap://app/com.haituo.setpplanet/pages/luckyBagOpen?adId=-1&ownerId=1000399194&androidid=-1&oaid=446D5DF91C5944EC968490C4245DD09F1b622455b6283a6dcd5e3c610c461137&ts=-1&type=oppo&channelValue=jbxq1'

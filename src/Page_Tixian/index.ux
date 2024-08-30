@@ -261,13 +261,11 @@ module.exports = {
 
   onShow(options) {
 
-    $umeng_stat.resume(this)
     console.log('提现 onShow()----------------->');
     this.getUser();
   },
 
   onHide() {
-    $umeng_stat.pause(this);//在onHide方法的第一行加入此代码
   },
 
 

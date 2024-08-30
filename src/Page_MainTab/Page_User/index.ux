@@ -219,8 +219,8 @@ module.exports = {
   },
   pushPageabout() {
     $router.push({
-      uri: 'Page_about'
-
+      // uri: 'Page_about'
+      uri:'/pages/ttzxj'
     });
   },
   pushPagefeedback() {
