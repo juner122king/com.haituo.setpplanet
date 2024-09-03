@@ -58,7 +58,7 @@ export default {
     this.branch = branch;
     this.adObj = adCodeData[branch]
 
-    // this.getClickReviewControl()
+    this.getClickReviewControl()
   },
   onShow() {
     // 生成一个1到3的随机数
