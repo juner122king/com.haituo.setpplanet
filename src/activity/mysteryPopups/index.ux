@@ -9,7 +9,13 @@
       <div class="Popover-2" else>
         <image class="btn" src="/Common/img/ad/bt_cpd.png"></image>
       </div>
+      <image
+        if="showRedPack"
+        class="close"
+        src="/Common/img/ad/icon_x.png"
+      ></image>
     </div>
+    <div class="complaint" onclick="complaint"></div>
     <ad
       adId="{{adList.adId}}"
       class="box"
@@ -178,7 +184,18 @@ export default {
       }
       this.isAudit = res.data;
     })
+  },
+  complaint(evt) {
+    // 阻止事件冒泡
+    if (evt) {
+      evt.stopPropagation()
+    }
+    console.log('跳转举报');
+    $router.push({
+      uri: 'feedback'
+    })
   }
+
 }
 </script>
 
@@ -186,10 +203,19 @@ export default {
 .wrapper {
   width: 100%;
   height: 100%;
-  background-image: url("http://cdn.ihaituo.cn/qa/pro/app/20f40ba58c7d277066e53f6eecf306ed.jpeg");
+  background-image: url("http://cdn.ihaituo.cn/qa/pro/app/029e30f6272517f887af64ab30d2f0b7.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;
+
+  .complaint {
+    width: 90px;
+    height: 170px;
+    /* background-color: #fcf; */
+    position: fixed;
+    bottom: 250px;
+    left: 0;
+  }
 }
 
 .img-popover {
@@ -236,5 +262,10 @@ export default {
   width: 0;
   height: 0;
   position: fixed;
+}
+.close {
+  margin-top: 50px;
+  width: 80px;
+  height: 80px;
 }
 </style>

@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.1.17",
-  "versionCode": 117,
+  "versionName": "1.1.18",
+  "versionCode": 118,
   "permissions": [
     {
       "origin": "*"
@@ -122,9 +122,6 @@
       "TopOn/AdReward": {
         "component": "index"
       },
-      "pages/ttzxj": {
-        "component": "index"
-      },
       "activity/mysteryPopups": {
         "component": "index"
       }
@@ -207,13 +204,6 @@
           "menuBar": false
         }
       },
-      "pages/ttzxj": {
-        "titleBar": false,
-        "menu": false,
-        "statusBarImmersive": true,
-        "statusBarBackgroundOpacity": 0,
-        "titleBarBackgroundOpacity": 0
-      },
       "activity/mysteryPopups": {
         "titleBar": false,
         "menu": false,
@@ -221,6 +211,7 @@
         "statusBarBackgroundOpacity": 0,
         "titleBarBackgroundOpacity": 0
       }
+      
     }
   }
 }

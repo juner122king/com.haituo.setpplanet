@@ -117,10 +117,9 @@ module.exports = {
       userId: '',
       balance: 0,
     },
-    transparentLayerHits: 0,
+    transparentLayerHits: 1,
     conversionlicks: 0,//点击上传次数为0则不做上传处理
     clicksOnAdsNow: 0,
-    transparentLayerHits: 0,
     actiParam: { // 上报参数
       channelValue: "",
       oaid: "",
@@ -130,7 +129,8 @@ module.exports = {
     myOaid: 0,
     requParamHead: { //完成任务请求头加
     },
-    openScreenEcpm: 0
+    openScreenEcpm: 0,
+    showTransparencyMask: 1,//当前获取的广告id次数 最大为5
   }
 
 }
