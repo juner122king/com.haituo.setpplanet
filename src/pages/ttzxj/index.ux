@@ -18,6 +18,7 @@
       onadclick="adClick"
       onadclose="close"
       type="native"
+      onadshow="adShow"
       closeBtnPosition="left-top"
     >
     </ad>
@@ -92,6 +93,8 @@ export default {
               message: `ad load success`
             })
           }
+
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1');
@@ -117,16 +120,25 @@ export default {
     // 每次显示页面时，增加一次计数
     this.visitCount++;
 
+    this.conversionUp('1')
+  },
+
+  adShow(evt) {
+    console.log('广告adShow: ', evt)
+    this.conversionUp('0')
+  },
+  conversionUp(clickCount) {
     let ecpmParam = {  //竞价相关参数
       ecpm: this.adList.ecpm,
       adType: 'NATIVE',
       adPositionId: this.adId,
-      clickCount: '1'
+      clickCount: clickCount
     }
     console.log('竞价相关参数', ecpmParam);
     $utils.conversionUpload(this, ecpmParam)
     $utils.buriedPointReport(this, 'click', this.adId)
   },
+
 }
 </script>
 
