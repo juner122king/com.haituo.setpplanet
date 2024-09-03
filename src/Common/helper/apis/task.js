@@ -116,6 +116,14 @@ const postTrackCapture = (data) => {
   })
 }
 
+// 获取点击控制审核状态
+const getClickReviewControl = (data) => {
+  return request({
+    method: 'GET',
+    url: `/qa/mini/basic/clickControl/audit/status/${data.branch}`,
+  })
+}
+
 
 let task = {
   getCompleteCount,
@@ -129,7 +137,8 @@ let task = {
   getAdJumpLink,
   getAdPageEntrance,
   getConversionlicks,
-  postTrackCapture 
+  postTrackCapture,
+  getClickReviewControl
 }
 
 export default task

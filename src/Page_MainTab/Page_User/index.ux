@@ -220,7 +220,7 @@ module.exports = {
   pushPageabout() {
     $router.push({
       // uri: 'Page_about'
-      uri:'/pages/ttzxj'
+      uri:'activity/mysteryPopups'
     });
   },
   pushPagefeedback() {

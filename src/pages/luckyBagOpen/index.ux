@@ -350,7 +350,7 @@ module.exports = {
   getAdCount() {
     let branch = $ad.getProvider();
     console.info('原生广告branch ', branch)
-    let adid = adCodeData[branch ? branch : 'HUAWEI'].nativeAd_cfd
+    let adid = adCodeData[branch ? branch : 'HUAWEI'].nativeAd
     console.info('原生广告id ', adid)
 
     $apis.example.getAdCount({

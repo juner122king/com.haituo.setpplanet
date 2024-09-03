@@ -124,6 +124,9 @@
       },
       "pages/ttzxj": {
         "component": "index"
+      },
+      "activity/mysteryPopups": {
+        "component": "index"
       }
     }
   },
@@ -205,6 +208,13 @@
         }
       },
       "pages/ttzxj": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
+      "activity/mysteryPopups": {
         "titleBar": false,
         "menu": false,
         "statusBarImmersive": true,

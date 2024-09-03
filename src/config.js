@@ -58,7 +58,7 @@ VwIDAQAB`
 // 私钥
 const privateKey = ''
 
-const currentService = 'prod'
+const currentService = 'test'
 const appConfig = {
   prod: {
     BASEHOST: 'https://api.ihaituo.cn',
