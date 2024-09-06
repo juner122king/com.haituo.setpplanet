@@ -61,7 +61,6 @@
 
 <script>
 const { adCodeData } = require('../../config.js').default
-let nativeAd;
 module.exports = {
 
   props: {

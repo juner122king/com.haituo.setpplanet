@@ -100,12 +100,22 @@ export default {
     }
   },
   adClick() {
-    $utils.conversionUpload(this, 'NATIVE', this.adId, true, this.ecpm);
+    this.conversionUp('1')
     $utils.buriedPointReport(this, 'click', this.adId)
     this.sensorsTrack({ title: "广告位" })
     this.$emit('emitHideTransparency')
     this.hasAdList = false;
     this.preloadAd()
+  },
+  conversionUp(clickCount) {
+    let ecpmParam = {  //竞价相关参数
+      ecpm: this.ecpm,
+      adType: 'NATIVE',
+      adPositionId: this.adId,
+      clickCount: clickCount
+    }
+    console.log('竞价相关参数', ecpmParam);
+    $utils.conversionUpload(this, ecpmParam)
   },
   close(type = '') {
     if (type) {

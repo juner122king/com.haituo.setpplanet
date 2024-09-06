@@ -144,6 +144,7 @@ export default {
     // 每次显示页面时，增加一次计数
     this.visitCount++;
     this.conversionUp('1')
+    $utils.buriedPointReport(this, 'click', this.adId)
 
     this.hasAdList = false;
     this.preloadAd()
@@ -163,7 +164,6 @@ export default {
     }
     console.log('竞价相关参数', ecpmParam);
     $utils.conversionUpload(this, ecpmParam)
-    $utils.buriedPointReport(this, 'click', this.adId)
   },
   error(e) {
     console.log(e, '广告返回失败');
