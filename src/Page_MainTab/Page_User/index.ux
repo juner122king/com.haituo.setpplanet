@@ -223,7 +223,7 @@ module.exports = {
     $router.push({
       uri: 'Page_about',
       // uri:'activity/mysteryPopups'
-      // uri:'pages/advertisingCampaigns'
+      // uri:'hap://app/com.haituo.setpplanet/activity/mysteryPopups?channelValue=test0906&type=vivo'
     });
   },
   pushPagefeedback() {

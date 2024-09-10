@@ -68,6 +68,8 @@ module.exports = {
               clickCount: '0'
             }
             $utils.conversionUpload(that, ecpmParam, splashData)
+            $utils.buriedPointReport(that, 'AppLaunch', '', '')//增加启动埋点
+
           } else if (onSplashStatusData.statusCode == 100) {
             let ecpm = ''
             try {
@@ -76,7 +78,6 @@ module.exports = {
               ecpm = that._def.dataApp.openScreenEcpm || 0
             }
             $utils.buriedPointReport(that, 'Splash', '1653995', splashData) //点击埋点
-
 
             let ecpmParam = {  //竞价相关参数
               ecpm: ecpm,
