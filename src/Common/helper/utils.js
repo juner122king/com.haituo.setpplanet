@@ -444,7 +444,7 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '', splashDa
       ...splashData,
     }
 
-    if (event !== 'Splash') {
+    if (event !== 'Splash' && event != 'SplashLaunch') {
       //不是开屏正常逻辑
       const isEnabled = these.$app.$def.dataApp.isEnabled
       if (event === 'AppLaunch' && isEnabled) {
@@ -475,6 +475,14 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '', splashDa
     const that = this
     let adBrand = $ad.getProvider()
     let urlQuery = convertToQueryString(checkPaem)
+
+    const eventData = {
+      click: '$Adclick',
+      Splash: '$Adclick',
+      AppLaunch: '$AppLaunch',
+      SplashLaunch: '$AppLaunch'
+    }
+
     $device.getInfo({
       success: function (ret) {
         let phoninfo = ret
@@ -482,12 +490,7 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '', splashDa
         let param = {
           ...checkPaem,
           ...splashData,
-          event:
-            event === 'click'
-              ? '$AdClick'
-              : event === 'Splash'
-                ? '$AdClick'
-                : '$AppLaunch',
+          event: eventData[event],
           cid: checkPaem.channelValue,
           pid: manufacturer || adBrand,
           appId: token.appId || 'SC_0001',

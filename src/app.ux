@@ -51,7 +51,10 @@ module.exports = {
           let splashData = {
             ...that._def.dataApp.actiParam,
             openScreenStatusCode: onSplashStatusData.statusCode
-          };
+          }
+
+          // $utils.buriedPointReport(that, 'SplashLaunch', '1636382', splashData) //新增启动埋点
+
           console.log(onSplashStatusData.statusCode);
           if (onSplashStatusData.statusCode == '-100') {
             console.log('这是-100');
@@ -68,7 +71,9 @@ module.exports = {
               clickCount: '0'
             }
             $utils.conversionUpload(that, ecpmParam, splashData)
-            $utils.buriedPointReport(that, 'AppLaunch', '', '')//增加启动埋点
+
+            $utils.buriedPointReport(that, 'SplashLaunch', '1636382', splashData) //新增启动埋点
+
 
           } else if (onSplashStatusData.statusCode == 100) {
             let ecpm = ''
