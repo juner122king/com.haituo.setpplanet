@@ -236,6 +236,8 @@ export default {
       $utils.buriedPointReport(this, 'AppLaunch', '', '')
     }
     const branch = $ad.getProvider()
+
+    console.log('ac广告商', branch);
     this.adObj = adCodeData[branch]
     this.adId = adCodeData[branch].fiction1;
     this.preloadAd()
@@ -244,6 +246,10 @@ export default {
   },
   onReady() {
     this.delayedDisplay()
+  },
+  onShow(options) {
+    let actiParam = this.$app.$def.dataApp.actiParam;
+    this.$app.$sensors.pageShow({ channel: actiParam.channelValue });
   },
   onHide() {
     this.timer = null;

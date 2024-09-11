@@ -13,10 +13,13 @@ const adCodeData = {
   },
   xiaomi: {
     nativeAd: '875427e86385392629207d9e11b0683c', //原生
-    tableScreen: 'l4ai02av3y',
-    stimulateAd: '182b9c7d8701f5c50a0d5f1cb9fcf2b0',
+    tableScreen: '4adbf73330f7692edb7264d63b11728d',
     banner: '926810d38a08e91d2e42033a97803676',
-    lotteryPageNativeAd: '3ebda492da8090a8e28b3544df52da61',
+    interstitialAdUnitId: '4adbf73330f7692edb7264d63b11728d',//插屏广告位id
+    fiction1: '8d085edac4bb6e4b0e2c8e9fabb723e6', //原生小说广告页id
+    fiction2: 'afa44530568a53149a6e35be096db039', //原生小说广告页id
+    fiction3: 'd4172189bd20e7a5dcc3e5abc66a3008', //原生小说广告页id
+    fiction4: 'f07eea47f806ccb1c715a365d288dfa4', //原生小说广告页id
   },
   oppo: {
     nativeAd: '1655290', //原生

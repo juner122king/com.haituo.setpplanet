@@ -1,8 +1,15 @@
 <script>
 import TOPON_AD_SDK from '@topon/quick-app-sdk/app.js'//https://help.takuad.com/docs/HJu6VU# taku广告
+import sensors from 'pdt-mini-ui/utils/quickapp-track.js'
 module.exports = {
   onCreate() {
     console.info('Application onCreate');
+
+    sensors.init(this);
+    sensors.appLaunch()
+    this.$sensors = sensors;
+
+
     const hook2global = global.__proto__ || global
     const $router = require('@system.router')
     const $utils = require('./Common/helper/utils').default
@@ -14,9 +21,7 @@ module.exports = {
     const $ad = require("@service.ad")
     const $app = require("@system.app")
     const $device = require("@system.device")
-
     const $processData = require('./Common/helper/processData').default
-
     hook2global.$router = $router
     hook2global.$utils = $utils
     hook2global.$storage = $storage
@@ -28,6 +33,7 @@ module.exports = {
     hook2global.$app = $app
     hook2global.$device = $device
     hook2global.$processData = $processData
+
 
     try {
       const instance = new TOPON_AD_SDK({
@@ -52,9 +58,6 @@ module.exports = {
             ...that._def.dataApp.actiParam,
             openScreenStatusCode: onSplashStatusData.statusCode
           }
-
-          // $utils.buriedPointReport(that, 'SplashLaunch', '1636382', splashData) //新增启动埋点
-
           console.log(onSplashStatusData.statusCode);
           if (onSplashStatusData.statusCode == '-100') {
             console.log('这是-100');
@@ -71,8 +74,13 @@ module.exports = {
               clickCount: '0'
             }
             $utils.conversionUpload(that, ecpmParam, splashData)
+            $utils.buriedPointReport(that, 'SplashLaunch', '1653995', splashData) //新增启动埋点
+            sensors.pageShow({ channel: splashData.channelValue, formId: '1653995' })
 
-            $utils.buriedPointReport(that, 'SplashLaunch', '1636382', splashData) //新增启动埋点
+            try {
+              sensors.track('$WebShow', { title: "开屏广告-广告曝光-1653995" })
+            } catch (error) { }
+
 
 
           } else if (onSplashStatusData.statusCode == 100) {
@@ -91,6 +99,12 @@ module.exports = {
               clickCount: '1'
             }
             $utils.conversionUpload(that, ecpmParam, splashData)
+
+            try {
+              sensors.track('$WebShow', { title: "开屏广告-广告曝光-1653995" })
+            } catch (error) { }
+
+
           } else {
             let ecpm = ''
             try {

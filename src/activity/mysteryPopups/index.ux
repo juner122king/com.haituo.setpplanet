@@ -67,6 +67,9 @@ export default {
     this.getClickReviewControl()
   },
   onShow() {
+
+    let actiParam = this.$app.$def.dataApp.actiParam;
+    this.$app.$sensors.pageShow({ channel: actiParam.channelValue });
     // 生成一个1到3的随机数
     // this.showBgIndex = Math.floor(Math.random() * 3) + 1;
     // 如果计数大于1，表示是从其他页面返回，显示红包

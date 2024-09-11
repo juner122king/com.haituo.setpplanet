@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@topon/quick-app-sdk": "^4.2.25",
-    "apex-ui": "^1.9.5"
+    "apex-ui": "^1.9.5",
+    "pdt-mini-ui": "^1.5.4"
   }
 }
