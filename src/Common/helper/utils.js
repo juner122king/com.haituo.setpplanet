@@ -443,15 +443,14 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '', splashDa
       type: '',
       ...splashData,
     }
-
-    if (event !== 'Splash' && event != 'SplashLaunch') {
+    if (event !== 'Splash' && event !== 'SplashLaunch') {
       //不是开屏正常逻辑
       const isEnabled = these.$app.$def.dataApp.isEnabled
       if (event === 'AppLaunch' && isEnabled) {
-        console.log('取消启动上报', isEnabled)
+        // console.log('取消启动上报', isEnabled)
         return
       } else {
-        console.log('成功启动上报')
+        // console.log('成功启动上报')
         these.$app.$def.dataApp.isEnabled = true
       }
       checkPaem = {
@@ -460,29 +459,28 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '', splashDa
       }
     }
 
-
     console.log(checkPaem, '查看是否有参数')
-    if (Object.keys(checkPaem).length <= 0) {
-      //无值的情况直接删除
-      return
-    }
-
     let token = await $storage.get({
       key: 'AUTH_TOKEN_DATA',
     })
-    token = JSON.parse(token.data)
-    console.log('查看这个token', token)
-    const that = this
-    let adBrand = $ad.getProvider()
-    let urlQuery = convertToQueryString(checkPaem)
 
-    const eventData = {
-      click: '$Adclick',
-      Splash: '$Adclick',
-      AppLaunch: '$AppLaunch',
-      SplashLaunch: '$AppLaunch'
+    try {
+      token = JSON.parse(token.data)
+    } catch (error) {
+      console.log('无token状态')
+      token = {
+        userId: 'null',
+        appId: '',
+      }
     }
-
+    let adBrand = $ad.getProvider().toLowerCase()
+    let urlQuery = convertToQueryString(checkPaem)
+    const eventData = {
+      click: '$AdClick',
+      Splash: '$AdClick',
+      AppLaunch: '$AppLaunch',
+      SplashLaunch: '$AppLaunch',
+    }
     $device.getInfo({
       success: function (ret) {
         let phoninfo = ret
@@ -508,20 +506,36 @@ async function buriedPointReport(these, event = 'AppLaunch', adId = '', splashDa
             urlQuery: urlQuery,
           },
         }
-
-        console.log('查看上报参数', param)
+        console.log('查看埋点上报参数', param)
         $apis.task
           .postTrackCapture({ ...param })
           .then((res) => {
-            console.log('埋点上报成功', res)
+            console.log('上报成功', res)
           })
           .catch((err) => {
-            console.log(err, '埋点上传失败')
+            console.log(err, '上传失败')
           })
       },
     })
   } catch (error) {
-    console.log(error, '埋点上传错误')
+    console.log(error, '上传错误')
+    $apis.task
+      .postTrackCapture({
+        event: event === 'click' ? '$AdClick' : '$AppLaunch',
+        appId: 'SC_0001',
+        properties: {
+          analysis: {
+            adId: adId,
+            title: adId,
+          },
+        },
+      })
+      .then((res) => {
+        console.log('上报成功', res)
+      })
+      .catch((err) => {
+        console.log(err, '上传失败')
+      })
   }
 }
 
