@@ -169,6 +169,28 @@ async function conversionUpload(that, ecpmParam, splashData = {}) {
       .catch((err) => {
         console.log(err, '转换失败')
       })
+      
+    if (param.type === 'uc') {
+      console.log('UC上报参数==', param)
+      $apis.task
+        .postConvertUploadUC({
+          ...param,
+          ecpm: ecpmParam.ecpm,
+          adType: ecpmParam.adType,
+          adPositionId: ecpmParam.adPositionId,
+          clickCount: ecpmParam.clickCount,
+          pid: manufacturer || branch,
+          deviceId: param.oaid || '',
+          type: param.type,
+          oaid: oaid
+        })
+        .then((res) => {
+          console.log(res, 'UC上报成功')
+        })
+        .catch((err) => {
+          console.log(err, 'UC上报失败')
+        })
+    }
   } catch (error) {
     console.log('转换失败', error)
   }
