@@ -60,6 +60,28 @@
     {
       "name": "system.animate"
     }
+    ,
+    {
+      "name": "system.vibrator"
+    },
+    {
+      "name": "system.image"
+    },
+    {
+      "name": "system.battery"
+    },
+    {
+      "name": "system.brightness"
+    },
+    {
+      "name": "system.volume"
+    },
+    {
+      "name": "system.telecom"
+    },
+    {
+      "name": "system.keyguard"
+    }
   ],
   "config": {
     "data": {
@@ -125,10 +147,19 @@
       "activity/mysteryPopups": {
         "component": "index"
       },
+      "activity/mysteryPopups_taku": {
+        "component": "index"
+      },
       "activity/randomGiftPack": {
         "component": "index"
       },
       "activity/threaten": {
+        "component": "index"
+      },
+      "YlhAds/RewardVideoAd": {
+        "component": "index"
+      },
+      "YlhAds/SplashAd": {
         "component": "index"
       }
     }
@@ -217,6 +248,13 @@
         "statusBarBackgroundOpacity": 0,
         "titleBarBackgroundOpacity": 0
       },
+      "activity/mysteryPopups_taku": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
       "activity/randomGiftPack": {
         "titleBar": false,
         "menu": false,
@@ -225,6 +263,20 @@
         "titleBarBackgroundOpacity": 0
       },
       "activity/threaten": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
+      "YlhAds/RewardVideoAd": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
+      "YlhAds/SplashAd": {
         "titleBar": false,
         "menu": false,
         "statusBarImmersive": true,

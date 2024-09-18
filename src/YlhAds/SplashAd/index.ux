@@ -1,0 +1,32 @@
+<import name="ylh-splash-ad" src="ylh-quick-app-ad-sdk/ads/SplashAd"></import>
+
+<template>
+  <div class="splash">
+    <ylh-splash-ad></ylh-splash-ad>
+  </div>
+</template>
+
+<script>
+export default {
+
+  onInit() {
+  },
+
+  onShow() {
+    this.$broadcast('onPageShow');
+  },
+
+  onHide() {
+    this.$broadcast('onPageHide');
+  },
+  onBackPress() {
+      return true;
+  },
+  onMenuPress() {
+      return true;
+  }
+}
+</script>
+
+<style>
+</style>

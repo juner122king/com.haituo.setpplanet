@@ -1,0 +1,33 @@
+<import name="ylh-reward-video-ad" src="ylh-quick-app-ad-sdk/ads/RewardVideoAd"></import>
+<template>
+    <div class="reward">
+        <ylh-reward-video-ad></ylh-reward-video-ad>
+    </div>
+</template>
+<script>
+export default {
+    data() {
+        return {
+        }
+    },
+    onInit() {
+    },
+
+    onReady() {},
+    onShow() {
+        this.$broadcast('onPageShow');
+    },
+    onHide() {
+        this.$broadcast('onPageHide');
+    },
+    onBackPress() {
+        return true;
+    },
+    onMenuPress() {
+        return true;
+    }
+}
+</script>
+
+<style>
+</style>
