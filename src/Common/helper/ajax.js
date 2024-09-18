@@ -6,184 +6,218 @@ import $router from '@system.router'
 const config = require('../../config').default
 const getUserId = async () => {
   let userId = await $device.getUserId()
-  return userId.data.userId;
-};
 
+  return userId.data.userId
+}
 
 const quit = () => {
   $prompt.showDialog({
     title: '警告',
-    message: "您已注销账号,请退出。",
-    buttons: [{ text: '退出', color: '#333333' }],
+    message: '您已注销账号，请退出。',
+    buttons: [
+      {
+        text: '退出',
+        color: '#333333',
+      },
+    ],
     success: function (data) {
-      $router.push({ uri: "Page_login" })
+      $router.push({
+        uri: 'Page_login',
+      })
     },
-    cancel: function () { console.log("cancel"); }
+    cancel: function () {
+      console.log('cancel')
+    },
   })
 }
 
 const getTokenData = () => {
   return new Promise(async (resolve, reject) => {
-    const example = require('./apis/example.js').default;
-    const deviceNum = await getUserId();
-    console.log(`getTokenData()---->deviceNum=${deviceNum}`);
-    console.log('是否触发的这里');
-    example.toLogin({
-      loginType: "DEVICE",
-      appId: 'SC_0001',
-      deviceNum,
-      loginAccount: deviceNum
-    }).then(data => {
-      console.log('走的成功回调');
-      resolve(data);
-    }).catch(err => {
-      console.log(err, '失败回调');
-      try {
-        if (JSON.parse(err).code === '310001') {
-          console.log('进来了')
-          quit()
+    let branch = $ad.getProvider().toLowerCase()
+    const example = require('./apis/example.js').default
+    const deviceNum = await getUserId()
+    // console.log('查看这个channel值', actiParam)
+    // console.log('***************', deviceNum)
+    // let cid =
+    //   (
+    //     await $storage.get({
+    //       key: 'cid',
+    //     })
+    //   ).data || ''
+    example
+      .toLogin({
+        loginType: 'DEVICE',
+        appId: 'SC_0001',
+        deviceNum,
+        loginAccount: deviceNum,
+        pid: branch.toLowerCase(), //应用平台
+      })
+      .then((data) => {
+        resolve(data)
+      })
+      .catch((err) => {
+        console.log(err, '获取token报错')
+        try {
+          if (JSON.parse(err).code === '310001') {
+            quit()
+          }
+        } catch (error) {
+          console.log(error, '查看获取报错')
         }
-      } catch (error) {
-        console.log(error, '查看获取报错');
-      }
-      reject(err)
-    })
-  });
-};
 
+        reject(err)
+      })
+  })
+}
 
-
-
-let isRefreshing = false; // 是否正在请求刷新token的接口
-const refreshSubscribers = []; // 存储请求的数组
-const subscribeTokenRefresh = cb => {
+let isRefreshing = false // 是否正在请求刷新token的接口
+const refreshSubscribers = [] // 存储请求的数组
+const subscribeTokenRefresh = (cb) => {
   // 将所有的请求都push到数组中,其实数组是[function(token){}, function(token){},...]
-  refreshSubscribers.push(cb);
-};
-const onRrefreshed = token => {
+  refreshSubscribers.push(cb)
+}
+const onRrefreshed = (token) => {
   // 数组中的请求得到新的token之后自执行，用新的token去请求数据
-  refreshSubscribers.map(cb => cb(token));
-};
-const isAccessTokenExpired = authData => {
+  refreshSubscribers.map((cb) => cb(token))
+}
+const isAccessTokenExpired = (authData) => {
   // 判断当前token是否过期
   if (new Date().getTime() - authData.expireAt > 10000 * 60) {
-    return true;
+    return true
   }
-  return false;
-};
+  return false
+}
 
-const request = options => {
+const request = (options) => {
   return new Promise(async (resolve, reject) => {
     const {
       method,
       url,
       data,
       headers = {},
-    } = options;
-    const authData = await $storage.get({
-      key: 'AUTH_TOKEN_DATA'
-    }) || {}
-    const accessToken = authData.data ? JSON.parse(authData.data).accessToken : ''
-    if (isAccessTokenExpired(authData) || !accessToken) {
-      if (!options.url.includes("qa/mini/basic/user/login")) {
-        if (!isRefreshing) {
-          isRefreshing = true;
-          getTokenData().then(async res => {
-            res = JSON.parse(res)
-            isRefreshing = false;
-            if (res.code === "000000") {
-              headers.Authorization = res.data.accessToken;
-              await $storage.set({
-                key: "AUTH_TOKEN_DATA",
-                value: JSON.stringify(res.data)
-              })
-              console.log('res.data.accessToken', res.data.accessToken);
-              onRrefreshed(res.data.accessToken);
-            }
-          })
-            .catch(err => {
-              isRefreshing = false;
-            });
+      isforeignAddress = false,
+    } = options
+    const authData =
+      (await $storage.get({
+        key: 'AUTH_TOKEN_DATA',
+      })) || {}
 
+    let accessToken = ''
+    let userId = ''
+    try {
+      if (authData.data) {
+        const parsedData = JSON.parse(authData.data)
+        accessToken = parsedData.accessToken || ''
+        userId = parsedData.userId || ''
+      } else {
+        accessToken = ''
+        userId = ''
+      }
+    } catch (error) {
+      console.log(error, '获取data有问题')
+    }
+    if (isAccessTokenExpired(authData) || !accessToken) {
+      if (!options.url.includes('qa/mini/basic/user/login')) {
+        if (!isRefreshing) {
+          isRefreshing = true
+          getTokenData()
+            .then(async (res) => {
+              let resData = ''
+              try {
+                resData = JSON.parse(res)
+              } catch (error) {
+                console.log(error, '获取token报错')
+                getTokenData()
+              }
+              isRefreshing = false
+              if (resData.code === '000000') {
+                headers.Authorization = resData.data.accessToken
+                await $storage.set({
+                  key: 'AUTH_TOKEN_DATA',
+                  value: JSON.stringify(resData.data),
+                })
+                console.log(
+                  'resData.data.accessToken',
+                  resData.data.accessToken
+                )
+                onRrefreshed(resData.data.accessToken)
+              }
+            })
+            .catch((err) => {
+              isRefreshing = false
+            })
         }
         let retry = new Promise(() => {
-          subscribeTokenRefresh(token => {
-            headers.Authorization = token; // 用最新token请求数据
-            return request(options)
-              .then(resolve)
-              .catch(reject);
-          });
-        });
-        return retry;
+          subscribeTokenRefresh((token) => {
+            headers.Authorization = token // 用最新token请求数据
+            return request(options).then(resolve).catch(reject)
+          })
+        })
+        return retry
       }
     }
-    headers.Authorization = accessToken || '';
-
+    headers.Authorization = accessToken || ''
+    if (url.includes('/qa/track/capture')) {
+      options.data.userId = userId
+      try {
+        if (!options.data.distinct_id) {
+          let buriedPointData = await $storage.get({
+            key: 'sensorsdata2015_quickapp',
+          })
+          if (buriedPointData && buriedPointData.data) {
+            buriedPointData = JSON.parse(buriedPointData.data)
+          } else {
+            throw new Error('Invalid buriedPointData')
+          }
+          options.data.distinct_id = buriedPointData.distinct_id
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
     $fetch.fetch({
-      // url: 'https://test.ipandata.com' + url,
-      url: config.BASEHOST + url,
+      url: isforeignAddress ? url : config.BASEHOST + url,
       method,
       data,
       header: {
-        "content-type": "application/json", //默认值
-        ...headers
+        'content-type': 'application/json', //默认值
+        ...headers,
       },
-      // success: function (res) {
-      //   const data = res.data
-      //   if (data.code === "000000" || JSON.parse(data).code === "000000") {
-      //     resolve(url.includes("qa/mini/basic/user/login") ? res.data : JSON.parse(res.data));
-      //   } else {
-      //     if (data.code === "300002") {
-      //       $storage.delete({
-      //         key: 'AUTH_TOKEN_DATA'
-      //       })
-      //       request(options)
-      //         .then(resolve)
-      //         .catch(reject);
-      //     } else {
-      //       reject(res.data);
-      //     }
-      //   }
-      // },
-
       success: function (res) {
         try {
-          const data = res.data;
-
-          // 尝试解析 JSON 数据，如果解析失败，则会抛出错误
-          const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
-
-          if (parsedData.code === "000000") {
-            resolve(url.includes("qa/mini/basic/user/login") ? data : parsedData);
+          const data = res.data
+          if (data.code === '000000' || JSON.parse(data).code === '000000') {
+            try {
+              resolve(
+                url.includes('qa/mini/basic/user/login')
+                  ? res.data
+                  : JSON.parse(res.data)
+              )
+            } catch (error) {
+              console.log('返回报错')
+              resolve(res.data)
+            }
           } else {
-            if (parsedData.code === "300002") {
-              $storage.delete({ key: 'AUTH_TOKEN_DATA' });
-              request(options)
-                .then(resolve)
-                .catch(reject);
+            const resData = JSON.parse(data)
+            if (resData.code === '300002') {
+              $storage.delete({
+                key: 'AUTH_TOKEN_DATA',
+              })
+              request(options).then(resolve).catch(reject)
+            } else if (resData.code === '310001') {
+              quit()
             } else {
-              reject(data);
+              reject(res.data)
             }
           }
-        } catch (e) {
-          console.error("Error parsing JSON or handling code: ", e);
-
-          // 检查是否返回的是 HTML，而不是 JSON
-          if (typeof res.data === 'string' && res.data.startsWith('<html>')) {
-            reject("Server returned an HTML page instead of JSON. Possible incorrect URL or server error.");
-          } else {
-            reject("Error parsing JSON or handling code: " + e.message);
-          }
-        }
+        } catch (error) {}
       },
-
       fail: function (err) {
-        reject(err);
+        reject(err)
       },
-      complete: function (res) {
-      }
-    });
-  });
-};
+      complete: function (res) {},
+    })
+  })
+}
 
-export default request;
+export default request

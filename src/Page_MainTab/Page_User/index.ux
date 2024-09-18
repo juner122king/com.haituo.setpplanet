@@ -224,6 +224,7 @@ module.exports = {
       uri: 'Page_about',
       // uri:'pages/luckyBagOpen'
       // uri:'activity/mysteryPopups'
+      //  uri:'activity/mysteryPopups_taku'
       // uri: 'pages/advertisingCampaigns'
       // uri: 'activity/randomGiftPack'
       //  uri: 'activity/threaten'
