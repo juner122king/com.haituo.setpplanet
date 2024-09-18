@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.1.22",
-  "versionCode": 122,
+  "versionName": "1.1.23",
+  "versionCode": 123,
   "permissions": [
     {
       "origin": "*"
@@ -124,6 +124,12 @@
       },
       "activity/mysteryPopups": {
         "component": "index"
+      },
+      "activity/randomGiftPack": {
+        "component": "index"
+      },
+      "activity/threaten": {
+        "component": "index"
       }
     }
   },
@@ -210,8 +216,21 @@
         "statusBarImmersive": true,
         "statusBarBackgroundOpacity": 0,
         "titleBarBackgroundOpacity": 0
+      },
+      "activity/randomGiftPack": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
+      "activity/threaten": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
       }
-      
     }
   }
 }

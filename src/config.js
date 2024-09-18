@@ -9,7 +9,13 @@ const adCodeData = {
     fiction2: '0e0b5e6f0da646adbc4d8afab817a275', //原生小说广告页id
     fiction3: '808847b949c54e3ba325119e1f58ca1f', //原生小说广告页id
     fiction4: 'edceb5351a9849deb3f7b92eba34ad18', //原生小说广告页id
-    interstitialAdUnitId: '572c41d7e93945ca8e9db8150df89aed'//插屏广告位id
+    interstitialAdUnitId: '572c41d7e93945ca8e9db8150df89aed',//插屏广告位id
+
+    taku: {
+      tableScreenAd: 'b66aaf2616af0d',
+      stimulateAd: 'b66a992c048a52',
+    },
+    openTheLuckyBag: '',//拆福袋原生
   },
   xiaomi: {
     nativeAd: '875427e86385392629207d9e11b0683c', //原生
@@ -20,6 +26,10 @@ const adCodeData = {
     fiction2: 'afa44530568a53149a6e35be096db039', //原生小说广告页id
     fiction3: 'd4172189bd20e7a5dcc3e5abc66a3008', //原生小说广告页id
     fiction4: 'f07eea47f806ccb1c715a365d288dfa4', //原生小说广告页id
+    taku: {
+      stimulateAd: 'b66c59f391f1a8',
+    },
+    openTheLuckyBag: '526963ec817795db72e4ab3a14132da8',
   },
   oppo: {
     nativeAd: '1655290', //原生
@@ -30,6 +40,10 @@ const adCodeData = {
     fiction2: '1653992', //原生小说广告页id
     fiction3: '1653993', //原生小说广告页id
     fiction4: '1653994', //原生小说广告页id
+    taku: {
+      stimulateAd: 'b66bea8d66e4d2',
+    },
+    openTheLuckyBag: '1655290',
   },
   OPPO: {
     nativeAd: '1655290', //原生
@@ -40,6 +54,10 @@ const adCodeData = {
     fiction2: '1653992', //原生小说广告页id
     fiction3: '1653993', //原生小说广告页id
     fiction4: '1653994', //原生小说广告页id
+    taku: {
+      stimulateAd: 'b66bea8d66e4d2',
+    },
+    openTheLuckyBag: '1655290',
   },
   HUAWEI: {
     banner: 'i8zsc3gcbg',
@@ -78,6 +96,7 @@ const appConfig = {
 }
 
 export default {
+  appId: 'SC_0001',
   adCodeData,
   publicKey,
   privateKey,

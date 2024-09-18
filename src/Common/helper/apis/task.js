@@ -133,14 +133,6 @@ const getClickReviewControl = (data) => {
   })
 }
 
-// 获取点击控制审核状态
-const adConversionImg = (path) => {
-  return request({
-    method: 'GET',
-    url: `/qa/mini/basic/adConversionImg/img/${path}`,
-  })
-}
-
 
 let task = {
   getCompleteCount,
@@ -156,8 +148,7 @@ let task = {
   getConversionlicks,
   postTrackCapture,
   getClickReviewControl,
-  postConvertUploadUC,
-  adConversionImg
+  postConvertUploadUC
 }
 
 export default task
