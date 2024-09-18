@@ -151,6 +151,17 @@ async function conversionUpload(that, ecpmParam, splashData = {}) {
       }
     }
 
+    let buriedPointData = await $storage.get({
+      key: 'sensorsdata2015_quickapp',
+    })
+    try {
+      buriedPointData = JSON.parse(buriedPointData.data)
+    } catch (error) {
+      buriedPointData = {
+        distinct_id: '',
+      }
+    }
+
     $apis.task
       .postConvertUpload({
         ...param,
@@ -161,7 +172,8 @@ async function conversionUpload(that, ecpmParam, splashData = {}) {
         pid: manufacturer || branch,
         deviceId: param.oaid || '',
         type: param.type,
-        oaid: oaid
+        oaid: oaid,
+        distinctId: buriedPointData.distinct_id
       })
       .then((res) => {
         console.log(res, '转换成功')
@@ -169,7 +181,7 @@ async function conversionUpload(that, ecpmParam, splashData = {}) {
       .catch((err) => {
         console.log(err, '转换失败')
       })
-      
+
     if (param.type === 'uc') {
       console.log('UC上报参数==', param)
       $apis.task
@@ -182,7 +194,8 @@ async function conversionUpload(that, ecpmParam, splashData = {}) {
           pid: manufacturer || branch,
           deviceId: param.oaid || '',
           type: param.type,
-          oaid: oaid
+          oaid: oaid,
+          distinctId: buriedPointData.distinct_id
         })
         .then((res) => {
           console.log(res, 'UC上报成功')
