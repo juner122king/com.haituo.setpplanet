@@ -42,8 +42,9 @@ const adCodeData = {
     fiction4: '1653994', //原生小说广告页id
     taku: {
       stimulateAd: 'b66bea8d66e4d2',
-      redpack1:'b66ea3f1fc81b6'
+      redpack1: 'b66ea3f1fc81b6'
     },
+    nativeTaku: 'b66ea3f1fc81b6',//JB-OPPO-红包弹出层1
     openTheLuckyBag: '1655290',
   },
   OPPO: {
@@ -58,6 +59,7 @@ const adCodeData = {
     taku: {
       stimulateAd: 'b66bea8d66e4d2',
     },
+    nativeTaku: 'b66ea3f1fc81b6',//JB-OPPO-红包弹出层1
     openTheLuckyBag: '1655290',
   },
   HUAWEI: {

@@ -95,13 +95,12 @@ module.exports = {
 	},
 	onInit() {
 		$apis.user.wealentry().then((res) => {
-			console.log('福利入口信息----------------->' + JSON.stringify(res));
+			// console.log('福利入口信息----------------->' + JSON.stringify(res));
 			this.isOpenstrapLayer = res.data.isOpenActivityBootstrapLayer
 		})
 
 	},
 	onShow(options) {
-		console.log('主页 onShow()----------------->');
 		this.getUser();
 		// //显示banner 广告高度，底部缩进
 		// $utils.showBannerAd()
@@ -112,7 +111,7 @@ module.exports = {
 
 	getUser() {
 		$apis.user.getUserInfo().then((res) => {
-			console.log('用户信息----------------->' + JSON.stringify(res));
+			// console.log('用户信息----------------->' + JSON.stringify(res));
 			this.$app.$def.dataApp.userData.loginPhone = res.data.loginPhone
 			this.$app.$def.dataApp.userData.userId = res.data.userId
 			this.$app.$def.dataApp.userData.balance = res.data.balance

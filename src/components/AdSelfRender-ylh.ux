@@ -1,0 +1,112 @@
+<import name='ylh-ad' src='ylh-quick-app-ad-sdk/ads/YlhAd'></import>
+<import name='ylh-ad-clickable-area' src='ylh-quick-app-ad-sdk/ads/YlhAdClickableArea'></import>
+
+<template>
+  <div
+    class="native-ad-container"
+    style="width: 750px;
+    height:100%;
+    min-height: {{ adType === 'splash' ? '100vh' : '220px' }}"
+  >
+    <ylh-ad
+      class="ad-wrapper"
+      ad-id="{{ adData.id }}"
+      if="{{ adData.id  }}"
+      on-ad-click="onAdClick"
+      on-ad-expose="onAdExpose"
+      on-app-status-change="onAppStatusChange"
+    >
+      <ylh-ad-clickable-area ad-id="{{ adData.id }}">
+        <div class="click-button">
+          <image src="{{adData.adLogo}}" class="ams-logo"></image>
+        </div>  
+      </ylh-ad-clickable-area>
+    </ylh-ad>
+  </div>
+</template>
+
+<script>
+import ad from "@service.ad";
+import device from "@system.device";
+
+export default {
+  props: {
+    // 当前广告
+    adData: {
+      type: Object,
+      required: true,
+      default: null,
+    },
+    adType: {
+      type: String,
+      required: true,
+      default: 'native',
+    }
+  },
+  data() {
+    return {
+      provider: '',
+      adContent: {}
+    }
+  },
+  onInit() {
+    this.provider = ad.getProvider() || '';
+  },
+  onAdClick() {
+    console.log('广告点击了:')
+
+  },
+  onAdExpose() {
+    console.log('广告曝光')
+  }
+
+}
+</script>
+
+<style lang="less">
+.native-ad-container {
+  width: 100%;
+  flex-direction: column;
+  position: fixed;
+}
+
+.ad-wrapper {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(32, 50, 218, 0.5);
+}
+
+.native-ad--outer {
+  flex-direction: column;
+}
+
+.ad-content-main {
+  flex: 1;
+  padding-left: 12px;
+}
+
+.btn-txt {
+  width: 100%;
+  font-size: 24px;
+  color: #ffffff;
+  background-color: #2265ff;
+  border-radius: 20px;
+  height: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.click-button {
+  width: 100%;
+  height: 90px;
+  margin-top: 10px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+
+  .ams-logo {
+    width: 500px;
+    height: 200px;
+  }
+}
+</style>

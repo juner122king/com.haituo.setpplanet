@@ -130,7 +130,7 @@
     },
     getUserInfo: function () {
       $apis.user.getUserInfo().then((res) => {
-        console.log('查看用户信息 ', res.data);
+        // console.log('查看用户信息 ', res.data);
         this.infoData = res.data;
         this.showType = res.data.extInfo.alipayAccount ? "setting" : "create"
       })

@@ -271,7 +271,7 @@ module.exports = {
 
   getUser() {
     $apis.user.getUserInfo().then((res) => {
-      console.log('用户信息----------------->' + JSON.stringify(res));
+      // console.log('用户信息----------------->' + JSON.stringify(res));
       this.userData = res.data
     })
   },

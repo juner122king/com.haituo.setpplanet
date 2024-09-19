@@ -1,45 +1,85 @@
+
 <import name="topon-ad" src="@topon/quick-app-sdk/placement.ux"></import>
+<!-- 自渲染示例组件，请根据自身业务实现自渲染组件 -->
+<import name="ad-self-render" src="../../components/AdSelfRender-ylh.ux"></import>
+<import name='ylh-ad' src='ylh-quick-app-ad-sdk/ads/YlhAd'></import>
+<import name='ylh-ad-clickable-area' src='ylh-quick-app-ad-sdk/ads/YlhAdClickableArea'></import>
+
 <template>
-  <div class="wrapper" onclick="adClick">
-    <div class="{{showRedPack?'coner':'conerno'}}" onclick="adClick">
+  <div
+    class="wrapper"
+    onclick="clickPopover"
+    style="{{`background-image: url(${bgImg})`}}"
+  >
+    <div class="{{showRedPack?'coner':'conerno'}}" onclick="clickPopover">
       <image
         if="showRedPack"
         class="img-popover"
-        src="{{`/Common/img/ad/kai${showBgIndex}.png`}}"
+        src="{{imageList[showBgIndex]}}"
       ></image>
       <div class="Popover-2" else>
         <image class="btn" src="/Common/img/ad/bt_cpd.png"></image>
       </div>
-      <image
+      <!-- <image
         if="showRedPack"
         class="close"
         src="/Common/img/ad/icon_x.png"
-      ></image>
+      ></image> -->
     </div>
     <div class="complaint" onclick="complaint"></div>
-    <!-- <ad
-      adId="{{adList.adId}}"
-      class="box"
-      show="{!!adList.adId}}"
-      onerror="error"
-      onadclick="adClick"
-      onadclose="close"
-      type="native"
-      closeBtnPosition="left-top"
-      if="{{hasAdList && !isAudit}}"
-      onadshow="adSuccShow"
-    >
-    </ad> -->
-
-    <topon-ad
-      id="topon-ad-{{placementId}}"
-      placement-id="{{placementId}}"
-      config="{{config}}"
-      @ad-load="handleAdLoad"
-      @ad-close="handleAdClose"
-      @ad-error="handleAdError"
-    >
-    </topon-ad>
+    <block if="key != 'nativeTaku'">
+      <ad
+        adId="{{adList.adId}}"
+        class="box"
+        show="{!!adList.adId}}"
+        onerror="error"
+        onadclick="adClick"
+        onadclose="close"
+        type="native"
+        closeBtnPosition="left-top"
+        if="{{hasAdList && !isAudit}}"
+        onadshow="adSuccShow"
+      >
+      </ad>
+    </block>
+    <block else>
+      <topon-ad
+        id="topon-ad-{{adId}}"
+        placement-id="{{adId}}"
+        class="box"
+        config="{{config}}"
+        @ad-load="handleAdLoad"
+        @ad-show="handleAdShow"
+        @ad-close="handleAdClose"
+        @ad-click="handleAdClick"
+        @ad-error="handleAdError"
+      >
+      </topon-ad>
+      <!-- 信息流自渲染广告 物料展示示例代码，ad-self-render组件于限与该demo展示使用，请根据业务所需完成自己的ad-self-render组件包括但不限于样式、广告要素、交互事件等的开发 -->
+      <block if="adData && displayed && isSelfRendering">
+        <!-- <ad-self-render
+          ad-data="{{adData}}"
+          ad-type="native"
+          @cus-show="handleReportShow"
+          @cus-click="handleReportClick"
+        ></ad-self-render> -->
+        <block if="currentAd.nwFirmId===64">
+          <div class="native-ad-container" style="width: 750px;height:100%;">
+            <ylh-ad
+              class="ad-wrapper"
+              ad-id="{{ adData.id }}"
+              if="{{ adData.id  }}"
+              on-ad-click="onAdClick"
+              on-ad-expose="onAdExpose"
+            >
+              <ylh-ad-clickable-area ad-id="{{ adData.id }}">
+                <div class="click-button"></div>
+              </ylh-ad-clickable-area>
+            </ylh-ad>
+          </div>
+        </block>
+      </block>
+    </block>
   </div>
 </template>
 
@@ -53,21 +93,34 @@ export default {
     adId: '',
     adList: "",
     hasAdList: true,
-    showBgIndex: 1, // 默认显示第一张图片，
+    showBgIndex: 0, // 默认显示第一张图片，
     maxNum: 5,//最多显示到第5张
     showRedPack: false, // 控制红包显示
     visitCount: 0, // 访问计数器
     isAudit: false,
-    placementId: 'b66bea8d66e4d2', // 请替换为您在topon 开发者后台上的placementId
-    config: {
-      entry: 'Page_MainTab', // 开屏广告结束后打开的第一个页面
-      timeout: 30000 // 默认0（走默认，开屏5秒，其他300秒），单位毫秒
-    },
+
+
+    key: '',//广告位key值 
     loaded: false,
     isSelfRendering: false, // 是否自渲染，通过getAd获取
+    isGetAd: false,
+    config: {
+      entry: '/Page_MainTab', // 开屏广告结束后打开的第一个页面
+      timeout: 30000 // 默认0（走默认，开屏5秒，其他300秒），单位毫秒
+    },
+
+    adData: null, // 广告物料，通过getAd获取
+    displayed: false, // 自渲染广告组件展示控制
+    currentAd: "",//广告来源数据
+    bgImg: '', //背景图
+    imageList: [
+      '/Common/img/ad/kai1.png',
+      '/Common/img/ad/kai2.png',
+      '/Common/img/ad/kai3.png',
+      '/Common/img/ad/kai4.png',
+      '/Common/img/ad/kai5.png',
+    ], //弹窗图片
   },
-
-
   onInit: function (e) {
     if (Object.keys(e).length > 0) {
       console.log('进来了', e);
@@ -84,35 +137,31 @@ export default {
     this.branch = branch;
     this.adObj = adCodeData[branch]
 
+    // 检查是否自动打开红包展示
     this.getClickReviewControl()
 
-
-
+    // 获取图片数据
+    this.getImageList()
   },
   onShow() {
-
     let actiParam = this.$app.$def.dataApp.actiParam;
     this.$app.$sensors.pageShow({ channel: actiParam.channelValue });
-    // 生成一个1到3的随机数
-    // this.showBgIndex = Math.floor(Math.random() * 3) + 1;
     // 如果计数大于1，表示是从其他页面返回，显示红包
     if (this.visitCount > 0) {
       this.showRedPack = true
     }
     if (this.adObj) {
-      let ids = ['fiction1', 'fiction2', 'fiction3', 'nativeAd']
-      let key = ids[Math.floor(Math.random() * 4)];
-      this.adId = this.adObj[key]
+      let ids = ['fiction1', 'nativeTaku', 'fiction2', 'nativeTaku', 'fiction3']
+      this.key = ids[this.showBgIndex ];
+      this.adId = this.adObj[this.key]
+      console.log(this.adId, '查看广告id编码')
 
-      this.adId = this.placementId
+      if (this.key === 'nativeTaku') {//taku广告位
+        this.handleLoadAd()//加载taku广告
+      } else {
+        this.preloadAd()
+      }
 
-      console.log('placementId', this.placementId);
-
-
-
-      this.preloadAd()
-
-      this.handleLoadAd()//加载TUKU广告
     }
   },
   clickPopover(evt) {  //关闭弹窗 查看透明层；
@@ -123,7 +172,7 @@ export default {
     }
     if (this.showRedPack) {
       setTimeout(() => {
-        this.showBgIndex = this.showBgIndex < 5 ? this.showBgIndex + 1 : 1;
+        this.showBgIndex = this.showBgIndex < 5 ? this.showBgIndex + 1 : 0;
       }, 100)
     }
     this.showRedPack = false;
@@ -134,94 +183,10 @@ export default {
       return
     }
 
-
-    this.handleIsReady()
-
-
-
-  },
-  // 广告源Load成功回调
-  handleAdLoad(e) {
-    console.log('demo接收load回调', e)
-    this.loaded = true
-  },
-
-  // load加载广告【首次挂载组件时，sdk会自动加载一次广告，无需调用.load()方法】
-  handleLoadAd() {
-    console.log('TUKU执行Load')
-
-    this.isGetAd = false
-    this.displayed = false
-    this.adData = null
-    const placement = this.getSdkElement();
-    if (placement.load) {
-      placement.load()
-    }
-  },
-  handleAdClick(e) {
-    console.log('demo接收click回调', e)
-  },
-  handleIsReady() {
-    const placement = this.getSdkElement();
-    if (placement.isReady) {
-      const isReady = placement.isReady()
-      console.log('TUKU,isReady?: ' + isReady)
-      this.handleGetAd()
-    }
-  },
-  // 获取广告素材
-  handleGetAd() {
-    if (!this.loaded) {
-      console.log('请等待加载完成后再获取数据')
-      return
-    }
-
-    this.displayed = false
-    this.adData = null
-    const placement = this.getSdkElement()
-    if (placement) {
-      const currentAd = placement.getAd()
-      console.log('currentAd', currentAd)
-      if (!currentAd) {
-        return;
-      }
-      // 判断是否为自渲染广告
-      this.isSelfRendering = currentAd.isSelfRendering
-      // 若是自渲染
-      if (currentAd.isSelfRendering) {
-        this.adData = currentAd.ad
-      } else {
-        this.adData = null
-        this.displayed = false
-      }
-      this.isGetAd = true
-      this.handleDisplayAd()
-    }
-
-  },
-  // 展示广告广告
-  handleDisplayAd() {
-    console.log('展示广告广告', '执行Show')
-    if (this.isSelfRendering) {
-      this.displayed = true
-    } else {
-      const placement = this.getSdkElement();
-      if (placement.show) {
-        placement.show()
-      }
-    }
-  },
-  handleAdError(e) {
-    console.log('demo接收error回调', e)
-  },
-  // 获取广告组件实例
-  getSdkElement() {
-    return this.$child(`topon-ad-${this.placementId}`)
   },
   preloadAd() {
     try {
       const that = this;
-      console.log(this.adId, '查看广告id编码');
       require('@service.ad').preloadAd({
         adUnitId: this.adId, // 原生信息流广告广告位id
         type: 'native', // 原生信息流广告
@@ -259,7 +224,6 @@ export default {
     }
   },
   adClick() {
-    console.log('adClick', '广告点击了')
     // 每次显示页面时，增加一次计数
     this.visitCount++;
     this.conversionUp('1')
@@ -269,10 +233,23 @@ export default {
     this.preloadAd()
     this.clickPopover()
 
+  },
+  onAdClick() { //Taku点击回调
+    console.log('TAku广告点击了:')
+    // 每次显示页面时，增加一次计数
+    this.visitCount++;
 
+    let takuadid = this.currentAd.nwUnitId
 
+    this.conversionUpTaku('1')
+    $utils.buriedPointReport(this, 'click', takuadid)
 
   },
+  onAdExpose() {
+    console.log('TAku广告曝光')
+    this.conversionUpTaku('0')
+  },
+
   adSuccShow(e) {
     console.log(e, '广告成功展示');
     this.conversionUp('0')
@@ -287,6 +264,18 @@ export default {
     console.log('竞价相关参数', ecpmParam);
     $utils.conversionUpload(this, ecpmParam)
   },
+  conversionUpTaku(clickCount) {
+    let ecpmParam = {  //竞价相关参数
+      ecpm: this.currentAd.cyEcpm * 100,
+      adType: 'NATIVE',
+      adPositionId: this.currentAd.nwUnitId,
+      clickCount: clickCount
+    }
+    console.log('竞价相关参数2', ecpmParam);
+    $utils.conversionUpload(this, ecpmParam)
+  },
+
+
   error(e) {
     console.log(e, '广告返回失败');
     this.preloadAd()
@@ -316,8 +305,117 @@ export default {
     $router.push({
       uri: 'feedback'
     })
-  }
+  },
 
+  // 广告源Load成功回调
+  handleAdLoad(e) {
+    console.log('demo接收load回调', e)
+    this.loaded = true
+
+    this.handleGetAd() //获取广告素材
+  },
+
+  // 广告源Show成功回调
+  handleAdShow(e) {
+    console.log('demo接收show回调', e)
+  },
+
+  // 广告源Close成功回调
+  handleAdClose(e) {
+    console.log('demo接收close回调', e)
+  },
+
+  handleAdClick(e) {
+    console.log('demo接收click回调', e)
+  },
+
+  handleAdError(e) {
+    console.log('demo接收error回调', e)
+  },
+  // 展示广告广告
+  handleDisplayAd() {
+    if (this.isSelfRendering) {
+      this.displayed = true
+    } else {
+      const placement = this.getSdkElement();
+      if (placement.show) {
+        placement.show()
+      }
+    }
+  },
+
+  // load加载广告【首次挂载组件时，sdk会自动加载一次广告，无需调用.load()方法】
+  handleLoadAd() {
+    /**
+     * 重置
+     */
+    this.isGetAd = false
+    this.displayed = false
+    this.adData = null
+    const placement = this.getSdkElement();
+    if (placement.load) {
+      placement.load()
+    }
+  },
+
+  handleIsReady() {
+    const placement = this.getSdkElement();
+    if (placement.isReady) {
+      console.log('TAKU广告已准备好')
+      // 展示广告广告
+      this.handleDisplayAd()
+    } else {
+      console.log('TAKU广告未准备好')
+    }
+  },
+
+  // 获取广告素材
+  handleGetAd() {
+    if (!this.loaded) {
+      console.log('请等待加载完成后再获取数据')
+      return
+    }
+    this.displayed = false
+    this.adData = null
+    const placement = this.getSdkElement()
+    if (placement) {
+      this.currentAd = placement.getAd()
+      console.log('currentAd', this.currentAd)
+      console.log('广告平台ID', this.currentAd.nwFirmId)
+      if (!this.currentAd) {
+        return;
+      }
+      // 判断是否为自渲染广告
+      this.isSelfRendering = this.currentAd.isSelfRendering
+      // 若是自渲染
+      if (this.currentAd.isSelfRendering) {
+        this.adData = this.currentAd.ad
+      } else {
+        this.adData = null
+        this.displayed = false
+      }
+      this.isGetAd = true
+
+      this.handleIsReady()
+
+    }
+
+  },
+  // 获取广告组件实例
+  getSdkElement() {
+    return this.$child(`topon-ad-${this.adId}`)
+  },
+  //获取图片数组
+  getImageList() {
+    $apis.activity
+      .getAdConversionImg({ path: 'randomGiftPack' })
+      .then((res) => {
+        console.log(res, '查看自定义广告详情')
+        let result = res.data
+        this.imageList = result.imgData
+        this.bgImg = result.bgImg
+      })
+  },
 }
 </script>
 
@@ -389,5 +487,30 @@ export default {
   margin-top: 50px;
   width: 80px;
   height: 80px;
+}
+
+.ad-wrapper {
+  width: 100%;
+  height: 100%;
+  /* background-color: rgba(32, 50, 218, 0.2); */
+}
+.native-ad-container {
+  width: 100%;
+  flex-direction: column;
+  position: fixed;
+}
+
+.click-button {
+  width: 100%;
+  height: 90px;
+  margin-top: 10px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+
+  .ams-logo {
+    width: 500px;
+    height: 200px;
+  }
 }
 </style>

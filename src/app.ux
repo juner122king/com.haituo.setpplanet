@@ -1,6 +1,8 @@
 <script>
 import TOPON_AD_SDK from '@topon/quick-app-sdk/app.js'//https://help.takuad.com/docs/HJu6VU# taku广告
 import sensors from 'pdt-mini-ui/utils/quickapp-track.js'
+// 标准版
+import YLHQuickAppSDK from 'ylh-quick-app-ad-sdk';//https://developers.adnet.qq.com/doc/quick_app/ 优量汇
 module.exports = {
   onCreate() {
     console.info('Application onCreate');
@@ -47,7 +49,13 @@ module.exports = {
       console.log('接入TOPON广告报错', error);
     }
 
-
+    try {
+      const config = {
+        appId: '1207114363' // 注意：appId为 必填字段
+      };
+      new YLHQuickAppSDK(this, config)
+    } catch (error) {
+    }
 
 
     const that = this;
@@ -56,17 +64,17 @@ module.exports = {
       $ad.onSplashStatus({
         reserved: true,
         callback: (data) => {
-          console.log(`监听开屏广告状态成功!data${JSON.stringify(data)}`)
+          // console.log(`监听开屏广告状态成功!data${JSON.stringify(data)}`)
           let onSplashStatusData = data;
           let splashData = {
             ...that._def.dataApp.actiParam,
             openScreenStatusCode: onSplashStatusData.statusCode
           }
-          console.log(`监听开屏广告状态成功!splashData${JSON.stringify(splashData)}`)
+          // console.log(`监听开屏广告状态成功!splashData${JSON.stringify(splashData)}`)
 
           console.log(onSplashStatusData.statusCode);
           if (onSplashStatusData.statusCode == '-100') {
-            console.log('这是-100');
+            // console.log('这是-100');
             return
           }
           if (onSplashStatusData.statusCode == 0) {
