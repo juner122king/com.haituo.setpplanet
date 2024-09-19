@@ -221,13 +221,13 @@ module.exports = {
   },
   pushPageabout() {
     $router.push({
-      uri: 'Page_about',
+      // uri: 'Page_about',
       // uri:'pages/luckyBagOpen'
       // uri:'activity/mysteryPopups'
       //  uri:'activity/mysteryPopups_taku'
       // uri: 'pages/advertisingCampaigns'
       // uri: 'activity/randomGiftPack'
-      //  uri: 'activity/threaten'
+       uri: 'activity/threaten'
       // uri:'hap://app/com.haituo.setpplanet/activity/mysteryPopups_taku?backurl=vivobrowser%3a%2f%2fbrowser.vivo.com%3fad_token%3d1816281355597746178&btn_name=%E8%BF%94%E5%9B%9E%E6%B5%8F%E8%A7%88%E5%99%A8&channelValue=KYY&type=oppo'
     });
   },

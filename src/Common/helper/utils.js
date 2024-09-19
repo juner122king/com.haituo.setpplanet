@@ -130,7 +130,6 @@ async function conversionUpload(that, ecpmParam, splashData = {}) {
       //机型广告唯一值相同都替换
       if (ecpmParam.adType !== 'OPEN_SCREEN') {
         let oaid = that.$app.$def.dataApp.myOaid
-
         try {
           console.log('进来了oppo')
           let oaidData = ''
