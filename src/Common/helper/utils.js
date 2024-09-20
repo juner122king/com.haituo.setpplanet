@@ -459,7 +459,6 @@ function getConversionlicks(context) {
     .then((res) => {
       console.log(res, '查看点击回传')
       if (res.data === 0) {
-        // $utils.conversionUpload(context)
       }
       context.$app.$def.dataApp.conversionlicks = res.data
     })
