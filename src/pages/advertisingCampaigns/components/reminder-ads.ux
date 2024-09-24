@@ -77,7 +77,6 @@
             <div class="foot-btn vertical-content">
               <ad-clickable-area
                 type="button"
-                if="{{branch !== 'xiaomi'}}"
                 class="click-item"
                 value="{{
                   btnTxt || adList.clickBtnTxt || defaultAd.clickBtnTxt
@@ -106,7 +105,7 @@
       <transparency-mask
         sportTitle="停留自弹窗"
         onemit-hide-transparency="hideTransparency"
-        if="{{showTransparency && branch !== 'xiaomi'}}"
+        if="{{showTransparency }}"
       ></transparency-mask>
     </div>
   </div>

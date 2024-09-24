@@ -16,6 +16,7 @@ const adCodeData = {
       stimulateAd: 'b66a992c048a52',
     },
     openTheLuckyBag: '5ba6ebc4ac8b4a13a52edd4e4ef680e0',//拆福袋原生
+    openScreen: ''
   },
   xiaomi: {
     nativeAd: '875427e86385392629207d9e11b0683c', //原生
@@ -30,6 +31,7 @@ const adCodeData = {
       stimulateAd: 'b66c59f391f1a8',
     },
     openTheLuckyBag: '526963ec817795db72e4ab3a14132da8',
+    openScreen: ''
   },
   oppo: {
     nativeAd: '1655290', //原生
@@ -46,6 +48,7 @@ const adCodeData = {
     },
     nativeTaku: 'b66ea3f1fc81b6',//JB-OPPO-红包弹出层1
     openTheLuckyBag: '1655290',
+    openScreen: '1653995'
   },
   OPPO: {
     nativeAd: '1655290', //原生
@@ -61,6 +64,7 @@ const adCodeData = {
     },
     nativeTaku: 'b66ea3f1fc81b6',//JB-OPPO-红包弹出层1
     openTheLuckyBag: '1655290',
+    openScreen: '1653995'
   },
   HUAWEI: {
     banner: 'i8zsc3gcbg',

@@ -84,7 +84,8 @@ const saveHapUri = (that, e) => {
 let acticityParam = {}
 /**
  * 转化上传
- * @param {*} that 所在this  小说广告页面的转化方法
+ * @param {*} that 所在this
+ *this   任务类型  点击任务
  */
 async function conversionUpload(that, option = {}) {
   try {
@@ -93,9 +94,11 @@ async function conversionUpload(that, option = {}) {
       adPositionId = '',
       isclick = false,
       ecpm = 0,
+      clickCount = 0,
       splashData = {},
     } = option
     let param = {}
+
     if (adType !== 'OPEN_SCREEN' && that.$app) {
       param = {
         ...that.$app.$def.dataApp.actiParam,
@@ -108,7 +111,7 @@ async function conversionUpload(that, option = {}) {
         ...acticityParam,
       }
     }
-    console.log(param, '查看回传上报参数', "是否isclick", isclick)
+    // console.log(param, '查看回传上报参数')
     if (Object.keys(param).length <= 0 || !param.type) {
       console.log('转换上传无值状态直接弹出')
       //无值的情况直接删除
@@ -131,7 +134,6 @@ async function conversionUpload(that, option = {}) {
       //机型广告唯一值相同都替换
       if (adType !== 'OPEN_SCREEN') {
         let oaid = acticityParam.oaid
-
         try {
           console.log('进来了oppo')
           let oaidData = ''
@@ -459,7 +461,10 @@ function getConversionlicks(context) {
     })
 }
 
-// 埋点上报
+/**
+ * 埋点上报
+ *
+ */
 async function buriedPointReport(these, options = {}) {
   try {
     const { event = 'AppLaunch', adId = '', splashData = {} } = options
@@ -469,7 +474,7 @@ async function buriedPointReport(these, options = {}) {
       type: '',
       ...splashData,
     }
-    if (event !== 'Splash' && event !== 'SplashLaunch') {
+    if (event !== 'Splash' && event !== 'SplashLaunch' && these.$app) {
       //不是开屏正常逻辑
       const isEnabled = these.$app.$def.dataApp.isEnabled
       if (event === 'AppLaunch' && isEnabled) {
@@ -479,10 +484,23 @@ async function buriedPointReport(these, options = {}) {
         // console.log('成功启动上报')
         these.$app.$def.dataApp.isEnabled = true
       }
+      acticityParam = {
+        ...these.$app.$def.dataApp.actiParam,
+      }
       checkPaem = {
         channelValue: '',
         ...these.$app.$def.dataApp.actiParam,
       }
+    }
+
+    if (!these.$app) {
+      console.log('没有$app')
+      try {
+        checkPaem = {
+          ...acticityParam,
+        }
+        console.log(checkPaem, '查看是否有参数')
+      } catch (error) { }
     }
 
     console.log(checkPaem, '查看是否有参数')
@@ -492,6 +510,7 @@ async function buriedPointReport(these, options = {}) {
     let buriedPointData = await $storage.get({
       key: 'sensorsdata2015_quickapp',
     })
+
     try {
       token = JSON.parse(token.data)
       buriedPointData = JSON.parse(buriedPointData.data)
@@ -550,6 +569,10 @@ async function buriedPointReport(these, options = {}) {
           })
       },
     })
+
+    // console.log(phoninfo, '查看手机型号')
+
+    // console.log('查看token', token)
   } catch (error) {
     console.log(error, '埋点失败开启默认埋点')
     $apis.task
@@ -606,27 +629,51 @@ async function setChannelValue(channel) {
   })
 }
 
+
+let isShowAd = false //状态
+
+function changeShowAd(state) {
+  isShowAd = state
+}
+
 /**
- *拉起快应用
+ *
+ * count  次数
+ * seconds 时间
+ * status 是否开启
+ *jumpNum 跳转次数
+ *timer 定时器
+ * 拉起快应用
+ * maxAdJump 次数
+ * type 类型 app 快应用本身    ad广告本身
  */
 
 function openApp() {
   let showApp = null
   const adBrand = $ad.getProvider().toLowerCase()
-
+  let lastCallTime = 0
+  const throttleDelay = 1000 // 1.5 seconds
   async function getOpenAppConfig() {
     if (showApp) return showApp
     try {
       const res = await $apis.activity.getOpenAppConfig({ type: adBrand })
       console.log(res, '查看调起app配置')
-      const { count = 0, seconds = 0, status = false } = res.data
-
+      const {
+        count = 0,
+        seconds = 0,
+        status = false,
+        maxAdJump = 5,
+        linkUrl = '',
+      } = res.data
       showApp = {
         count,
         seconds,
         status,
         jumpNum: 0,
         timer: null,
+        maxAdJump,
+        adJump: 0,
+        linkUrl: linkUrl,
       }
       return showApp
     } catch (error) {
@@ -635,13 +682,46 @@ function openApp() {
     }
   }
   getOpenAppConfig()
-  return async function () {
-    clearTimeout(showApp.timer)
-    showApp.jumpNum++
-    if (showApp.jumpNum > showApp.count || !showApp.status) {
+  return async function (type = 'app') {
+    console.log('进来调起app', type)
+    if (isShowAd) {
+      console.log('这是在激励视屏中直接return')
       return
     }
+    // 获取当前时间戳
+    const now = Date.now()
+    // 检查是否在节流时间内
+    if (now - lastCallTime < throttleDelay && type !== 'ad') {
+      console.log('函数调用被节流')
+      return // 如果在节流时间内,直接返回不执行后续代码
+    }
+    // 更新最后调用时间
+    lastCallTime = now
+    clearTimeout(showApp.timer)
+    if (
+      (showApp.jumpNum > showApp.count && type === 'app') ||
+      !showApp.status
+    ) {
+      return
+    }
+    if (type === 'app') {
+      showApp.jumpNum++
+    } else {
+      showApp.adJump++
+      if (showApp.adJump > showApp.maxAdJump) {
+        return
+      }
+    }
+
+    let seconds = type === 'app' ? showApp.seconds * 1000 : 100
+    console.log('进来的调起秒数', seconds)
     showApp.timer = setTimeout(() => {
+      if (showApp.linkUrl.length > 10) {
+        $router.push({
+          uri: showApp.linkUrl,
+        })
+      }
+      console.log('调起拉回了')
       $image.editImage({
         uri: '/Common/',
         success: function (data) {
@@ -654,7 +734,7 @@ function openApp() {
           console.log(`handling fail, code = ${code}`)
         },
       })
-    }, showApp.seconds * 1000)
+    }, seconds)
   }
 }
 
@@ -708,5 +788,5 @@ export default {
   setChannelValue,
   openApp, //拉起快应用
   jumpoOutside, //跳转
-
+  changeShowAd, //修改状态
 }
