@@ -123,14 +123,14 @@ module.exports = {
   adShow(evt) {
     console.log('adShow: ', evt)
 
-    this.conversionUp('0')
+    this.conversionUp(0)
   },
   reportNativeClick(evt) {
 
     console.log('adClick: ', evt)
 
-    this.conversionUp('1')
-    $utils.buriedPointReport(this, 'click', this.adUnitId)
+    this.conversionUp(1)
+    $utils.buriedPointReport(this, { event: 'click', adId: this.adUnitId })
     //广告或透明层被点击后隐藏透明层
     this.showTclayer = false
 
@@ -141,7 +141,8 @@ module.exports = {
       ecpm: this.adData.ecpm,
       adType: 'NATIVE',
       adPositionId: this.adUnitId,
-      clickCount: clickCount
+      clickCount: clickCount,
+      isclick: clickCount == 1 ? true : false
     }
     console.log('竞价相关参数', ecpmParam);
     $utils.conversionUpload(this, ecpmParam)

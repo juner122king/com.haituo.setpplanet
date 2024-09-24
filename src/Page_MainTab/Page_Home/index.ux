@@ -1,6 +1,7 @@
 <import name="my-circle" src="../ui/circle/index"></import>
 <import name="my-dialog" src="../ui/dialog/index"></import>
 <import name="my-privacypop" src="../ui/privacypop/index"></import>
+<import name="gold-coin-pendant" src="../../components/goldCoinPendant/index.ux"></import>
 <template>
   <div class="container">
     <div class="top_view">
@@ -116,6 +117,7 @@
     ></my-dialog>
 
     <my-privacypop @agree="agree" @cancel="cancel" show-pop="{{isShow}}" />
+    <gold-coin-pendant if="{{!ishowTisp}}"></gold-coin-pendant>
   </div>
 </template>
 
@@ -319,6 +321,8 @@ module.exports = {
     open2: false,
     obj: {},
     isShow: false,//隐私询问
+
+    ishowTisp: false,
   },
   //首页初始化流程：
   // Step1获取用户设置的今日目标步数

@@ -1,9 +1,11 @@
-
 <import name="topon-ad" src="@topon/quick-app-sdk/placement.ux"></import>
 <!-- 自渲染示例组件，请根据自身业务实现自渲染组件 -->
-<import name="ad-self-render" src="../../components/AdSelfRender-ylh.ux"></import>
-<import name='ylh-ad' src='ylh-quick-app-ad-sdk/ads/YlhAd'></import>
-<import name='ylh-ad-clickable-area' src='ylh-quick-app-ad-sdk/ads/YlhAdClickableArea'></import>
+<!-- <import name="ad-self-render" src="../../components/AdSelfRender-ylh.ux"></import> -->
+<import name="ylh-ad" src="ylh-quick-app-ad-sdk/ads/YlhAd"></import>
+<import
+  name="ylh-ad-clickable-area"
+  src="ylh-quick-app-ad-sdk/ads/YlhAdClickableArea"
+></import>
 
 <template>
   <div
@@ -64,14 +66,13 @@
           @cus-click="handleReportClick"
         ></ad-self-render> -->
         <block if="currentAd.nwFirmId===64">
-          <div class="native-ad-container" style="width: 750px;height:100%;">
+          <div class="native-ad-container" style="width: 750px; height: 100%">
             <ylh-ad
               class="ad-wrapper"
               ad-id="{{ adData.id }}"
               if="{{ adData.id  }}"
               on-ad-click="onAdClick"
               on-ad-expose="onAdExpose"
-              on-app-status-change="onAppStatusChange"
             >
               <ylh-ad-clickable-area ad-id="{{ adData.id }}">
                 <div class="click-button"></div>
@@ -89,30 +90,29 @@ const { adCodeData } = require('../../config.js').default
 export default {
   private: {
     title: '欢迎体验快应用开发',
-    branch: "",
-    adObj: "",
+    branch: '',
+    adObj: '',
     adId: '',
-    adList: "",
+    adList: '',
     hasAdList: true,
     showBgIndex: 0, // 默认显示第一张图片，
-    maxNum: 5,//最多显示到第5张
+    maxNum: 5, //最多显示到第5张
     showRedPack: false, // 控制红包显示
     visitCount: 0, // 访问计数器
     isAudit: false,
 
-
-    key: '',//广告位key值 
+    key: '', //广告位key值
     loaded: false,
     isSelfRendering: false, // 是否自渲染，通过getAd获取
     isGetAd: false,
     config: {
       entry: '/Page_MainTab', // 开屏广告结束后打开的第一个页面
-      timeout: 30000 // 默认0（走默认，开屏5秒，其他300秒），单位毫秒
+      timeout: 30000, // 默认0（走默认，开屏5秒，其他300秒），单位毫秒
     },
 
     adData: null, // 广告物料，通过getAd获取
     displayed: false, // 自渲染广告组件展示控制
-    currentAd: "",//广告来源数据
+    currentAd: '', //广告来源数据
     bgImg: '', //背景图
     imageList: [
       '/Common/img/ad/kai1.png',
@@ -124,18 +124,18 @@ export default {
   },
   onInit: function (e) {
     if (Object.keys(e).length > 0) {
-      console.log('进来了', e);
+      console.log('进来了', e)
       this.$app.$def.dataApp.actiParam = {
         ...e,
       }
-      $utils.buriedPointReport(this, 'AppLaunch', '', '')
     }
-    //处理回传链接
-    $utils.saveHapUri(this, e)
-
+    // 延迟执行埋点报告
+    setTimeout(() => {
+      $utils.buriedPointReport(this)
+    }, 1000)
     this.visitCount = 0 // 访问计数器
     const branch = $ad.getProvider().toLowerCase()
-    this.branch = branch;
+    this.branch = branch
     this.adObj = adCodeData[branch]
 
     // 检查是否自动打开红包展示
@@ -145,9 +145,8 @@ export default {
     this.getImageList()
   },
   onShow() {
-    let actiParam = this.$app.$def.dataApp.actiParam;
-    this.$app.$sensors.pageShow({ channel: actiParam.channelValue });
-
+    let actiParam = this.$app.$def.dataApp.actiParam
+    this.$app.$sensors.pageShow({ channel: actiParam.channelValue })
     this.changeAdType()
   },
   changeAdType() {
@@ -157,154 +156,153 @@ export default {
     }
     if (this.adObj) {
       let ids = ['fiction1', 'nativeTaku', 'fiction2', 'nativeTaku', 'fiction3']
-      this.key = ids[this.showBgIndex];
+      this.key = ids[this.showBgIndex]
       this.adId = this.adObj[this.key]
       console.log(this.adId, '查看广告id编码')
 
-      if (this.key === 'nativeTaku') {//taku广告位
-        this.handleLoadAd()//加载taku广告
+      if (this.key === 'nativeTaku' || this.showBgIndex === 1 || this.showBgIndex === 3) {
+        //taku广告位
+        this.handleLoadAd() //加载taku广告
       } else {
         this.preloadAd()
       }
-
     }
   },
-  clickPopover(evt) {  //关闭弹窗 查看透明层；
-    console.log('跳转几次');
+  clickPopover(evt) {
+    //关闭弹窗 查看透明层；
+    console.log('跳转几次')
     // 阻止事件冒泡
     if (evt) {
       evt.stopPropagation()
     }
     if (this.showRedPack) {
       setTimeout(() => {
-        this.showBgIndex = this.showBgIndex < 5 ? this.showBgIndex + 1 : 0;
+        this.showBgIndex = this.showBgIndex < 4 ? this.showBgIndex + 1 : 0
       }, 100)
     }
-    this.showRedPack = false;
+    this.showRedPack = false
     if (this.isAudit) {
       $router.push({
-        uri: "pages/luckyBagOpen"
+        uri: 'pages/luckyBagOpen',
       })
       return
     }
-
   },
   preloadAd() {
     try {
-      const that = this;
+      const that = this
       require('@service.ad').preloadAd({
         adUnitId: this.adId, // 原生信息流广告广告位id
         type: 'native', // 原生信息流广告
         adCount: 1,
         ecpm: true,
         success: (data) => {
-          console.log(data, '查看能返回多少广告');
+          console.log(data, '查看能返回多少广告')
           this.adList = data.adList[0]
-          console.log(this.adList, '返回广告成功');
-          this.hasAdList = true;
+          console.log(this.adList, '返回广告成功')
+          this.hasAdList = true
 
           if (this.debug) {
             prompt.showToast({
-              message: `ad load success`
+              message: `ad load success`,
             })
           }
         },
         fail: (data, code) => {
-          console.log(data, code, '返回广告失败1');
-          this.hasAdList = true;
+          console.log(data, code, '返回广告失败1')
+          this.hasAdList = true
           if (code === 205) {
-            this.hasAdList = true;
+            this.hasAdList = true
             this.adList = data.adList[0]
           } else {
             if (this.debug) {
               prompt.showToast({
-                message: `ad load fail!data= ${JSON.stringify(data)},code= ${code}`
+                message: `ad load fail!data= ${JSON.stringify(
+                  data
+                )},code= ${code}`,
               })
             }
           }
-        }
+        },
       })
     } catch (e) {
-      console.log(e, e.message);
+      console.log(e, e.message)
     }
   },
   adClick() {
     // 每次显示页面时，增加一次计数
-    this.visitCount++;
-    this.conversionUp('1')
-    $utils.buriedPointReport(this, 'click', this.adId)
-
-    this.hasAdList = false;
+    this.visitCount++
+    this.conversionUp(1)
+    $utils.buriedPointReport(this, { event: 'click', adId: this.adId })
+    this.hasAdList = false
     this.preloadAd()
     this.clickPopover()
-
   },
-  onAdClick() { //Taku点击回调
+  onAdClick() {
+    //Taku点击回调
     console.log('TAku广告点击了:')
     // 每次显示页面时，增加一次计数
-    this.visitCount++;
+    this.visitCount++
 
     let takuadid = this.currentAd.nwUnitId
 
-    this.conversionUpTaku('1')
-    $utils.buriedPointReport(this, 'click', takuadid)
-
+    this.conversionUpTaku(1)
+    $utils.buriedPointReport(this, { event: 'click', adId: takuadid })
     this.changeAdType()
-
   },
   onAdExpose() {
     console.log('TAku广告曝光')
-    this.conversionUpTaku('0')
-  },
-  onAppStatusChange(status, progress) {
-    console.log('下载状态status->', status)
-
+    this.conversionUpTaku(0)
   },
 
   adSuccShow(e) {
-    console.log(e, '广告成功展示');
-    this.conversionUp('0')
+    $utils.conversionUpload(this, {
+      adType: 'NATIVE',
+      adPositionId: this.adId,
+      isclick: false,
+      ecpm: this.adList.ecpm,
+    })
   },
   conversionUp(clickCount) {
-    let ecpmParam = {  //竞价相关参数
+    let ecpmParam = {
+      //竞价相关参数
       ecpm: this.adList.ecpm,
       adType: 'NATIVE',
       adPositionId: this.adId,
-      clickCount: clickCount
+      clickCount: clickCount,
+      isclick: clickCount == 1 ? true : false,
     }
-    console.log('竞价相关参数', ecpmParam);
     $utils.conversionUpload(this, ecpmParam)
   },
   conversionUpTaku(clickCount) {
-    let ecpmParam = {  //竞价相关参数
+    let ecpmParam = {
+      //竞价相关参数
       ecpm: this.currentAd.cyEcpm * 100,
       adType: 'NATIVE',
       adPositionId: this.currentAd.nwUnitId,
-      clickCount: clickCount
+      clickCount: clickCount,
+      isclick: clickCount == 1 ? true : false,
     }
-    console.log('竞价相关参数2', ecpmParam);
     $utils.conversionUpload(this, ecpmParam)
   },
-
-
   error(e) {
-    console.log(e, '广告返回失败');
+    console.log(e, '广告返回失败')
     this.preloadAd()
   },
   close(e) {
-    console.log(e, '广告关闭');
+    console.log(e, '广告关闭')
   },
   /***
    * 是否自动打开
    */
   getClickReviewControl() {
-    const branch = $ad.getProvider().toUpperCase();
+    const branch = $ad.getProvider().toUpperCase()
     $apis.task.getClickReviewControl({ branch: branch }).then((res) => {
-      console.log(res, '查看是否在审核');
+      console.log(res, '查看是否在审核')
       if (!res.data) {
-        this.showRedPack = true;
+        this.showRedPack = true
       }
-      this.isAudit = res.data;
+      this.isAudit = res.data
     })
   },
   complaint(evt) {
@@ -312,9 +310,9 @@ export default {
     if (evt) {
       evt.stopPropagation()
     }
-    console.log('跳转举报');
+    console.log('跳转举报')
     $router.push({
-      uri: 'feedback'
+      uri: 'feedback',
     })
   },
 
@@ -348,7 +346,7 @@ export default {
     if (this.isSelfRendering) {
       this.displayed = true
     } else {
-      const placement = this.getSdkElement();
+      const placement = this.getSdkElement()
       if (placement.show) {
         placement.show()
       }
@@ -360,17 +358,19 @@ export default {
     /**
      * 重置
      */
+    console.log('进来了首次挂载')
     this.isGetAd = false
     this.displayed = false
     this.adData = null
-    const placement = this.getSdkElement();
+    const placement = this.getSdkElement()
+    console.log(placement, '查看是否有返回')
     if (placement.load) {
       placement.load()
     }
   },
 
   handleIsReady() {
-    const placement = this.getSdkElement();
+    const placement = this.getSdkElement()
     if (placement.isReady) {
       console.log('TAKU广告已准备好')
       // 展示广告广告
@@ -394,7 +394,7 @@ export default {
       console.log('currentAd', this.currentAd)
       console.log('广告平台ID', this.currentAd.nwFirmId)
       if (!this.currentAd) {
-        return;
+        return
       }
       // 判断是否为自渲染广告
       this.isSelfRendering = this.currentAd.isSelfRendering
@@ -408,9 +408,7 @@ export default {
       this.isGetAd = true
 
       this.handleIsReady()
-
     }
-
   },
   // 获取广告组件实例
   getSdkElement() {

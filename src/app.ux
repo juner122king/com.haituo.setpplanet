@@ -6,7 +6,7 @@ import YLHQuickAppSDK from 'ylh-quick-app-ad-sdk';//https://developers.adnet.qq.
 module.exports = {
   onCreate() {
     console.info('Application onCreate');
-
+    // this.instance = null
     sensors.init(this);
     sensors.appLaunch()
     this.$sensors = sensors;
@@ -24,6 +24,7 @@ module.exports = {
     const $app = require("@system.app")
     const $device = require("@system.device")
     const $processData = require('./Common/helper/processData').default
+    const $adFun = require('./Common/helper/adFun').default
     hook2global.$router = $router
     hook2global.$utils = $utils
     hook2global.$storage = $storage
@@ -35,19 +36,24 @@ module.exports = {
     hook2global.$app = $app
     hook2global.$device = $device
     hook2global.$processData = $processData
+    hook2global.$adFun = $adFun
 
 
     try {
-      const instance = new TOPON_AD_SDK({
+      this.instance = new TOPON_AD_SDK({
         app: this,
         appId: 'a669f1dd02c4c4', // 请替换为您在topon开发者后台上的appId（您在topon开发者后台上所创建的应用ID）
-        appKey: 'a37788f795fed8ddd480a419615b5eed', // 请替换为您在topon开发者后台上的 app key（topon开发者后台 => 账户信息 => key即为appKey）
+        appKey: 'a25e2743eecc2d23f66176b150a593e21', // 请替换为您在topon开发者后台上的 app key（topon开发者后台 => 账户信息 => key即为appKey）
         config: { ylhAppId: '1207114363' }//优量汇App ID，集成优量汇时必填，
-      });
-      this.$def.topon_sdk_instance = instance
+      })
     } catch (error) {
       console.log('接入TOPON广告报错', error);
     }
+
+    //开屏埋点
+    $adFun.openScreen(this)
+    this.openApp = $utils.openApp() //重写方法
+
 
     try {
       const config = {
@@ -56,91 +62,18 @@ module.exports = {
       new YLHQuickAppSDK(this, config)
     } catch (error) {
     }
-
-
-    const that = this;
-    let adBrand = $ad.getProvider().toLowerCase();
-    if (adBrand === 'oppo') {
-      $ad.onSplashStatus({
-        reserved: true,
-        callback: (data) => {
-          // console.log(`监听开屏广告状态成功!data${JSON.stringify(data)}`)
-          let onSplashStatusData = data;
-          let splashData = {
-            ...that._def.dataApp.actiParam,
-            openScreenStatusCode: onSplashStatusData.statusCode
-          }
-          // console.log(`监听开屏广告状态成功!splashData${JSON.stringify(splashData)}`)
-
-          console.log(onSplashStatusData.statusCode);
-          if (onSplashStatusData.statusCode == '-100') {
-            // console.log('这是-100');
-            return
-          }
-          if (onSplashStatusData.statusCode == 0) {
-            let ecpm = onSplashStatusData.data.ecpm || onSplashStatusData.data.cpm;
-            that._def.dataApp.openScreenEcpm = ecpm
-
-            let ecpmParam = {  //竞价相关参数
-              ecpm: ecpm,
-              adType: 'OPEN_SCREEN',
-              adPositionId: '1653995',
-              clickCount: '0'
-            }
-            $utils.conversionUpload(that, ecpmParam, splashData)
-            $utils.buriedPointReport(that, 'SplashLaunch', '1653995', splashData) //新增启动埋点
-            sensors.pageShow({ channel: splashData.channelValue, formId: '1653995' })
-
-            try {
-              sensors.track('$WebShow', { title: "开屏广告-广告曝光-1653995" })
-            } catch (error) { }
-
-
-
-          } else if (onSplashStatusData.statusCode == 100) {//开屏广告点击
-            let ecpm = ''
-            try {
-              ecpm = onSplashStatusData.data.ecpm || onSplashStatusData.data.cpm
-            } catch (error) {
-              ecpm = that._def.dataApp.openScreenEcpm || 0
-            }
-            $utils.buriedPointReport(that, 'Splash', '1653995', splashData) //点击埋点
-
-            let ecpmParam = {  //竞价相关参数
-              ecpm: ecpm,
-              adType: 'OPEN_SCREEN',
-              adPositionId: '1653995',
-              clickCount: '1'
-            }
-            $utils.conversionUpload(that, ecpmParam, splashData)//上报
-
-            try {
-              sensors.track('$WebShow', { title: "开屏广告-广告曝光-1653995" })
-            } catch (error) { }
-
-
-          } else {
-            let ecpm = ''
-            try {
-              ecpm = onSplashStatusData.data.ecpm || onSplashStatusData.data.cpm || that._def.dataApp.openScreenEcpm
-            } catch (error) {
-              ecpm = that._def.dataApp.openScreenEcpm || 0
-            }
-            $utils.buriedPointReport(that, 'Splash', '1653995', splashData) //点击埋点
-
-            let ecpmParam = {  //竞价相关参数
-              ecpm: ecpm,
-              adType: 'OPEN_SCREEN',
-              adPositionId: '1653995',
-              clickCount: '0'
-            }
-            $utils.conversionUpload(that, ecpmParam, splashData)
-          }
-        }
-      })
-    }
   },
-
+  // onShow() {
+  //   // this.instance.onShow()
+  // },
+  onHide() {
+    // this.instance.onHide()
+    this.openApp()
+  },
+  openApp() { },
+  // onDestroy() {
+  //   // this.instance.onDestroy()
+  // },
   dataApp: {
     url1: "http://www.ihaituo.cn/xy/jb/bzzx.html",
     url2: "http://www.ihaituo.cn/xy/jb/yhxy.html",

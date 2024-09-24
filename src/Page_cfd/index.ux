@@ -217,9 +217,11 @@ module.exports = {
       this.$app.$def.dataApp.actiParam = {
         ...e,
       }
-      $utils.buriedPointReport(this, 'AppLaunch', '', '')
-    }
 
+    }
+    setTimeout(() => {
+      $utils.buriedPointReport(this)
+    }, 1000)
     //处理回传链接
     $utils.saveHapUri(this, e)
     //显示banner 广告高度，底部缩进

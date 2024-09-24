@@ -15,7 +15,7 @@ const adCodeData = {
       tableScreenAd: 'b66aaf2616af0d',
       stimulateAd: 'b66a992c048a52',
     },
-    openTheLuckyBag: '',//拆福袋原生
+    openTheLuckyBag: '5ba6ebc4ac8b4a13a52edd4e4ef680e0',//拆福袋原生
   },
   xiaomi: {
     nativeAd: '875427e86385392629207d9e11b0683c', //原生
