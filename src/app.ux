@@ -39,7 +39,7 @@ module.exports = {
     hook2global.$processData = $processData
     hook2global.$adFun = $adFun
     hook2global.$image = $image
-
+    hook2global.$sensors = sensors
 
     try {
       this.instance = new TOPON_AD_SDK({
@@ -66,8 +66,6 @@ module.exports = {
   },
 
   onHide() {
-    // this.instance.onHide()
-    this.openApp()
   },
   openApp() { },
 

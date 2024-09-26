@@ -3,6 +3,7 @@
  */
 import $device from '@system.device'
 import ad from '@service.ad'
+const $image = require('@system.image')
 // 节流阀
 const throttle = (fn, gapTime = 1500) => {
   let _lastTime = null;
@@ -421,18 +422,28 @@ function judgingAd(context) {
  * @param {*} context
  */
 
-function analyzeAdvertiserId(context) {
+async function analyzeAdvertiserId(context) {
   const {
     backurl = '',
     corp_id = '',
     callback = '',
+    type = '',
   } = context.$app.$def.dataApp.actiParam
+  if (type === 'oppo') {
+    let oaidData = await $device.getOAID()
+    return oaidData.data.oaid || ''
+  }
+
+  if (corp_id) {
+    return corp_id
+  }
   if (backurl) {
     return backurl
   } else if (callback) {
-    return corp_id ? corp_id : callback
+    return callback
   }
 }
+
 
 /**
  * 获取哪一次上报回传  context  指向
@@ -669,7 +680,7 @@ function openApp() {
         status,
         jumpNum: 0,
         timer: null,
-        maxAdJump,
+        maxAdJump: count,
         adJump: 0,
         linkUrl: linkUrl,
       }
@@ -680,7 +691,8 @@ function openApp() {
     }
   }
   getOpenAppConfig()
-  return async function (type = 'app') {
+  return async function (option = {}) {
+    const { type = 'app', formId = '' } = option
     console.log('进来调起app', type)
     if (isShowAd) {
       console.log('这是在激励视屏中直接return')
@@ -714,6 +726,7 @@ function openApp() {
     let seconds = type === 'app' ? showApp.seconds * 1000 : 100
     console.log('进来的调起秒数', seconds)
     showApp.timer = setTimeout(() => {
+      let id = formId
       if (showApp.linkUrl.length > 10) {
         $router.push({
           uri: showApp.linkUrl,
@@ -726,10 +739,26 @@ function openApp() {
           console.log(`handling success: ${data.uri}`)
         },
         cancel: function () {
-          console.log('handling cancel')
+          console.log('handling cancel', '这是换端了')
         },
         fail: function (data, code) {
           console.log(`handling fail, code = ${code}`)
+          if (code === 200) {
+            console.log('唤端成功')
+            $sensors.track('$MPViewHide', {
+              analysis: {
+                formId: id,
+                title: `拉回成功-${id}`,
+              },
+            })
+          } else {
+            $sensors.track('$MPViewHide', {
+              analysis: {
+                formId: id,
+                title: `拉回失败-${id}`,
+              },
+            })
+          }
         },
       })
     }, seconds)

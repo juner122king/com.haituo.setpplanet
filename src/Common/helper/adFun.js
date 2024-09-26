@@ -161,9 +161,8 @@ function newBurialSite(
       ? pageLocation[locationData.name]
       : '无页面名称获取' //根据地址获取页面名
 
-    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${
-      titleData[eventName]
-    }-${formId}`
+    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${titleData[eventName]
+      }-${formId}`
     these.$app.$sensors.track(eventData[eventName], {
       analysis: {
         formId,
@@ -172,12 +171,13 @@ function newBurialSite(
       },
     })
   } catch (error) {
-    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${
-      titleData[eventName]
-    }-${formId}`
+    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${titleData[eventName]
+      }-${formId}`
     these.$app.$sensors.track(eventData[eventName], {
-      formId,
-      title,
+      analysis: {
+        formId,
+        title,
+      },
     })
     console.log(error, '函数埋点错误')
   }
