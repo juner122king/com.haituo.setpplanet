@@ -657,7 +657,7 @@ function changeShowAd(state) {
  * type 类型 app 快应用本身    ad广告本身
  */
 
-function openApp() {
+ function openApp() {
   let showApp = null
   const adBrand = $ad.getProvider().toLowerCase()
   let lastCallTime = 0
@@ -692,76 +692,92 @@ function openApp() {
   }
   getOpenAppConfig()
   return async function (option = {}) {
-    const { type = 'app', formId = '' } = option
-    console.log('进来调起app', type)
-    if (isShowAd) {
-      console.log('这是在激励视屏中直接return')
-      return
-    }
-    // 获取当前时间戳
-    const now = Date.now()
-    // 检查是否在节流时间内
-    if (now - lastCallTime < throttleDelay && type !== 'ad') {
-      console.log('函数调用被节流')
-      return // 如果在节流时间内,直接返回不执行后续代码
-    }
-    // 更新最后调用时间
-    lastCallTime = now
-    clearTimeout(showApp.timer)
-    if (
-      (showApp.jumpNum > showApp.count && type === 'app') ||
-      !showApp.status
-    ) {
-      return
-    }
-    if (type === 'app') {
-      showApp.jumpNum++
-    } else {
-      showApp.adJump++
-      if (showApp.adJump > showApp.maxAdJump) {
+    try {
+      const { type = 'app', formId = '' } = option
+      console.log('进来调起app', type)
+      if (isShowAd) {
+        console.log('这是在激励视屏中或设定中直接return')
         return
       }
-    }
-
-    let seconds = type === 'app' ? showApp.seconds * 1000 : 100
-    console.log('进来的调起秒数', seconds)
-    showApp.timer = setTimeout(() => {
-      let id = formId
-      if (showApp.linkUrl.length > 10) {
-        $router.push({
-          uri: showApp.linkUrl,
-        })
+      // 获取当前时间戳
+      const now = Date.now()
+      // 检查是否在节流时间内
+      if (now - lastCallTime < throttleDelay && type !== 'ad') {
+        console.log('函数调用被节流')
+        return // 如果在节流时间内,直接返回不执行后续代码
       }
-      console.log('调起拉回了')
-      $image.editImage({
-        uri: '/Common/',
-        success: function (data) {
-          console.log(`handling success: ${data.uri}`)
-        },
-        cancel: function () {
-          console.log('handling cancel', '这是换端了')
-        },
-        fail: function (data, code) {
-          console.log(`handling fail, code = ${code}`)
-          if (code === 200) {
-            console.log('唤端成功')
-            $sensors.track('$MPViewHide', {
+      // 更新最后调用时间
+      lastCallTime = now
+      clearTimeout(showApp.timer)
+      if (
+        (showApp.jumpNum > showApp.count && type === 'app') ||
+        !showApp.status
+      ) {
+        return
+      }
+
+      if (type === 'app') {
+        showApp.jumpNum++
+      } else {
+        showApp.adJump++
+        if (showApp.adJump > showApp.maxAdJump) {
+          return
+        }
+      }
+
+      let seconds = type === 'app' ? showApp.seconds * 1000 : 100
+      console.log('进来的调起秒数', seconds)
+      showApp.timer = setTimeout(() => {
+        let id = formId
+        if (showApp.linkUrl.length > 10) {
+          $router.push({
+            uri: showApp.linkUrl,
+          })
+        }
+        console.log('调起拉回了')
+        //上报类型
+        let reportType = {
+          ad: '$AppStartByAdClick', // 广告拉回
+          app: '$AppStartByPageLeave', // 页面调起
+        }
+        $image.editImage({
+          uri: '/Common/',
+          success: function (data) {
+            console.log(`handling success: ${data.uri}`)
+          },
+          cancel: function () {
+            console.log('handling cancel', '这是换端了')
+            $sensors.track(reportType[type], {
               analysis: {
                 formId: id,
                 title: `拉回成功-${id}`,
               },
             })
-          } else {
-            $sensors.track('$MPViewHide', {
-              analysis: {
-                formId: id,
-                title: `拉回失败-${id}`,
-              },
-            })
-          }
-        },
-      })
-    }, seconds)
+          },
+          fail: function (data, code) {
+            console.log(`handling fail, code = ${code}`)
+            if (code === 200) {
+              console.log('唤端成功')
+              $sensors.track(reportType[type], {
+                analysis: {
+                  formId: id,
+                  title: `拉回成功-${id}`,
+                },
+              })
+            } else {
+              $sensors.track(reportType[type], {
+                analysis: {
+                  formId: id,
+                  title: `拉回失败-${id}`,
+                },
+              })
+            }
+          },
+        })
+      }, seconds)
+    } catch (error) {
+      console.log(error, '查看调起app错误')
+    }
   }
 }
 

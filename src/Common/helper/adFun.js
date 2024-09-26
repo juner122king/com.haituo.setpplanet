@@ -182,8 +182,28 @@ function newBurialSite(
     console.log(error, '函数埋点错误')
   }
 }
-
+/**
+ *  ip地址限制跳转其他页面
+ *
+ */
+async function ipLimit(these) {
+  try {
+    //转大写
+    const brand = $ad.getProvider().toUpperCase()
+    const ipLimit = await $apis.task.getIpLimit({ brand })
+    console.log(ipLimit, 'ip是否限制位置')
+    if (ipLimit.data) {
+      $utils.changeShowAd(true)
+      $router.replace({
+        uri: 'Page_Tixian',
+      })
+    }
+  } catch (error) {
+    console.log(error, 'ip限制错误')
+  }
+}
 export default {
   openScreen,
   newBurialSite,
+  ipLimit,
 }
