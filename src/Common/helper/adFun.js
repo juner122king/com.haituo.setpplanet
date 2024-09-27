@@ -25,6 +25,9 @@ function openScreen(these) {
         these.sensors.track('$WebShow', {
           analysis: {
             title: `开屏广告-广告曝光失败-${config.adCodeData.oppo.openScreen}`,
+            channel: splashData.channelValue,
+            formId: config.adCodeData.oppo.openScreen,
+            ...splashData,
           },
         })
         return
@@ -59,9 +62,11 @@ function openScreen(these) {
 
         try {
           sensors.pageShow({
-            channel: splashData.channelValue,
-            formId: config.adCodeData.oppo.openScreen,
-            ...splashData,
+            analysis: {
+              channel: splashData.channelValue,
+              formId: config.adCodeData.oppo.openScreen,
+              ...splashData,
+            },
           })
         } catch (error) {
           handleError('埋点', error)
@@ -69,6 +74,9 @@ function openScreen(these) {
         these.sensors.track('$WebShow', {
           analysis: {
             title: '开屏广告-广告曝光-' + config.adCodeData.oppo.openScreen,
+            channel: splashData.channelValue,
+            formId: config.adCodeData.oppo.openScreen,
+            ...splashData,
           },
         })
       } else if (statusCode == 100) {
@@ -102,6 +110,9 @@ function openScreen(these) {
         these.sensors.track('$AppClick', {
           analysis: {
             title: '开屏广告-广告位-' + config.adCodeData.oppo.openScreen,
+            channel: splashData.channelValue,
+            formId: config.adCodeData.oppo.openScreen,
+            ...splashData,
           },
         })
       }
@@ -142,7 +153,7 @@ function newBurialSite(
 ) {
   const eventData = {
     //事件
-    show: ' $WebShow',
+    show: '$WebShow',
     click: '$AppClick',
     error: '$WebShow',
   }
@@ -195,7 +206,7 @@ async function ipLimit(these) {
     if (ipLimit.data) {
       $utils.changeShowAd(true)
       $router.replace({
-        uri: 'Page_Tixian',
+        uri: 'pages/welfareCenter',
       })
     }
   } catch (error) {
