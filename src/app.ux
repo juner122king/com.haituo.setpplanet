@@ -93,7 +93,7 @@ module.exports = {
     },
     openScreenEcpm: 0,
     showTransparencyMask: 1,//当前获取的广告id次数 最大为5
-    isShowAd: false, //是否展示广告
+    isShowAd: false, //是否展示广告,
   }
 
 }

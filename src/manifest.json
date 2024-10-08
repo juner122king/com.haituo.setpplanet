@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.1.37",
-  "versionCode": 137,
+  "versionName": "1.1.38",
+  "versionCode": 138,
   "permissions": [
     {
       "origin": "*"
@@ -89,8 +89,38 @@
     "logLevel": "debug"
   },
   "router": {
-    "entry": "Page_MainTab",
+    "entry": "activity/pollingPage",
     "pages": {
+      "activity/pollingPage": {
+        "component": "index"
+      },
+      "activity/pollingPage01": {
+        "component": "index"
+      },
+      "activity/pollingPage02": {
+        "component": "index"
+      },
+      "activity/pollingPage03": {
+        "component": "index"
+      },
+      "activity/pollingPage04": {
+        "component": "index"
+      },
+      "activity/pollingPage05": {
+        "component": "index"
+      },
+      "activity/pollingPage06": {
+        "component": "index"
+      },
+      "activity/pollingPage07": {
+        "component": "index"
+      },
+      "activity/pollingPage08": {
+        "component": "index"
+      },
+      "activity/pollingPage09": {
+        "component": "index"
+      },
       "Page_MainTab": {
         "launchMode": "singleTask",
         "component": "index"
@@ -267,6 +297,56 @@
         "statusBarImmersive": true,
         "statusBarBackgroundOpacity": 0,
         "titleBarBackgroundOpacity": 0
+      },
+      "activity/pollingPage": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage"
+      },
+      "activity/pollingPage01": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage01"
+      },
+      "activity/pollingPage02": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage02"
+      },
+      "activity/pollingPage03": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage03"
+      },
+      "activity/pollingPage04": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage04"
+      },
+      "activity/pollingPage05": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage05"
+      },
+      "activity/pollingPage06": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage06"
+      },
+      "activity/pollingPage07": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage07"
+      },
+      "activity/pollingPage08": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage08"
+      },
+      "activity/pollingPage09": {
+        "titleBar": true,
+        "menu": true,
+        "titleBarText": "pollingPage09"
       },
       "YlhAds/RewardVideoAd": {
         "titleBar": false,
