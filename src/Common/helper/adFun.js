@@ -3,7 +3,6 @@ import prompt from '@system.prompt'
 import $ad from '@service.ad'
 const config = require('../../config').default
 const $image = require('@system.image')
-const { JSEncrypt } = require('../libs/jsencrypt/lib/index')
 /**
  * 开屏上报  传this
  * @param {*} these
@@ -21,7 +20,6 @@ function openScreen(these) {
         openScreenData: data,
       }
       if (statusCode === '-100') {
-        console.log('这是-100')
         these.sensors.track('$WebShow', {
           analysis: {
             title: `开屏广告-广告曝光失败-${config.adCodeData.oppo.openScreen}`,
@@ -32,9 +30,7 @@ function openScreen(these) {
         })
         return
       }
-      const handleError = (action, error) => {
-        console.log(`${action}报错`, error)
-      }
+      const handleError = (action, error) => { }
       if (statusCode == 0) {
         const ecpm = adData.ecpm || adData.cpm
         these._def.dataApp.openScreenEcpm = ecpm
@@ -120,6 +116,7 @@ function openScreen(these) {
   })
 }
 
+// 埋点上报页面名
 const pageLocation = {
   'activity/mysteryPopups': '旧红包',
   'activity/threaten': '吓唬人',
@@ -156,25 +153,29 @@ function newBurialSite(
     show: '$WebShow',
     click: '$AppClick',
     error: '$WebShow',
+    load: '$WebShow',
+    loadError: '$WebShow',
   }
   const titleData = {
     //标题
     show: '广告曝光',
     click: '广告位',
     error: '广告曝光失败',
+    load: '广告请求',
+    loadError: '广告请求失败',
   }
   try {
     const { eventName, formId, subTitle } = rest
-    // console.log(rest, '查看新埋点参数')
+    //
     let locationData = $router.getState()
-    // console.log(locationData, '获取页面名')
+    //
     let pageName = locationData
       ? pageLocation[locationData.name]
       : '无页面名称获取' //根据地址获取页面名
 
     let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${titleData[eventName]
       }-${formId}`
-    these.$app.$sensors.track(eventData[eventName], {
+    $sensors.track(eventData[eventName], {
       analysis: {
         formId,
         ...rest,
@@ -184,15 +185,15 @@ function newBurialSite(
   } catch (error) {
     let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${titleData[eventName]
       }-${formId}`
-    these.$app.$sensors.track(eventData[eventName], {
+    $sensors.track(eventData[eventName], {
       analysis: {
         formId,
         title,
       },
     })
-    console.log(error, '函数埋点错误')
   }
 }
+
 /**
  *  ip地址限制跳转其他页面
  *
@@ -202,17 +203,16 @@ async function ipLimit(these) {
     //转大写
     const brand = $ad.getProvider().toUpperCase()
     const ipLimit = await $apis.task.getIpLimit({ brand })
-    console.log(ipLimit, 'ip是否限制位置')
+
     if (ipLimit.data) {
       $utils.changeShowAd(true)
       $router.replace({
-        uri: 'pages/welfareCenter',
+        uri: 'Page_Tixian',
       })
     }
-  } catch (error) {
-    console.log(error, 'ip限制错误')
-  }
+  } catch (error) { }
 }
+
 export default {
   openScreen,
   newBurialSite,

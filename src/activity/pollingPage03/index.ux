@@ -5,7 +5,7 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-    <text class="textt" 
+    <text class="textt"
       >四、饮食搭配与营养摄入
       健身和运动减脂过程中，饮食搭配和营养摄入同样重要。合理的饮食可以提供身体所需的能量和营养素，支持运动表现，促进身体恢复。在健身前后，要避免进食大量食物，以免引起消化不良或胃部不适。运动前可以适当补充一些碳水化合物和蛋白质，为身体提供能量和修复材料。运动后，要及时补充蛋白质和碳水化合物，促进肌肉恢复和能量补充。此外，要控制热量摄入，增加蔬菜、水果、全谷物等富含膳食纤维的食物摄入，减少高热量、高脂肪、高糖分的食物摄入。
     </text>
@@ -265,11 +265,8 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -277,7 +274,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false

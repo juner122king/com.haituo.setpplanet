@@ -5,7 +5,7 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-    <text class="textt" 
+    <text class="textt"
       >三、保持适当的运动节奏
       在健身或运动过程中，保持适当的运动节奏至关重要。适当的运动节奏有助于控制呼吸、心跳和体温，避免身体过度疲劳。例如，在进行有氧运动如跑步或游泳时，可以通过调整呼吸和步频来控制运动节奏。跑步时，可以采用“两步一呼、两步一吸”的呼吸方式，保持稳定的步频，避免过快或过慢。游泳时，可以通过调整划水和踢腿的频率来控制节奏。此外，在力量训练时，也要注意控制动作的速度和节奏，避免过快导致动作变形或受伤。
     </text>
@@ -265,11 +265,8 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
+       
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -277,7 +274,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false

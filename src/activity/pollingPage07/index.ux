@@ -5,9 +5,9 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-    <text class="textt" 
+    <text class="textt"
       >八、重视运动后的恢复
-运动后身体需要一段时间来恢复，包括肌肉的修复、能量的补充等。恢复过程同样重要，它决定了身体能否更好地适应下一次运动。在运动后，可以进行一些轻松的恢复性运动，如散步、瑜伽等，帮助身体放松和恢复。同时，要保证充足的休息和营养的摄入，促进身体的恢复和修复。在饮食上，可以多吃一些富含蛋白质和维生素的食物，如鸡蛋、牛奶、鱼肉、新鲜水果和蔬菜等。此外，还可以进行按摩、拉伸等放松活动，帮助肌肉放松和恢复弹性。
+      运动后身体需要一段时间来恢复，包括肌肉的修复、能量的补充等。恢复过程同样重要，它决定了身体能否更好地适应下一次运动。在运动后，可以进行一些轻松的恢复性运动，如散步、瑜伽等，帮助身体放松和恢复。同时，要保证充足的休息和营养的摄入，促进身体的恢复和修复。在饮食上，可以多吃一些富含蛋白质和维生素的食物，如鸡蛋、牛奶、鱼肉、新鲜水果和蔬菜等。此外，还可以进行按摩、拉伸等放松活动，帮助肌肉放松和恢复弹性。
     </text>
     <div
       @click="adCapture"
@@ -265,11 +265,8 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -277,7 +274,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false

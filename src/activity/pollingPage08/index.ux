@@ -5,7 +5,7 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-    <text class="textt" 
+    <text class="textt"
       >九、减脂过程中的注意事项
       减脂是一个需要耐心和坚持的过程，要注意避免一些常见的误区。首先，减脂不可太快，因为减脂太快会造成体内大量脂肪分解，产生过多的酮体沉积在体内，引起酮症酸中毒。同时，减脂太快也会更累、更饿，导致难以坚持减脂计划。其次，不可过度节食，过度节食会导致基础能量供应不足，出现明显的饥饿感和低血糖，不利于身体健康。减脂应循序渐进，均衡饮食避免微量营养素缺乏，以及合理运动。在饮食上，要控制热量摄入，增加蔬菜、水果、全谷物等富含膳食纤维的食物摄入，减少高热量、高脂肪、高糖分的食物摄入。在运动上，要选择适合自己的运动项目，逐渐增加运动强度和时间，保持适当的运动节奏。
     </text>
@@ -265,11 +265,8 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -277,7 +274,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false

@@ -5,9 +5,9 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-    <text class="textt" 
+    <text class="textt"
       >十、保持充足的睡眠
-睡眠对于减脂和健身来说至关重要。睡眠不足会影响身体的新陈代谢和激素水平，从而影响减脂效果。保持规律的作息和足够的睡眠时间，有助于提高身体的代谢能力，促进脂肪燃烧。睡眠不足会导致身体分泌更多的皮质醇激素，这种激素会促进脂肪堆积，同时降低身体的代谢率。因此，要保证每天有足够的睡眠时间，成年人一般每天需要7-9小时的睡眠。在睡前，可以放松身心，避免过度兴奋的活动，如看手机、电脑等。同时，要创造一个安静、舒适的睡眠环境，保持房间的温度和湿度适宜，有助于提高睡眠质量。
+      睡眠对于减脂和健身来说至关重要。睡眠不足会影响身体的新陈代谢和激素水平，从而影响减脂效果。保持规律的作息和足够的睡眠时间，有助于提高身体的代谢能力，促进脂肪燃烧。睡眠不足会导致身体分泌更多的皮质醇激素，这种激素会促进脂肪堆积，同时降低身体的代谢率。因此，要保证每天有足够的睡眠时间，成年人一般每天需要7-9小时的睡眠。在睡前，可以放松身心，避免过度兴奋的活动，如看手机、电脑等。同时，要创造一个安静、舒适的睡眠环境，保持房间的温度和湿度适宜，有助于提高睡眠质量。
     </text>
     <div
       @click="adCapture"
@@ -265,11 +265,8 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -277,7 +274,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false

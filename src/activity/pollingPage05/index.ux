@@ -5,9 +5,9 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-      <text class="textt" 
+    <text class="textt"
       >六、选择合适的运动项目
-每个人的身体状况、兴趣爱好和运动能力不同，适合的运动项目也会有所不同。因此，在选择运动项目时，要根据自己的实际情况进行选择。例如，跑步、游泳、瑜伽、健身操等都是常见的运动项目，但适合的人群和效果各不相同。跑步适合心肺功能较好的人，游泳则适合关节负担较小的人，瑜伽适合需要放松身心的人，健身操则适合需要提高身体协调性和灵活性的人。选择适合自己的运动项目，不仅可以提高运动效果，还能增加运动的乐趣和持续性。
+      每个人的身体状况、兴趣爱好和运动能力不同，适合的运动项目也会有所不同。因此，在选择运动项目时，要根据自己的实际情况进行选择。例如，跑步、游泳、瑜伽、健身操等都是常见的运动项目，但适合的人群和效果各不相同。跑步适合心肺功能较好的人，游泳则适合关节负担较小的人，瑜伽适合需要放松身心的人，健身操则适合需要提高身体协调性和灵活性的人。选择适合自己的运动项目，不仅可以提高运动效果，还能增加运动的乐趣和持续性。
     </text>
     <div
       @click="adCapture"
@@ -265,11 +265,8 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -277,7 +274,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false

@@ -260,11 +260,7 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -638,7 +634,7 @@ export default {
 .threaten {
   width: 100%;
   height: 100%;
-  background-image: url('http://cdn.ihaituo.cn/qa/pro/app/029e30f6272517f887af64ab30d2f0b7.png');
+  background-image: url("http://cdn.ihaituo.cn/qa/pro/app/029e30f6272517f887af64ab30d2f0b7.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;

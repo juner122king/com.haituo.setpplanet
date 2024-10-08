@@ -5,7 +5,7 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-    <text class="textt" 
+    <text class="textt"
       >一、热身运动的重要性
       在开始任何健身或运动计划之前，热身运动是不可或缺的一部分。热身活动可以帮助身体逐渐提高心率、增加呼吸频率，使肌肉和关节逐渐适应即将到来的运动强度。这不仅有助于减少运动伤害的风险，还能提升运动表现。热身活动可以包括轻松的慢跑、伸展运动或静态拉伸等。例如，跑步前可以进行腿部和背部的拉伸，游泳前则可以进行肩部和手臂的预热。通过热身，身体温度上升，血液循环加快，肌肉更加柔软，关节灵活性提高，为接下来的运动做好充分准备。
     </text>
@@ -269,11 +269,8 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
+
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -281,7 +278,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false

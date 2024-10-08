@@ -5,9 +5,9 @@
     class="threaten"
     style="{{`background-image: url(${bgimgList[pollingPageNum]})`}}"
   >
-      <text class="textt" 
+    <text class="textt"
       >七、注意运动技巧和方法
-正确的运动技巧和方法不仅可以提高运动效果，还可以减少运动伤害的风险。在进行任何运动项目时，都要注意正确的姿势和动作。例如，跑步时要注意保持正确的身体姿势和步频，避免过度摆臂或膝盖内扣等不良姿势。游泳时要注意正确的呼吸和划水动作，避免颈部和背部受伤。瑜伽和健身操要注意动作的准确性和流畅性，避免过度拉伸或扭伤关节。如果不确定运动技巧是否正确，可以请教专业的教练或参加相关的培训课程，以提高运动效果和安全性。
+      正确的运动技巧和方法不仅可以提高运动效果，还可以减少运动伤害的风险。在进行任何运动项目时，都要注意正确的姿势和动作。例如，跑步时要注意保持正确的身体姿势和步频，避免过度摆臂或膝盖内扣等不良姿势。游泳时要注意正确的呼吸和划水动作，避免颈部和背部受伤。瑜伽和健身操要注意动作的准确性和流畅性，避免过度拉伸或扭伤关节。如果不确定运动技巧是否正确，可以请教专业的教练或参加相关的培训课程，以提高运动效果和安全性。
     </text>
     <div
       @click="adCapture"
@@ -265,11 +265,7 @@ export default {
           console.log(this.adList, '查看原生广告数据')
           this.hasAdList = true
           this.adState = true
-          if (this.debug) {
-            prompt.showToast({
-              message: `ad load success`,
-            })
-          }
+          this.sensorsTrack({}, 'load')
         },
         fail: (data, code) => {
           console.log(data, code, '返回广告失败1')
@@ -277,7 +273,7 @@ export default {
             {
               errData: data,
             },
-            'error'
+            'loadError'
           )
           this.hasAdList = true
           this.adState = false
