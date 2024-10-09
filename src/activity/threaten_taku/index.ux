@@ -1,0 +1,758 @@
+<import name="icon" src="apex-ui/components/icon/index"></import>
+<import name="ad-renderer" src="../components/adRenderer.ux"></import>
+<import name="taku-renderer" src="../components/takuRenderer.ux"></import>
+<template>
+  <div>
+    <div
+      class="wrapper"
+      onclick="clickPopover"
+      style="{{`background-image: url(${bgImg})`}}"
+    >
+      <!-- 红包弹窗 -->
+      <div class="coner" onclick="clickPopover" show="{{showRedPack}}">
+        <image class="img-popover" src="{{imageList[showBgIndex]}}"></image>
+        <icon type="close" size="80" color="#ffffff"></icon>
+      </div>
+
+      <!-- 投诉窗口 -->
+      <div class="complaint" if="{{complaintStatus}}" onclick="complaint">
+        <div class="imageBox">
+          <image src="{{complaintImg}}"></image>
+        </div>
+      </div>
+      <!-- 自渲染广告组件  全屏 -->
+      <div class="ad-renderer-box" show="{{currentTask.linkType === 'TAKU'}}">
+        <!-- 塔库组件 -->
+        <taku-renderer
+          id="taku-renderer"
+          ad-id="{{currentTask.adIdOrPackage}}"
+          onemit-ad-click="adRendererClick"
+          onemit-ad-show="adRendererShow"
+          onemit-ad-error="adRendererError"
+          auto-load="{{false}}"
+          is-show-ad="{{true}}"
+        ></taku-renderer>
+        <!-- 自渲染广告底部 -->
+        <div class="ad-renderer-bottom" if="{{currentTask.bottomAdId}}">
+          <ad-renderer
+            id="adRenderer-bottom"
+            ad-id="{{currentTask.bottomAdId}}"
+            onemit-ad-click="adBottomRendererClick"
+            onemit-ad-show="adBottomRendererShow"
+            onemit-ad-error="adBottomRendererError"
+            auto-load="{{false}}"
+            is-show-ad="{{true}}"
+            title="底部"
+          ></ad-renderer>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const { adCodeData, appId } = require('../../config.js').default
+export default {
+  private: {
+    title: '欢迎体验快应用开发',
+    branch: '',
+    adObj: '',
+    showBgIndex: 0, // 默认显示第一张图片，
+    maxNum: 5, //最多显示到第5张
+    showRedPack: false, // 控制红包显示
+    visitCount: 0, // 访问计数器
+    isfristReqCoun: true,
+    isAudit: false,
+    adState: true,
+    taskData: {
+      maxRequestNums: 1, //允许最大错误重试数
+    }, //获取任务数据
+    maxTaskNum: 0, //最大任务数
+    currentTaskNum: 0, //当前任务数
+    taskState: '', //当前任务状态
+    rewardedVideoAd: null, //激励广告
+    rewardedVideoAdState: true, //激励广告状态
+    currentTask: {
+      isLinkQa: false,
+      linkType: '',
+      adIdOrPackage: '',
+    }, // 新增属性，用于跟踪当前任务状态
+    bgImg: '', //背景图
+    imageList: [
+      '/assets/images/Popover-1.png',
+      '/assets/images/Popover-2.png',
+      '/assets/images/Popover-3.png',
+      '/assets/images/Popover-4.png',
+      '/assets/images/Popover-5.png',
+    ], //弹窗图片
+    adUnitId: '', //激励广告id
+    isFinishTask: false, //是否完成任务
+    rewardedVideoAdTime: null, //激励广告延时
+    rewardedVideoAdPlayCount: 0, //激励视频已播放次数
+    changeImageTime: null, //当前换图时间
+    complaintStatus: false, //举报状态
+    complaintImg:
+      'http://cdn.ihaituo.cn/qa/pro/temporary/63d3e397c404d4d7049ad6167fe6dbc7.png', //举报图片
+    errorNum: 0, //当错误次数
+    bottomAdSuccess: false, //底部自渲染广告组件是否成功展示
+    isMotivating: false, //是否正在激励
+    ifAdClick: false, //是否点击广告
+  },
+  onInit: function (e) {
+    // 初始化全局参数
+    if (Object.keys(e).length > 0) {
+      this.$app.$def.dataApp.actiParam = {
+        ...e,
+      }
+    }
+    // 延迟执行埋点报告
+    setTimeout(() => {
+      $utils.buriedPointReport(this)
+    }, 1000)
+    // 重置访问计数器
+    this.visitCount = 0
+    // 获取广告提供商
+    const branch = $ad.getProvider().toLowerCase()
+    this.branch = branch
+    this.adObj = adCodeData[branch]
+    // 检查是否自动打开红包展示
+    this.getClickReviewControl(branch)
+    // 获取广告数据
+    this.getPageAdData()
+    // 获取图片数据
+    this.getImageList()
+  },
+  onShow() {
+    $utils.changeShowAd(false)
+    let actiParam = this.$app.$def.dataApp.actiParam
+    // 页面埋点
+    this.$app.$sensors.pageShow({
+      channel: actiParam.channelValue,
+      formId: this.adId,
+    })
+    if (this.rewardedVideoAd) {
+      //激励广告开启
+      this.openRewardedVideoAd()
+    }
+    if (
+      this.taskData.adConversionModelList &&
+      this.taskData.adConversionModelList.length > 0
+    ) {
+      this.settingUpTasks() // 有则将每次任务更新
+      this.changeImage()
+      this.bottomAdSuccess = false
+      this.ifAdClick = false
+    }
+  },
+  onHide() {
+    this.clearRewardedVideoAdTime() //清除激励广告 再重新进来的时候开启
+    this.goAway()
+  },
+  //离去调起app
+  goAway() {
+    const needsFallback =
+      (this.currentTask.linkType === 'YS' && !this.adState) ||
+      (this.currentTask.linkType === 'JL' && !this.rewardedVideoAdState) ||
+      this.currentTask.linkType === '无任务'
+    if (needsFallback || this.ifAdClick) {
+      console.log('不调起app: 兜底跳转或已点击广告')
+      return
+    }
+    console.log('离开调起app')
+    this.$app.openApp({
+      type: 'app',
+    })
+  },
+  changeImage(type) {
+    //1秒内不会重复调用
+    if (this.changeImageTime && Date.now() - this.changeImageTime < 1000) {
+      return
+    }
+    this.changeImageTime = Date.now()
+    this.showBgIndex = (this.showBgIndex + 1) % this.imageList.length
+  },
+  // 自渲染广告组件点击
+  adRendererClick(e) {
+    console.log('adRendererClick', e)
+    let type = e.detail.isOppoNative //是否是优量汇自渲染
+    if (!type) {
+      this.ifAdClick = true
+    } else if (type && this.branch === 'xiaomi') {
+      this.settingUpTasks()
+    }
+  },
+  // 自渲染广告组件展示
+  adRendererShow(e) {
+    console.log(
+      'adRendererShow',
+      this.currentTask.bottomAdId,
+      this.bottomAdSuccess
+    )
+    if (!this.currentTask.bottomAdId || this.bottomAdSuccess) return
+    setTimeout(() => {
+      //自渲染广告组件展示后 展示底部自渲染广告组件
+      this.showBottomAd(this.currentTask.bottomAdId)
+    }, 1000)
+  },
+  // 自渲染广告组件出错
+  adRendererError(e) {
+    this.errorNum = e.detail.errorNum
+    const { maxRequestNums = 1 } = this.taskData
+    if (this.errorNum < maxRequestNums) {
+      //未达到最大错误次数
+      console.log('进来了重新设置广告', this.errorNum, maxRequestNums)
+      setTimeout(() => {
+        this.settingUpTasks() //如果失效，则重新设置任务
+      }, 1000)
+    } else {
+      console.log(
+        '自渲染广告组件预加载失败，错误次数已达上限，展示激励广告',
+        this.errorNum
+      )
+      // 一直请求失败则 展示激励没有激励则 直接跳转
+      if (
+        this.rewardedVideoAdState &&
+        this.rewardedVideoAdPlayCount >= this.taskData.rewardedCount
+      ) {
+        //直接展示激励
+        this.showVideoAd()
+      } else if (!this.isMotivating) {
+        console.log('进来了兜底')
+        this.adState = false
+        this.fallbackRedirect()
+      }
+    }
+  },
+  /***
+   * 点击弹窗
+   */
+  clickPopover(evt) {
+    // 每次显示页面时，增加一次计数
+    this.visitCount++
+    // 审核状态下，直接跳转默认链接
+    if (this.isAudit) {
+      this.jumpoOutside()
+      return
+    }
+    // 阻止事件冒泡
+    if (evt) {
+      evt.stopPropagation()
+    }
+    this.startTask()
+  },
+  adCapture(evt) {
+    if (evt) {
+      evt.stopPropagation()
+    }
+  },
+  /**
+  启动任务
+  */
+  startTask() {
+    this.checkAndJumpQaLink()
+    this.showRedPack = true
+    // 根据当前任务类型执行相应操作
+    switch (this.currentTask.linkType) {
+      case 'JL':
+        if (this.rewardedVideoAdState) {
+          this.showVideoAd()
+        }
+        break
+      case 'KYY':
+        this.jumpoOutside(this.currentTask.adIdOrPackage)
+        break
+      default:
+    }
+
+    if (!this.fallbackRedirect()) {
+      //跳转兜底链接
+      return
+    }
+
+    if (this.currentTask.linkType === 'KYY') {
+      //计数大于1或自动开启开红包展示
+      setTimeout(() => {
+        // 更新礼包显示
+        this.changeImage('kyy')
+      }, 800)
+    }
+
+    // 设置下一个任务
+    this.settingUpTasks()
+  },
+  // 兜底跳转
+  fallbackRedirect() {
+    const needsFallback =
+      (this.currentTask.linkType === 'YS' && !this.adState) ||
+      (this.currentTask.linkType === 'JL' && !this.rewardedVideoAdState) ||
+      this.currentTask.linkType === '无任务'
+    if (needsFallback) {
+      this.jumpoOutside()
+      return false
+    }
+    return true
+  },
+
+  // 埋点上报  曝光埋点事件 $WebShow
+  sensorsTrack(e = {}, type = 'show') {
+    try {
+      const { formId = '', subTitle = '', errData = {} } = e
+      let apid = formId || this.adId
+      $adFun.newBurialSite(this, {
+        eventName: type, // 事件名
+        formId: apid, // 广告id
+        subTitle: subTitle, //页面名
+        ...this.$app.$def.dataApp.actiParam,
+        errData: errData,
+      })
+    } catch (error) { }
+  },
+  /***
+   * 是否自动打开 跟审核状态挂钩
+   */
+  getClickReviewControl() {
+    const branch = $ad.getProvider().toUpperCase()
+    $apis.task.getClickReviewControl({ branch: branch }).then((res) => {
+      if (!res.data) {
+        this.showRedPack = true
+      }
+      this.isAudit = res.data
+    })
+  },
+  complaint(evt) {
+    // 阻止事件冒泡
+    if (evt) {
+      evt.stopPropagation()
+    }
+
+    $router.push({
+      uri: 'setting/feedback',
+    })
+  },
+
+  /**
+   **
+   * 创建激励广告
+   * @param {*} adUnitId 广告id
+   * @param {*} type 类型 立即展示还是自触发  immediately 立即  self 自触发
+   */
+  createRewardedVideoAd: function (adUnitId, type = 'self') {
+    try {
+      if (!adUnitId || this.rewardedVideoAd) {
+        if (!adUnitId) {
+          this.rewardedVideoAdState = false
+        }
+        return
+      }
+      this.adUnitId = adUnitId
+      const that = this
+      let rewardedVideoAd = $ad.createRewardedVideoAd({
+        adUnitId: adUnitId,
+      })
+      this.rewardedVideoAd = rewardedVideoAd
+      if (!rewardedVideoAd) {
+        // 不支持广告
+        this.rewardedVideoAd = null
+        this.rewardedVideoAdState = false
+        return
+      }
+      rewardedVideoAd.onLoad((e) => {
+        that.rewardedVideoAdState = true
+        if (that.brand === 'oppo') {
+          const data = rewardedVideoAd.getECPM()
+          that.emcp = data.ecpm
+          $utils.conversionUpload(that, {
+            adType: 'REWARDED_VIDEO',
+            adPositionId: adUnitId,
+            isclick: false,
+            ecpm: data.ecpm,
+          })
+        }
+        console.log('激励广告加载成功')
+        if (type === 'immediately') {
+          that.openRewardedVideoAd()
+        }
+      })
+      rewardedVideoAd.onClose((e) => {
+        if (that.branch !== 'vivo') {
+          rewardedVideoAd.load()
+        }
+        if (e.isEnded) {
+          $utils.conversionUpload(that, {
+            adType: 'REWARDED_VIDEO',
+            adPositionId: adUnitId,
+            isclick: true,
+            ecpm: that.ecpm,
+          })
+          that.sensorsTrack({ formId: adUnitId }, 'click')
+          $utils.buriedPointReport(that, { event: 'click', adId: adUnitId })
+        }
+        $utils.changeShowAd(false)
+        that.isMotivating = false
+      })
+
+      rewardedVideoAd.onError((e) => {
+        that.rewardedVideoAd = ''
+        that.rewardedVideoAdState = false
+        that.sensorsTrack({ formId: adUnitId }, 'error')
+        $utils.changeShowAd(false)
+        that.isMotivating = false
+        console.log('激励广告加载失败', e)
+      })
+
+      if (this.branch !== 'vivo') {
+        rewardedVideoAd.load()
+      }
+    } catch (error) { }
+  },
+  /**
+   * 展示激励广告
+   */
+  showVideoAd() {
+    if (!this.rewardedVideoAd || this.isMotivating) {
+      return
+    }
+    const showAd = () => {
+      this.rewardedVideoAd.show()
+      $utils.changeShowAd(true)
+      this.sensorsTrack({ formId: this.adUnitId }, 'show')
+      this.isMotivating = true
+    }
+    const handleError = () => {
+      this.isMotivating = false
+      $utils.changeShowAd(false)
+      this.jumpoOutside()
+    }
+    $utils.changeShowAd(true)
+    if (this.branch === 'vivo') {
+      this.rewardedVideoAd.load().then(showAd).catch(handleError)
+    } else {
+      try {
+        showAd()
+      } catch (e) {
+        handleError()
+        this.isMotivating = false
+      }
+    }
+  },
+  /**
+   * 判断是否能跳转QA链接
+   */
+  checkAndJumpQaLink() {
+    if (!this.taskData.isLinkQa && this.currentTask.linkType === 'YS') {
+      return
+    }
+    if (this.currentTask.qaLink) {
+      this.jumpoOutside(this.currentTask.qaLink)
+    } else {
+    }
+  },
+  //跳转方法
+  jumpoOutside(link = '') {
+    let location = link || this.taskData.adConversionModel.adIdOrPackage
+    if (!location) return
+    $utils.jumpoOutside({
+      url: location,
+      ...this.$app.$def.dataApp.actiParam,
+    })
+  },
+  onBackPress() {
+    return true
+  },
+  /**
+   * 设置任务
+   */
+  settingUpTasks() {
+    const { adConversionModelList } = this.taskData
+    this.currentTask = adConversionModelList[this.currentTaskNum]
+    if (!this.currentTask) {
+      this.currentTask = {
+        linkType: '无任务',
+        adIdOrPackage: 'hap://app/com.haituo.bzk/activity/threaten_taku',
+      }
+      return
+    }
+    console.log('当前任务', this.currentTask)
+    try {
+      // 根据任务类型执行相应操作
+      switch (this.currentTask.linkType) {
+        case 'JL':
+          this.createRewardedVideoAd(this.currentTask.adIdOrPackage)
+          break
+        case 'YS':
+          this.showNativeAd(this.currentTask.adIdOrPackage)
+          break
+        case 'TAKU':
+          this.showTakuAd(this.currentTask.adIdOrPackage)
+          break
+        default:
+      }
+    } catch (error) {
+      console.log('设置任务失败', error)
+    }
+    // 更新任务计数器
+    this.currentTaskNum = (this.currentTaskNum + 1) % (this.maxTaskNum + 1)
+  },
+  //展示塔库广告
+  showTakuAd(adId) {
+    this.$child('taku-renderer').handleLoadAd(adId)
+  },
+  /**
+   * 展示原生广告
+   */
+  showNativeAd(adId) {
+    console.log('进来了展示原生')
+    if (this.currentTask && this.currentTask.linkType === 'YS') {
+      this.$child('adRenderer').preloadAd(adId)
+    }
+  },
+  /*
+   * 展示底部自渲染广告
+   */
+  showBottomAd(adId) {
+    if (this.currentTask && this.currentTask.bottomAdId) {
+      console.log('进来了展示底部自渲染')
+      this.$child('adRenderer-bottom').preloadAd(adId)
+    }
+  },
+  adBottomRendererClick() {
+    console.log('自渲染广告底部点击')
+    this.ifAdClick = true
+  },
+  adBottomRendererShow() {
+    console.log('自渲染广告底部展示')
+    this.bottomAdSuccess = true
+  },
+  adBottomRendererError() {
+    console.log('自渲染广告底部错误')
+    this.bottomAdSuccess = false
+    let errorNum = e.detail.errorNum
+    const { maxRequestNums = 1 } = this.taskData
+    if (
+      !this.currentTask.bottomAdId ||
+      this.bottomAdSuccess ||
+      errorNum >= maxRequestNums
+    ) {
+      return
+    }
+    //自渲染广告组件展示后 展示底部自渲染广告组件
+    setTimeout(() => {
+      this.showBottomAd(this.currentTask.bottomAdId)
+    }, 1000)
+  },
+  /**
+   * 获取页面广告参数
+   */
+  getPageAdData() {
+    $apis.activity
+      .getAdConfigView({
+        appId: appId,
+        type: this.branch,
+        path: 'threaten_taku',
+      })
+      .then((res) => {
+        console.log('获取页面广告参数', res)
+        const { adConversionModel, adConversionModelList } = res.data
+        this.taskData = res.data
+        if (adConversionModelList.length < 1) {
+          return
+        }
+        this.maxTaskNum = this.taskData.adConversionModelList.length - 1
+        this.settingUpTasks()
+        this.openRewardedVideoAd()
+      })
+      .catch((err) => {
+        this.taskData = {
+          adConversionModelList: [],
+          adConversionModel: {
+            adIdOrPackage: 'hap://app/com.haituo.mrxyy/pages/displayDesktop',
+          },
+        }
+        this.settingUpTasks()
+      })
+  },
+  //获取图片数组
+  getImageList() {
+    $apis.activity
+      .getAdConversionImg({ path: 'threaten_taku', type: this.branch })
+      .then((res) => {
+        let result = res.data
+        const { imgData, bgImg, complaintStatus, complaintImg } = result
+        this.imageList = imgData
+        this.bgImg = bgImg
+        this.complaintStatus = complaintStatus
+        this.complaintImg = complaintImg || this.complaintImg
+      })
+  },
+  /**
+  延时开启激励广告
+  */
+  openRewardedVideoAd() {
+    try {
+      const { rewardedStatus, rewardedCount, rewardedId, rewardedSeconds } =
+        this.taskData
+      if (
+        !rewardedStatus ||
+        this.rewardedVideoAdPlayCount >= rewardedCount ||
+        !rewardedId
+      ) {
+        // 任务开关
+        return
+      }
+
+      this.clearRewardedVideoAdTime()
+      if (!this.rewardedVideoAd) {
+        console.log('进来了创建激励任务')
+        this.createRewardedVideoAd(rewardedId, 'immediately')
+      } else {
+        this.rewardedVideoAdTime = setTimeout(() => {
+          this.rewardedVideoAdPlayCount++
+          this.showVideoAd()
+        }, rewardedSeconds * 1000)
+      }
+    } catch (error) {
+      this.sensorsTrack({ formId: rewardedId }, 'error')
+    }
+  },
+  //清除激励广告
+  clearRewardedVideoAdTime() {
+    clearTimeout(this.rewardedVideoAdTime)
+  },
+}
+</script>
+
+<style lang="less">
+.wrapper {
+  width: 100%;
+  height: 100%;
+  background-image: url('http://cdn.ihaituo.cn/qa/pro/app/029e30f6272517f887af64ab30d2f0b7.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+.complaint {
+  width: 55px;
+  height: 110px;
+  position: fixed;
+  bottom: 200px;
+  left: 0;
+}
+.img-popover {
+  width: 630px;
+  object-fit: cover;
+}
+.Popover-2 {
+  width: 100%;
+  height: 800px;
+  background-image: url('/assets/images/Popover-2.png');
+  background-size: 100% 800px;
+  background-repeat: no-repeat;
+  justify-content: center;
+  align-items: flex-end;
+  .btn {
+    width: 500px;
+    height: 130px;
+    object-fit: contain;
+    top: -70px;
+  }
+}
+.box {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+
+  .container {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.simulating-exit {
+  width: 180px;
+  height: 65px;
+  border-radius: 32px;
+  border: 1px solid #fcf;
+  background-color: #ffd3db;
+  margin-top: 20px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  position: absolute;
+  top: 20px;
+  right: 30px;
+}
+.image_finger {
+  position: absolute;
+  top: 950px;
+  left: 400px;
+  width: 150px;
+  height: 150px;
+  /* background-color: #00ffff; */
+  background-image: url(/assets/images/icon_sz.png);
+  animation-name: float;
+  animation-duration: 1500ms;
+  animation-iteration-count: infinite;
+  background-position: center;
+  background-size: 100%;
+}
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-60px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(-60px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.coner {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  justify-content: center;
+  top: 0px;
+  left: 0px;
+}
+.conerno {
+  width: 0;
+  height: 0;
+  position: fixed;
+}
+
+.bottom-ad {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+.ad-renderer-box {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.ad-renderer-bottom {
+  width: 100%;
+  height: 10px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+</style>

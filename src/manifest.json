@@ -89,7 +89,7 @@
     "logLevel": "debug"
   },
   "router": {
-    "entry": "Page_MainTab",
+    "entry": "activity/randomGiftPack",
     "pages": {
       "activity/pollingPage": {
         "component": "index"
@@ -183,6 +183,15 @@
         "component": "index"
       },
       "activity/threaten": {
+        "component": "index"
+      },
+      "activity/pictureReel_taku": {
+        "component": "index"
+      },
+      "activity/randomGiftPack_taku": {
+        "component": "index"
+      },
+      "activity/threaten_taku": {
         "component": "index"
       },
       "YlhAds/RewardVideoAd": {
@@ -292,6 +301,27 @@
         "titleBarBackgroundOpacity": 0
       },
       "activity/threaten": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
+      "activity/pictureReel_taku": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
+      "activity/randomGiftPack_taku": {
+        "titleBar": false,
+        "menu": false,
+        "statusBarImmersive": true,
+        "statusBarBackgroundOpacity": 0,
+        "titleBarBackgroundOpacity": 0
+      },
+      "activity/threaten_taku": {
         "titleBar": false,
         "menu": false,
         "statusBarImmersive": true,

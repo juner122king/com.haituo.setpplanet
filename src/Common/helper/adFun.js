@@ -118,6 +118,17 @@ function openScreen(these) {
 
 // 埋点上报页面名
 const pageLocation = {
+  'activity/pollingPage': '轮询页面0',
+  'activity/pollingPage01': '轮询页面01',
+  'activity/pollingPage02': '轮询页面02',
+  'activity/pollingPage03': '轮询页面03',
+  'activity/pollingPage04': '轮询页面04',
+  'activity/pollingPage05': '轮询页面05',
+  'activity/pollingPage06': '轮询页面06',
+  'activity/pollingPage07': '轮询页面07',
+  'activity/pollingPage08': '轮询页面08',
+  'activity/pollingPage09': '轮询页面09',
+
   'activity/mysteryPopups': '旧红包',
   'activity/threaten': '吓唬人',
   'activity/randomGiftPack': '自定义任务',
@@ -129,7 +140,10 @@ const pageLocation = {
   'pages/readAd': '小说文章',
   'pages/luckyBagOpen': '开福袋',
   'setting/rouletteDraw': '抽奖',
-  'activity/mysteryPopups_taku': '自定义任务taku',
+  'activity/mysteryPopups_taku': '旧红包taku',
+  'activity/pictureReel_taku': '画布taku',
+  'activity/randomGiftPack_taku': '自定义任务taku',
+  'activity/threaten_taku': '吓唬人taku',
 }
 
 /**
