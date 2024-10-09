@@ -24,6 +24,12 @@
         >
           <image src="{{adList.imgUrlList[0]}}" style="height: 1px"></image>
         </ad-clickable-area>
+        <ad-clickable-area
+          class="ad-image"
+          type="video"
+          style="width: 1px; height: 1px"
+        >
+        </ad-clickable-area>
       </ad>
     </block>
   </div>
@@ -46,7 +52,7 @@ export default {
   preloadAd(id) {
     try {
       const that = this
-      console.log(this.adId, '查看广告id编码')
+
       let adId = id
       this.adId = id
       require('@service.ad').preloadAd({
@@ -57,7 +63,7 @@ export default {
         adid: adId, // 原生信息流广告广告位id,
         success: (data) => {
           this.adList = data.adList[0]
-          console.log(this.adList, '查看最底部原生广告数据')
+
           this.hasAdList = true
           if (this.debug) {
             prompt.showToast({
@@ -72,7 +78,6 @@ export default {
             },
             'error'
           )
-          console.log(data, code, '返回广告失败底部原生')
           this.hasAdList = true
           if (code === 205) {
             this.hasAdList = true
@@ -88,9 +93,7 @@ export default {
           }
         },
       })
-    } catch (e) {
-      console.log(e, e.message)
-    }
+    } catch (e) {}
   },
   adSuccShow() {
     $utils.conversionUpload(this, {
@@ -100,7 +103,6 @@ export default {
       ecpm: this.adList.ecpm,
     })
     this.sensorsTrack({}, 'show')
-    console.log('adSuccShow')
   },
   adError(errCode, errMsg) {
     this.sensorsTrack(
@@ -114,7 +116,6 @@ export default {
     )
   },
   adClick() {
-    console.log('adClick')
     $utils.conversionUpload(this, {
       adType: 'NATIVE',
       adPositionId: this.adId,
@@ -127,9 +128,7 @@ export default {
     this.$app.openApp({ type: 'ad', formId: this.adId })
     this.$emit('emitClose')
   },
-  close() {
-    console.log('close')
-  },
+  close() {},
   // 埋点上报  曝光埋点事件 $WebShow
   sensorsTrack(e = {}, type = 'show') {
     try {
@@ -142,9 +141,7 @@ export default {
         ...this.$app.$def.dataApp.actiParam,
         errData: errData,
       })
-    } catch (error) {
-      console.log(error, '埋点报错')
-    }
+    } catch (error) {}
   },
 }
 </script>

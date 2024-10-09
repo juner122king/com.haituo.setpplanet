@@ -1,0 +1,390 @@
+<import name="icon" src="apex-ui/components/icon/index"></import>
+<import name="topon-ad" src="@topon/quick-app-sdk/placement.ux"></import>
+<!-- 自渲染示例组件，请根据自身业务实现自渲染组件 -->
+<!-- <import name="ad-self-render" src="../../components/AdSelfRender-ylh.ux"></import> -->
+<import name="ylh-ad" src="ylh-quick-app-ad-sdk/ads/YlhAd"></import>
+<import
+  name="ylh-ad-clickable-area"
+  src="ylh-quick-app-ad-sdk/ads/YlhAdClickableArea"
+></import>
+
+<script>
+export default {
+  data: {
+    loaded: false,
+    isSelfRendering: false, // 是否自渲染，通过getAd获取
+    isGetAd: false,
+    config: {
+      entry: '/Page_MainTab', // 开屏广告结束后打开的第一个页面
+      timeout: 30000, // 默认0（走默认，开屏5秒，其他300秒），单位毫秒
+    },
+    adData: null, // 广告物料，通过getAd获取
+    displayed: false, // 自渲染广告组件展示控制
+    currentAd: '', //广告来源数据
+    tkYsAdId: '', // 信息流广告id  || 塔库实例
+    tkYsAdState: false, //塔库任务状态
+    taKuError: false,
+    takuAdId: '', //塔库广告id
+    errorNum: 0,
+  },
+  props: {
+    adId: {
+      //塔库广告id
+      default: '',
+    },
+    display: {
+      // 是否展示
+      default: true,
+    },
+    autoLoad: {
+      default: true,
+    },
+  },
+  onInit() {
+    this.tkYsAdId = this.adId
+    this.takuAdId = this.adId
+    console.log('adId', this.adId, '进来了展示taku广告')
+    this.$watch('adId', 'watchAdId')
+    if (this.autoLoad) {
+      this.handleLoadAd(this.adId)
+    }
+  },
+  watchAdId(newVal, oldVal) {
+    this.takuAdId = newVal
+    console.log('adId', newVal)
+    this.handleLoadAd(newVal)
+  },
+  // 广告源Load成功回调
+  handleAdLoad(e) {
+    this.loaded = true
+    this.handleGetAd() //获取广告素材
+    console.log('塔库原生广告加载', e)
+  },
+  // 广告源Show成功回调
+  handleAdShow(e) {
+    console.log('塔库原生广告展示')
+  },
+  // 广告源Close成功回调
+  handleAdClose(e) {
+    console.log('塔库原生广告关闭')
+  },
+  handleAdClick(e) {
+    console.log('原生塔库点击')
+  },
+  tkClick() {
+    this.conversionUpTaku(1)
+    this.handleReportClick()
+    console.log('塔库原生广告自渲染点击')
+    let isOppoNative = this.currentAd.nwFirmId == 64
+    if (!isOppoNative) {
+      this.$app.openApp({
+        type: 'ad',
+        formId: this.currentAd.nwUnitId,
+      })
+    }
+    this.$emit('emitAdClick', {
+      isOppoNative: isOppoNative,
+    })
+  },
+  adClose() {
+    this.$emit('emitAdClose')
+  },
+  handleAdError(e) {
+    this.tkYsAdState = false
+    this.taKuError = true
+    console.log('塔库原生广告错误', e)
+    this.sensorsTrack({}, 'loadError')
+    this.$emit('emitAdError', {
+      errorNum: this.errorNum,
+    })
+    this.errorNum++
+  },
+  // 展示广告广告
+  handleDisplayAd() {
+    if (this.isSelfRendering) {
+      //是否为自渲染
+      this.displayed = true
+      console.log('塔库原生广告展示', this.displayed)
+    } else {
+      const placement = this.getSdkElement()
+      if (placement.show) {
+        placement.show()
+      }
+    }
+  },
+  // 上报ad.show
+  handleReportShow() {
+    this.errorNum = 0
+    const placement = this.getSdkElement()
+    placement.reportShow()
+
+    console.log('塔库原生广告上报ad.show', placement)
+  },
+  // 上报ad.click
+  handleReportClick() {
+    const placement = this.getSdkElement()
+    placement.reportClick()
+    console.log('塔库原生广告上报ad.click', placement)
+  },
+  // 获取广告组件实例
+  getSdkElement() {
+    return this.$child(`topon-ad-${this.tkYsAdId}`)
+  },
+  // load加载广告【首次挂载组件时，sdk会自动加载一次广告，无需调用.load()方法】
+  handleLoadAd(id) {
+    /**
+     * 重置
+     */
+    if (!this.tkYsAdId) {
+      this.tkYsAdId = id
+    }
+    this.takuAdId = id
+    this.tkYsAdState = true
+    this.isGetAd = false
+    this.displayed = false
+    this.adData = null
+    const placement = this.getSdkElement()
+    if (placement && placement.load) {
+      placement.load()
+    }
+  },
+
+  handleIsReady() {
+    const placement = this.getSdkElement()
+    if (placement.isReady) {
+      // 展示广告广告
+      this.tkYsAdState = true
+      this.taKuError = false
+      console.log('塔库原生广告isReadyTrue', this.tkYsAdState)
+      this.handleDisplayAd()
+    } else {
+      this.tkYsAdState = false
+      this.taKuError = true
+      console.log('塔库原生广告isReadyFalse', this.tkYsAdState)
+    }
+  },
+  onAdExpose() {
+    console.log('onAdExpose塔库广告曝光', this.currentAd)
+    this.$emit('emitAdShow')
+    try {
+      this.handleReportShow()
+      this.conversionUpTaku(0)
+    } catch (error) {
+      console.log('onAdExpose塔库广告曝光', error)
+    }
+  },
+  conversionUpTaku(clickCount) {
+    let ecpmParam = {
+      //竞价相关参数
+      ecpm: this.currentAd.cyEcpm * 100,
+      adType: 'NATIVE',
+      adPositionId: this.currentAd.nwUnitId,
+      clickCount: clickCount,
+      isclick: clickCount == 1 ? true : false,
+    }
+
+    $utils.conversionUpload(this, ecpmParam)
+    let type = clickCount == 1 ? 'click' : 'show'
+    this.sensorsTrack({ formId: this.currentAd.nwUnitId }, type)
+    if (type === 'click') {
+      $utils.buriedPointReport(this, {
+        event: 'click',
+        adId: this.currentAd.nwUnitId,
+      })
+    }
+  },
+  // 埋点上报  曝光埋点事件 $WebShow
+  sensorsTrack(e = {}, type = 'show') {
+    console.log('sensorsTrack', e, type)
+    try {
+      const { formId = '', subTitle = '', errData = {} } = e
+      let apid = formId || this.currentAd.nwUnitId || this.adId
+      $adFun.newBurialSite(this, {
+        eventName: type, // 事件名
+        formId: apid, // 广告id
+        subTitle: subTitle, //页面名
+        ...this.$app.$def.dataApp.actiParam,
+        errData: errData,
+      })
+    } catch (error) {}
+  },
+  /**
+   * 事件捕获
+   */
+  adCapture(evt) {
+    // 阻止事件冒泡
+    if (!evt) return
+    evt.stopPropagation()
+  },
+  // 获取广告素材
+  handleGetAd() {
+    if (!this.loaded) {
+      return
+    }
+    this.displayed = false
+    this.adData = null
+    const placement = this.getSdkElement()
+    if (placement) {
+      this.currentAd = placement.getAd()
+      console.log('塔库原生广告获取广告素材', this.currentAd)
+      if (!this.currentAd) {
+        return
+      }
+      this.sensorsTrack({}, 'load')
+      // 判断是否为自渲染广告
+      this.isSelfRendering = this.currentAd.isSelfRendering
+      // 若是自渲染
+      if (this.currentAd.isSelfRendering) {
+        this.adData = this.currentAd.ad
+      } else {
+        this.adData = null
+        this.displayed = false
+      }
+      this.isGetAd = true
+
+      this.handleIsReady()
+    }
+  },
+  /**
+   * 原生广告错误
+   */
+  adError(errCode = {}) {
+    this.tkYsAdState = false
+    this.taKuError = true
+    console.log(`自渲染广告组件出错-${this.title}`, errCode)
+    this.hasAdList = false
+    this.$emit('emitAdError', {
+      errorNum: this.errorNum,
+    })
+    this.errorNum++
+    this.sensorsTrack(
+      {
+        errData: {
+          errCode: errCode.errCode,
+          errMsg: errCode.errMsg,
+        },
+      },
+      'error'
+    )
+  },
+}
+</script>
+<template>
+  <div>
+    <div class="takuRenderer" @click="adCapture" if="{{display && adId}}">
+      <topon-ad
+        id="topon-ad-{{tkYsAdId}}"
+        placement-id="{{takuAdId}}"
+        class="topon-box"
+        config="{{config}}"
+        @ad-load="handleAdLoad"
+        @ad-show="handleAdShow"
+        @ad-close="handleAdClose"
+        @ad-click="handleAdClick"
+        @ad-error="handleAdError"
+      >
+      </topon-ad>
+      <!-- 信息流自渲染广告 物料展示示例代码，ad-self-render组件于限与该demo展示使用，请根据业务所需完成自己的ad-self-render组件包括但不限于样式、广告要素、交互事件等的开发 -->
+      <block if="adData && displayed && isSelfRendering">
+        <block if="currentAd.nwFirmId===64">
+          <div class="native-ad-container" style="width: 750px; height: 100%">
+            <ylh-ad
+              class="ad-box"
+              ad-id="{{ adData.id }}"
+              if="{{ adData.id  }}"
+              on-ad-click="tkClick"
+              on-ad-expose="onAdExpose"
+            >
+              <ylh-ad-clickable-area ad-id="{{ adData.id }}">
+                <div class="click-button"></div>
+              </ylh-ad-clickable-area>
+            </ylh-ad>
+          </div>
+        </block>
+        <block else>
+          <ad
+            adId="{{currentAd.ad.adId }}"
+            class="ad-box"
+            show="{{!!currentAd.ad.adId }}"
+            onerror="adError"
+            onadclick="tkClick"
+            onadclose="adClose"
+            type="native"
+            closeBtnPosition="left-top"
+            onadshow="onAdExpose"
+          >
+            <ad-clickable-area
+              class="ad-title"
+              style="width: 100%; height: 100%"
+            >
+              <text class="page-title" style="font-size: 1px">{{
+                currentAd.ad.title
+              }}</text>
+            </ad-clickable-area>
+            <ad-clickable-area
+              class="ad-image"
+              style="width: 100%; height: 100%"
+            >
+              <image
+                if="{{currentAd.ad.imgUrlList}}"
+                src="{{currentAd.ad.imgUrlList[0]}}"
+                style="height: 1px"
+              ></image>
+            </ad-clickable-area>
+            <ad-clickable-area
+              class="ad-image"
+              type="video"
+              style="width: 1px; height: 1px"
+            >
+            </ad-clickable-area>
+          </ad>
+        </block>
+      </block>
+    </div>
+  </div>
+</template>
+
+<style lang="less">
+.ad-box {
+  width: 100%;
+  height: 100%;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.ad-title {
+  width: 100%;
+  height: 100%;
+}
+
+.takuRenderer {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.click-button {
+  width: 100%;
+  height: 100%;
+  margin-top: 10px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  .ams-logo {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.native-ad-container {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  position: fixed;
+}
+</style>

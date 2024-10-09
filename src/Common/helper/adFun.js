@@ -30,7 +30,7 @@ function openScreen(these) {
         })
         return
       }
-      const handleError = (action, error) => { }
+      const handleError = (action, error) => {}
       if (statusCode == 0) {
         const ecpm = adData.ecpm || adData.cpm
         these._def.dataApp.openScreenEcpm = ecpm
@@ -173,8 +173,9 @@ function newBurialSite(
       ? pageLocation[locationData.name]
       : '无页面名称获取' //根据地址获取页面名
 
-    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${titleData[eventName]
-      }-${formId}`
+    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${
+      titleData[eventName]
+    }-${formId}`
     $sensors.track(eventData[eventName], {
       analysis: {
         formId,
@@ -183,8 +184,9 @@ function newBurialSite(
       },
     })
   } catch (error) {
-    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${titleData[eventName]
-      }-${formId}`
+    let title = `${pageName + (subTitle ? '-' + subTitle : '')}-${
+      titleData[eventName]
+    }-${formId}`
     $sensors.track(eventData[eventName], {
       analysis: {
         formId,
@@ -210,7 +212,7 @@ async function ipLimit(these) {
         uri: 'Page_Tixian',
       })
     }
-  } catch (error) { }
+  } catch (error) {}
 }
 
 export default {

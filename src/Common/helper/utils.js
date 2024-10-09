@@ -660,22 +660,20 @@ function changeShowAd(state) {
  * type 类型 app 快应用本身    ad广告本身
  */
 
-function openApp() {
+ function openApp() {
   let showApp = null
   const adBrand = $ad.getProvider().toLowerCase()
-  let lastCallTime = 0
-  const throttleDelay = 1000 // 1.5 seconds
+
   async function getOpenAppConfig() {
     if (showApp) return showApp
     try {
       const res = await $apis.activity.getOpenAppConfig({ type: adBrand })
-      console.log(res, '查看调起app配置')
       const {
         count = 0,
         seconds = 0,
         status = false,
-        maxAdJump = 5,
         linkUrl = '',
+        errorMaxNums = 1,
       } = res.data
       showApp = {
         count,
@@ -685,7 +683,9 @@ function openApp() {
         timer: null,
         maxAdJump: count,
         adJump: 0,
-        linkUrl: linkUrl,
+        linkUrl,
+        errorMaxNums,
+        errorNums: 0,
       }
       return showApp
     } catch (error) {
@@ -693,96 +693,74 @@ function openApp() {
       return null
     }
   }
+
   getOpenAppConfig()
-  return async function (option = {}) {
-    try {
-      const { type = 'app', formId = '' } = option
-      console.log('进来调起app', type)
-      if (isShowAd) {
-        console.log('这是在激励视屏中或设定中直接return')
-        return
-      }
-      // 获取当前时间戳
-      const now = Date.now()
-      // 检查是否在节流时间内
-      if (now - lastCallTime < throttleDelay && type !== 'ad') {
-        console.log('函数调用被节流')
-        return // 如果在节流时间内,直接返回不执行后续代码
-      }
-      // 更新最后调用时间
-      lastCallTime = now
-      if (showApp.timer) {
-        clearTimeout(showApp.timer)
-      }
-      if (
-        (showApp.jumpNum > showApp.count && type === 'app') ||
-        !showApp.status
-      ) {
-        return
-      }
-
-      if (type === 'app') {
-        showApp.jumpNum++
-      } else {
-        showApp.adJump++
-        if (showApp.adJump > showApp.maxAdJump) {
-          return
-        }
-      }
-
-      let seconds = type === 'app' ? showApp.seconds * 1000 : 100
-      console.log('进来的调起秒数', seconds)
-      showApp.timer = setTimeout(() => {
-        let id = formId
-        if (showApp.linkUrl.length > 10) {
-          $router.push({
-            uri: showApp.linkUrl,
-          })
-        }
-        console.log('调起拉回了')
-        //上报类型
-        let reportType = {
-          ad: '$AppStartByAdClick', // 广告拉回
-          app: '$AppStartByPageLeave', // 页面调起
-        }
-        $image.editImage({
-          uri: '/Common/',
-          success: function (data) {
-            console.log(`handling success: ${data.uri}`)
-          },
-          cancel: function () {
-            console.log('handling cancel', '这是换端了')
-            $sensors.track(reportType[type], {
-              analysis: {
-                formId: id,
-                title: `拉回成功-${id}`,
-              },
-            })
-          },
-          fail: function (data, code) {
-            console.log(`handling fail, code = ${code}`)
-            if (code === 200) {
-              console.log('唤端成功')
-              $sensors.track(reportType[type], {
-                analysis: {
-                  formId: id,
-                  title: `拉回成功-${id}`,
-                },
-              })
-            } else {
-              $sensors.track(reportType[type], {
-                analysis: {
-                  formId: id,
-                  title: `拉回失败-${id}`,
-                },
-              })
-            }
-          },
-        })
-      }, seconds)
-    } catch (error) {
-      console.log(error, '查看调起app错误')
+  function setUpApp(type = 'app', id = '') {
+    const reportType = {
+      ad: '$AppStartByAdClick',
+      app: '$AppStartByPageLeave',
     }
+
+    function trackEvent(success) {
+      $sensors.track(reportType[type], {
+        analysis: {
+          formId: id,
+          title: `拉回${success ? '成功' : '失败'}-${id}`,
+        },
+      })
+    }
+    console.log('进来了调起app')
+
+    $image.editImage({
+      uri: '/Common/',
+      success: () => {},
+      cancel: () => {
+        console.log('拉回取消')
+        trackEvent(true)
+      },
+      fail: (data, code) => {
+        console.log('拉回失败', code)
+        if (code === 200) {
+          trackEvent(true)
+        } else {
+          trackEvent(false)
+          if (showApp.errorNums < showApp.errorMaxNums) {
+            console.log('拉回失败', showApp.errorNums)
+            showApp.errorNums++
+            setUpApp(type, id)
+          }
+        }
+      },
+    })
+  }
+
+  return async function startApp(option = {}) {
+    if (!showApp) {
+      await getOpenAppConfig()
+    }
+    if (!showApp || isShowAd || !showApp.status) return
+
+    const { type = 'app', formId = '' } = option
+
+    if (showApp.timer) {
+      clearTimeout(showApp.timer)
+    }
+
+    if (type === 'app') {
+      if (showApp.jumpNum > showApp.count) return
+      showApp.jumpNum++
+    } else {
+      if (showApp.adJump >= showApp.maxAdJump) return
+      showApp.adJump++
+    }
+
+    const seconds = type === 'app' ? showApp.seconds * 1000 : 100
+    showApp.timer = setTimeout(() => {
+      if (showApp.linkUrl.length > 10) {
+        $router.push({ uri: showApp.linkUrl })
+      }
+      setUpApp(type, formId)
+    }, seconds)
   }
 }
 
