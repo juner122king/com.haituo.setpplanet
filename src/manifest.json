@@ -89,7 +89,7 @@
     "logLevel": "debug"
   },
   "router": {
-    "entry": "activity/randomGiftPack",
+    "entry": "Page_MainTab",
     "pages": {
       "activity/pollingPage": {
         "component": "index"

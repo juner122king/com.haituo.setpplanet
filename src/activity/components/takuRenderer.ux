@@ -37,7 +37,7 @@ export default {
       default: true,
     },
     autoLoad: {
-      default: true,
+      default: false,
     },
   },
   onInit() {
@@ -58,11 +58,11 @@ export default {
   handleAdLoad(e) {
     this.loaded = true
     this.handleGetAd() //获取广告素材
-    console.log('塔库原生广告加载', e)
+    // console.log('塔库原生广告加载', e)
   },
   // 广告源Show成功回调
   handleAdShow(e) {
-    console.log('塔库原生广告展示')
+    // console.log('塔库原生广告展示')
   },
   // 广告源Close成功回调
   handleAdClose(e) {
@@ -75,7 +75,7 @@ export default {
     this.conversionUpTaku(1)
     this.handleReportClick()
     console.log('塔库原生广告自渲染点击')
-    let isOppoNative = this.currentAd.nwFirmId == 64
+    let isOppoNative = this.currentAd.nwFirmId == 64 //是否是优量汇自渲染
     if (!isOppoNative) {
       this.$app.openApp({
         type: 'ad',
@@ -155,12 +155,10 @@ export default {
       // 展示广告广告
       this.tkYsAdState = true
       this.taKuError = false
-      console.log('塔库原生广告isReadyTrue', this.tkYsAdState)
       this.handleDisplayAd()
     } else {
       this.tkYsAdState = false
       this.taKuError = true
-      console.log('塔库原生广告isReadyFalse', this.tkYsAdState)
     }
   },
   onAdExpose() {
@@ -195,7 +193,6 @@ export default {
   },
   // 埋点上报  曝光埋点事件 $WebShow
   sensorsTrack(e = {}, type = 'show') {
-    console.log('sensorsTrack', e, type)
     try {
       const { formId = '', subTitle = '', errData = {} } = e
       let apid = formId || this.currentAd.nwUnitId || this.adId
