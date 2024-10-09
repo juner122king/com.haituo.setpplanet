@@ -105,6 +105,12 @@ export default {
         },
         fail: (data, code) => {
           try {
+            this.sensorsTrack(
+              {
+                errData: {},
+              },
+              'loadError'
+            )
             console.log(`自渲染广告组件预加载失败-${this.title}`, data)
             this.$emit('emitAdError', {
               errorNum: this.errorNum,
@@ -113,12 +119,6 @@ export default {
             console.log('自渲染广告组件预加载失败-emitAdError', error)
           }
           this.errorNum = this.errorNum + 1
-          this.sensorsTrack(
-            {
-              errData: data,
-            },
-            'loadError'
-          )
           this.hasAdList = false
         },
       })
