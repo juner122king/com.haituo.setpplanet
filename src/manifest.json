@@ -1,8 +1,8 @@
 {
   "package": "com.haituo.setpplanet",
   "name": "计步星球",
-  "versionName": "1.1.39",
-  "versionCode": 139,
+  "versionName": "1.1.40",
+  "versionCode": 140,
   "permissions": [
     {
       "origin": "*"
@@ -89,7 +89,7 @@
     "logLevel": "debug"
   },
   "router": {
-    "entry": "Page_MainTab",
+    "entry": "activity/pollingPage",
     "pages": {
       "activity/pollingPage": {
         "component": "index"

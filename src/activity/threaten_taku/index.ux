@@ -326,7 +326,7 @@ export default {
     }
 
     $router.push({
-      uri: 'setting/feedback',
+      uri: 'feedback',
     })
   },
 
